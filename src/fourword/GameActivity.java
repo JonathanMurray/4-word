@@ -118,7 +118,7 @@ public class GameActivity extends SimpleLayoutGameActivity {
 
     @Override
     protected int getLayoutID() {
-        return R.layout.testlayout;
+        return R.layout.game;
     }
 
     @Override
