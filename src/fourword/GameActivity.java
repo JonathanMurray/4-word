@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Created by jonathan on 2015-06-20.
  */
-public class MyLayoutGameActivity extends SimpleLayoutGameActivity {
+public class GameActivity extends SimpleLayoutGameActivity {
     private Font font;
     private Camera camera;
     private static final int NUM_COLS = 4;
