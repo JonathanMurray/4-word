@@ -31,10 +31,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9ce05210-84bf-4659-88fa-42f9577efdbe" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fourword/GridModel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fourword/AI.java" afterPath="$PROJECT_DIR$/src/fourword/AI.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fourword/GridScene.java" afterPath="$PROJECT_DIR$/src/fourword/GridScene.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fourword/MyLayoutGameActivity.java" afterPath="$PROJECT_DIR$/src/fourword/MyLayoutGameActivity.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/fourword/MyLayoutGameActivity.java" afterPath="$PROJECT_DIR$/src/fourword/GameActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/img/android.svg" afterPath="$USER_HOME$/Documents/AndEngine/ext/img/android.svg" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/img/badge.svg" afterPath="$USER_HOME$/Documents/AndEngine/ext/img/badge.svg" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/scripts/build_texturepacks.sh" afterPath="$USER_HOME$/Documents/AndEngine/ext/scripts/build_texturepacks.sh" />
@@ -107,8 +105,8 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyLayoutGameActivity.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/fourword/MyLayoutGameActivity.java">
+      <file leaf-file-name="GameActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/fourword/GameActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.4054054">
               <caret line="160" column="78" selection-start-line="160" selection-start-column="78" selection-end-line="160" selection-end-column="78" />
@@ -233,6 +231,7 @@
         <option value="$PROJECT_DIR$/src/fourword/GridModel.java" />
         <option value="$PROJECT_DIR$/src/fourword/AI.java" />
         <option value="$PROJECT_DIR$/src/fourword/MyLayoutGameActivity.java" />
+        <option value="$PROJECT_DIR$/src/fourword/GameActivity.java" />
       </list>
     </option>
   </component>
@@ -370,7 +369,7 @@
     </configuration>
     <configuration default="false" name="MyLayoutGameActivity" type="AndroidRunConfigurationType" factoryName="Android Application" temporary="true">
       <module name="android-test" />
-      <option name="ACTIVITY_CLASS" value="fourword.MyLayoutGameActivity" />
+      <option name="ACTIVITY_CLASS" value="fourword.GameActivity" />
       <option name="MODE" value="specific_activity" />
       <option name="DEPLOY" value="true" />
       <option name="ARTIFACT_NAME" value="" />
@@ -741,7 +740,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/fourword/MyLayoutGameActivity.java">
+    <entry file="file://$PROJECT_DIR$/src/fourword/GameActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -923,7 +922,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/fourword/MyLayoutGameActivity.java">
+    <entry file="file://$PROJECT_DIR$/src/fourword/GameActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -1115,7 +1114,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/fourword/MyLayoutGameActivity.java">
+    <entry file="file://$PROJECT_DIR$/src/fourword/GameActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -1403,7 +1402,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/fourword/MyLayoutGameActivity.java">
+    <entry file="file://$PROJECT_DIR$/src/fourword/GameActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.4054054">
           <caret line="160" column="78" selection-start-line="160" selection-start-column="78" selection-end-line="160" selection-end-column="78" />
