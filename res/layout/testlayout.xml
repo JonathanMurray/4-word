@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="150px"
+            android:text="4-WORD"
+            android:textSize="32dp"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="600px"
+            android:orientation="horizontal">
+        <org.andengine.opengl.view.RenderSurfaceView
+                android:id="@+id/surface_view"
+                android:layout_width="600px"
+                android:layout_height="match_parent"/>
+        <TextView
+                android:id="@+id/info_text"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:text="Make your move!"/>
+    </LinearLayout>
+
+
+
+    <Button
+            android:id="@+id/doneButton"
+            android:layout_width="match_parent"
+            android:layout_height="250px"
+            android:text="DONE!"
+            android:onClick="clickedDone"/>
+
+    <EditText
+            android:inputType="textCapCharacters|textNoSuggestions"
+            android:id="@+id/text_input"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:alpha="0"/>
+
+
+
+</LinearLayout>
