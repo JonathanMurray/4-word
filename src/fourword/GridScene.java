@@ -1,7 +1,6 @@
-package com.example.android_test;
+package fourword;
 
 import android.content.Context;
-import android.view.View;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.IEntity;

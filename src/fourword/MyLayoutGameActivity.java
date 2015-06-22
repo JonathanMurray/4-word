@@ -1,4 +1,4 @@
-package com.example.android_test;
+package fourword;
 
 import android.content.Context;
 import android.graphics.Color;
