@@ -22,7 +22,7 @@ import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.ui.activity.SimpleLayoutGameActivity;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * Created by jonathan on 2015-06-20.
@@ -35,11 +35,11 @@ public class GameActivity extends SimpleLayoutGameActivity {
     private boolean[][] lockedCells = new boolean[NUM_COLS][NUM_ROWS];
     private GridScene scene;
     private GridModel grid;
-    private boolean hasEdited;
-    private Cell editedCell;
-    private char editedChar;
-    private boolean yourTurn = true;
-    private UserAction receivedAction;
+
+    private GameState state;
+    private HashMap<StateName, GameState> fsm = new HashMap<StateName, GameState>();
+
+
 
     @Override
     protected void onCreateResources() {
@@ -51,41 +51,32 @@ public class GameActivity extends SimpleLayoutGameActivity {
     protected Scene onCreateScene() {
         this.mEngine.registerUpdateHandler(new FPSLogger());
 
+
+
         scene = new GridScene(this, font, 250, NUM_COLS, NUM_ROWS, this.getVertexBufferObjectManager(), camera);
         grid = new GridModel(NUM_COLS, NUM_ROWS);
-        lockCharAtCell('A', new Cell(0, 0));
-        lockCharAtCell('X', new Cell(1, 1));
-        lockCharAtCell('B', new Cell(1, 3));
+
+        fsm.put(StateName.PICK_AND_PLACE_LETTER, new PickAndPlaceLetter(this, scene, grid));
+        fsm.put(StateName.WAIT_FOR_OPPONENT, new WaitForOpponent(this, scene, grid));
+        fsm.put(StateName.PLACE_OPPONENTS_LETTER, new PlaceOpponentsLetter(this, scene, grid));
+        state = fsm.get(StateName.PICK_AND_PLACE_LETTER);
+
+        setGridAndView('A', new Cell(0, 0));
+        setGridAndView('X', new Cell(1, 1));
+        setGridAndView('B', new Cell(1, 3));
 
         final EditText textInput = (EditText) findViewById(R.id.text_input);
         textInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() > 0 && scene.highlightedCell() && yourTurn){
+                if(s.length() > 0){
                     char ch = Character.toUpperCase(s.charAt(s.length()-1));
-                    if(Character.isLetter(ch)){
-                        Cell highlighted = scene.getHighlighted();
-                        boolean cellIsLocked = lockedCells[highlighted.x()][highlighted.y()];
-                        if(!cellIsLocked){
-                            if(hasEdited && editedCell != highlighted){
-                                scene.removeCharAtCell(editedCell);
-                            }
-                            ((TextView)findViewById(R.id.title)).setText(s.toString());
-                            scene.setCharAtCell(ch, highlighted);
-                            editedCell = highlighted;
-                            editedChar = ch;
-                            hasEdited = true;
-                        }
+                    if(Character.isLetter(ch)) {
+                        state.userTypedLetter(ch);
                     }
                     s.clear();
                 }
@@ -95,28 +86,18 @@ public class GameActivity extends SimpleLayoutGameActivity {
         scene.setGridTouchListener(new GridTouchListener() {
             @Override
             public void gridTouchEvent(Cell cell) {
-                scene.highlightCell(cell);
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
+                state.userClickedCell(cell);
             }
         });
-
-
 
         scene.registerUpdateHandler(new IUpdateHandler() {
             @Override
             public void onUpdate(float pSecondsElapsed) {
-                if (!yourTurn && receivedAction != null) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            scene.setCharAtCell(receivedAction.letter(), receivedAction.cell());
-                            ((TextView) findViewById(R.id.info_text)).setText("Make your move!");
-                            ((Button) findViewById(R.id.doneButton)).setEnabled(true);
-                            yourTurn = true;
-                            receivedAction = null;
-                        }
-                    });
+                StateTransition transition = state.onUpdate();
+                if(transition.changeState){
+                    state.exit();
+                    state = fsm.get(transition.newState);
+                    state.enter(transition.data);
                 }
             }
 
@@ -127,6 +108,12 @@ public class GameActivity extends SimpleLayoutGameActivity {
         });
 
         return scene;
+    }
+
+    public void bringUpKeyboard(){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        final EditText textInput = (EditText) findViewById(R.id.text_input);
+        imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
     }
 
     @Override
@@ -146,38 +133,38 @@ public class GameActivity extends SimpleLayoutGameActivity {
     }
 
 
-    private void lockCharAtCell(char ch, Cell cell){
+    private void setGridAndView(char ch, Cell cell){
         scene.setCharAtCell(ch, cell);
         grid.setCharAtCell(ch, cell);
-        lockedCells[cell.x()][cell.y()] = true;
+        //lockedCells[cell.x()][cell.y()] = true;
     }
 
     public void clickedDone(View view){
 
-        if(hasEdited){
-            lockCell(editedCell);
-            hasEdited = false;
-            yourTurn = false;
-            ((TextView)findViewById(R.id.info_text)).setText("Opponent's turn ...");
-            ((Button)findViewById(R.id.doneButton)).setEnabled(false);
+        StateTransition transition = state.userClickedDone();
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(2000);
-                        receivedAction = new AI().nextAction(grid);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+        if(transition.changeState){
+            state.exit();
+            state = fsm.get(transition.newState);
+            state.enter(transition.data);
         }
     }
 
-    private void lockCell(Cell cell){
-        lockedCells[cell.x()][cell.y()] = true;
-        grid.setCharAtCell(editedChar, editedCell);
+    public void setInfoText(final String text){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((TextView) findViewById(R.id.info_text)).setText(text);
+            }
+        });
+    }
+
+    public void setButtonEnabled(final boolean enabled) {
+        runOnUiThread(new Runnable(){
+            public void run(){
+                ((Button) findViewById(R.id.doneButton)).setEnabled(enabled);
+            }
+        });
     }
 
 }

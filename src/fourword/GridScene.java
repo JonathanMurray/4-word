@@ -118,13 +118,13 @@ public class GridScene extends Scene{
 
         highlightedRect.setColor(new Color(0.3f, 0.5f, 0.6f));
         highlightedRect.setZIndex(-100); //far back
-        attachChild(highlightedRect);
+        safeAttach(highlightedRect);
         sortChildren();
     }
 
     public void dehighlightCell(){
         hasHighlightedCell = false;
-        detachChild(highlightedRect);
+        safeDetach(highlightedRect);
         highlightedRect = null;
     }
 
@@ -148,22 +148,27 @@ public class GridScene extends Scene{
         //charCells[cell.x()][cell.y()] = ch;
         Text text = new Text((float) (cell.x()+0.3) * cellSize, (float) (cell.y()+0.2) * cellSize, font, "" + ch, vboManager);
         text.setZIndex(0);
-        attachQueue.add(text);
-        //attachChild(text);
+        safeAttach(text);
         textCells[cell.x()][cell.y()] = text;
     }
 
+    public void safeDetach(IEntity e){
+        if(attachQueue.contains(e)){ //hasn't been attached yet, just cancel it from the queue
+            attachQueue.remove(e);
+        }else{
+            detachQueue.add(e); //has been attached, demand detachment
+        }
+    }
 
+    public void safeAttach(IEntity e){
+        attachQueue.add(e);
+    }
 
     public void removeCharAtCell(Cell cell){
         assertValidCell(cell);
         Text currentText = textCells[cell.x()][cell.y()];
         if(currentText != null){
-            if(attachQueue.contains(currentText)){ //hasn't been attached yet, just cancel it from the queue
-                attachQueue.remove(currentText);
-            }else{
-                detachQueue.add(currentText); //has been attached, demand detachment
-            }
+            safeDetach(currentText);
         }
     }
 
