@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * Created by jonathan on 2015-06-20.
  */
 public class GridScene extends Scene{
-    private static final char NULL_CHAR = '\u0000';
+
     private static int LINE_WIDTH = 4;
     private static int MARGIN = 0;
     private static Font font;
@@ -31,7 +31,7 @@ public class GridScene extends Scene{
     private int numRows;
     private int gridWidth;
     private int gridHeight;
-    private char[][] charCells;
+
     private Text[][] textCells;
     private Cell highlighted;
     private Rectangle highlightedRect;
@@ -51,7 +51,7 @@ public class GridScene extends Scene{
         this.numRows = numRows;
         gridWidth = cellSize * numCols;
         gridHeight = cellSize * numRows;
-        charCells = new char[numCols][numRows];
+        //charCells = new char[numCols][numRows];
         textCells = new Text[numCols][numRows];
         this.vboManager = vboManager;
         this.camera = camera;
@@ -145,7 +145,7 @@ public class GridScene extends Scene{
         assertValidCell(cell);
         removeCharAtCell(cell);
 
-        charCells[cell.x()][cell.y()] = ch;
+        //charCells[cell.x()][cell.y()] = ch;
         Text text = new Text((float) (cell.x()+0.3) * cellSize, (float) (cell.y()+0.2) * cellSize, font, "" + ch, vboManager);
         text.setZIndex(0);
         attachQueue.add(text);
@@ -153,13 +153,7 @@ public class GridScene extends Scene{
         textCells[cell.x()][cell.y()] = text;
     }
 
-    public char getCharAtCell(Cell cell){
-        return charCells[cell.x()][cell.y()];
-    }
 
-    public boolean hasCharAtCell(Cell cell){
-        return getCharAtCell(cell) != NULL_CHAR;
-    }
 
     public void removeCharAtCell(Cell cell){
         assertValidCell(cell);
@@ -175,22 +169,6 @@ public class GridScene extends Scene{
 
     public void setGridTouchListener(GridTouchListener gridTouchListener) {
         this.gridTouchListener = gridTouchListener;
-    }
-
-    public String getCol(int colIndex){
-        StringBuilder s = new StringBuilder();
-        for(int y = 0; y < numRows; y++){
-            s.append(getCharAtCell(new Cell(colIndex, y)));
-        }
-        return s.toString();
-    }
-
-    public String getRow(int rowIndex){
-        StringBuilder s = new StringBuilder();
-        for(int x = 0; x < numCols; x++){
-            s.append(getCharAtCell(new Cell(x, rowIndex)));
-        }
-        return s.toString();
     }
 
     private void assertValidCell(Cell cell){

@@ -8,7 +8,7 @@ public class AI {
     int numCols = 4;
     int numRows = 4;
 
-    public UserAction nextAction(GridScene grid){
+    public UserAction nextAction(GridModel grid){
         for(int x = 0; x < numCols; x++){
             for(int y = 0; y < numRows; y++){
                 Cell cell = new Cell(x,y);

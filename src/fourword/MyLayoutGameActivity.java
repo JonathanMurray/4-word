@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.example.android_test.R;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
@@ -32,9 +33,11 @@ public class MyLayoutGameActivity extends SimpleLayoutGameActivity {
     private static final int NUM_COLS = 4;
     private static final int NUM_ROWS = 4;
     private boolean[][] lockedCells = new boolean[NUM_COLS][NUM_ROWS];
-    private GridScene grid;
+    private GridScene scene;
+    private GridModel grid;
     private boolean hasEdited;
     private Cell editedCell;
+    private char editedChar;
     private boolean yourTurn = true;
     private UserAction receivedAction;
 
@@ -48,7 +51,8 @@ public class MyLayoutGameActivity extends SimpleLayoutGameActivity {
     protected Scene onCreateScene() {
         this.mEngine.registerUpdateHandler(new FPSLogger());
 
-        grid = new GridScene(this, font, 250, NUM_COLS, NUM_ROWS, this.getVertexBufferObjectManager(), camera);
+        scene = new GridScene(this, font, 250, NUM_COLS, NUM_ROWS, this.getVertexBufferObjectManager(), camera);
+        grid = new GridModel(NUM_COLS, NUM_ROWS);
         lockCharAtCell('A', new Cell(0, 0));
         lockCharAtCell('X', new Cell(1, 1));
         lockCharAtCell('B', new Cell(1, 3));
@@ -67,18 +71,19 @@ public class MyLayoutGameActivity extends SimpleLayoutGameActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() > 0 && grid.highlightedCell() && yourTurn){
+                if(s.length() > 0 && scene.highlightedCell() && yourTurn){
                     char ch = Character.toUpperCase(s.charAt(s.length()-1));
                     if(Character.isLetter(ch)){
-                        Cell highlighted = grid.getHighlighted();
+                        Cell highlighted = scene.getHighlighted();
                         boolean cellIsLocked = lockedCells[highlighted.x()][highlighted.y()];
                         if(!cellIsLocked){
                             if(hasEdited && editedCell != highlighted){
-                                grid.removeCharAtCell(editedCell);
+                                scene.removeCharAtCell(editedCell);
                             }
                             ((TextView)findViewById(R.id.title)).setText(s.toString());
-                            grid.setCharAtCell(ch, highlighted);
+                            scene.setCharAtCell(ch, highlighted);
                             editedCell = highlighted;
+                            editedChar = ch;
                             hasEdited = true;
                         }
                     }
@@ -87,10 +92,10 @@ public class MyLayoutGameActivity extends SimpleLayoutGameActivity {
             }
         });
 
-        grid.setGridTouchListener(new GridTouchListener() {
+        scene.setGridTouchListener(new GridTouchListener() {
             @Override
             public void gridTouchEvent(Cell cell) {
-                grid.highlightCell(cell);
+                scene.highlightCell(cell);
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
             }
@@ -98,16 +103,16 @@ public class MyLayoutGameActivity extends SimpleLayoutGameActivity {
 
 
 
-        grid.registerUpdateHandler(new IUpdateHandler() {
+        scene.registerUpdateHandler(new IUpdateHandler() {
             @Override
             public void onUpdate(float pSecondsElapsed) {
-                if(!yourTurn && receivedAction != null){
+                if (!yourTurn && receivedAction != null) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            grid.setCharAtCell(receivedAction.letter(), receivedAction.cell());
-                            ((TextView)findViewById(R.id.info_text)).setText("Make your move!");
-                            ((Button)findViewById(R.id.doneButton)).setEnabled(true);
+                            scene.setCharAtCell(receivedAction.letter(), receivedAction.cell());
+                            ((TextView) findViewById(R.id.info_text)).setText("Make your move!");
+                            ((Button) findViewById(R.id.doneButton)).setEnabled(true);
                             yourTurn = true;
                             receivedAction = null;
                         }
@@ -121,7 +126,7 @@ public class MyLayoutGameActivity extends SimpleLayoutGameActivity {
             }
         });
 
-        return grid;
+        return scene;
     }
 
     @Override
@@ -142,16 +147,13 @@ public class MyLayoutGameActivity extends SimpleLayoutGameActivity {
 
 
     private void lockCharAtCell(char ch, Cell cell){
+        scene.setCharAtCell(ch, cell);
         grid.setCharAtCell(ch, cell);
         lockedCells[cell.x()][cell.y()] = true;
     }
 
     public void clickedDone(View view){
-        if(grid.hasCharAtCell(new Cell(0,0)) && grid.hasCharAtCell(new Cell(0,1)) && grid.hasCharAtCell(new Cell(0,2)) && grid.hasCharAtCell(new Cell(0,3))){
-            String col = grid.getCol(0);
-            List<String> words = new ScoreCalculator().extractWords(col);
-            ((TextView)findViewById(R.id.title)).setText(words.toString());
-        }
+
         if(hasEdited){
             lockCell(editedCell);
             hasEdited = false;
@@ -175,6 +177,7 @@ public class MyLayoutGameActivity extends SimpleLayoutGameActivity {
 
     private void lockCell(Cell cell){
         lockedCells[cell.x()][cell.y()] = true;
+        grid.setCharAtCell(editedChar, editedCell);
     }
 
 }
