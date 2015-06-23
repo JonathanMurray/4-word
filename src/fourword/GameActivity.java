@@ -21,13 +21,14 @@ import org.andengine.entity.util.FPSLogger;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.ui.activity.SimpleLayoutGameActivity;
+import org.andengine.util.debug.Debug;
 
 import java.util.HashMap;
 
 /**
  * Created by jonathan on 2015-06-20.
  */
-public class GameActivity extends SimpleLayoutGameActivity {
+public class GameActivity extends SimpleLayoutGameActivity implements GameClient.Listener{
     private Font font;
     private Camera camera;
     private static final int NUM_COLS = 4;
@@ -48,18 +49,23 @@ public class GameActivity extends SimpleLayoutGameActivity {
     }
 
     @Override
-    protected Scene onCreateScene() {
+    protected Scene onCreateScene() throws InterruptedException {
         this.mEngine.registerUpdateHandler(new FPSLogger());
 
+        int serverPort = 2224;
+        String serverIP = "127.0.0.1";
+        serverIP = "10.0.2.2";
+        serverIP = "192.168.1.2";
 
+        GameClient client = new GameClient(serverIP, serverPort, this);
 
         scene = new GridScene(this, font, 250, NUM_COLS, NUM_ROWS, this.getVertexBufferObjectManager(), camera);
         grid = new GridModel(NUM_COLS, NUM_ROWS);
 
-        fsm.put(StateName.PICK_AND_PLACE_LETTER, new PickAndPlaceLetter(this, scene, grid));
-        fsm.put(StateName.WAIT_FOR_OPPONENT, new WaitForOpponent(this, scene, grid));
-        fsm.put(StateName.PLACE_OPPONENTS_LETTER, new PlaceOpponentsLetter(this, scene, grid));
-        state = fsm.get(StateName.PICK_AND_PLACE_LETTER);
+        fsm.put(StateName.PICK_AND_PLACE_LETTER, new PickAndPlaceLetter(this, scene, grid, client));
+        fsm.put(StateName.WAIT_FOR_SERVER, new WaitForServer(this, scene, grid, client));
+        fsm.put(StateName.PLACE_OPPONENTS_LETTER, new PlaceOpponentsLetter(this, scene, grid, client));
+        state = fsm.get(StateName.WAIT_FOR_SERVER);
         state.enter(null);
 
         setGridAndView('A', new Cell(0, 0));
@@ -95,11 +101,7 @@ public class GameActivity extends SimpleLayoutGameActivity {
             @Override
             public void onUpdate(float pSecondsElapsed) {
                 StateTransition transition = state.onUpdate();
-                if(transition.changeState){
-                    state.exit();
-                    state = fsm.get(transition.newState);
-                    state.enter(transition.data);
-                }
+                handleTransition(transition);
             }
 
             @Override
@@ -108,7 +110,23 @@ public class GameActivity extends SimpleLayoutGameActivity {
             }
         });
 
+        client.start();
+
         return scene;
+    }
+
+    @Override
+    public void handleServerMessage(GameServerMessage msg) {
+        StateTransition transition = state.handleServerMessage(msg);
+        handleTransition(transition);
+    }
+
+    private void handleTransition(StateTransition transition){
+        if(transition.changeState){
+            state.exit();
+            state = fsm.get(transition.newState);
+            state.enter(transition.data);
+        }
     }
 
     public void bringUpKeyboard(){
@@ -141,14 +159,8 @@ public class GameActivity extends SimpleLayoutGameActivity {
     }
 
     public void clickedDone(View view){
-
         StateTransition transition = state.userClickedDone();
-
-        if(transition.changeState){
-            state.exit();
-            state = fsm.get(transition.newState);
-            state.enter(transition.data);
-        }
+        handleTransition(transition);
     }
 
     public void setInfoText(final String text){
@@ -167,5 +179,6 @@ public class GameActivity extends SimpleLayoutGameActivity {
             }
         });
     }
+
 
 }

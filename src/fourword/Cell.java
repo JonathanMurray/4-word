@@ -1,9 +1,11 @@
 package fourword;
 
+import java.io.Serializable;
+
 /**
  * Created by jonathan on 2015-06-22.
  */
-public class Cell {
+public class Cell implements Serializable {
     private int x;
     private int y;
     public Cell(int x, int y){
@@ -30,6 +32,6 @@ public class Cell {
     }
 
     public String toString(){
-        return "[" + x + ", " + "]";
+        return "[" + x + ", " + y + "]";
     }
 }

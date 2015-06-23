@@ -1,7 +1,6 @@
 package fourword;
 
-import android.content.Context;
-import android.view.inputmethod.InputMethodManager;
+import org.andengine.extension.multiplayer.protocol.adt.message.client.ClientMessage;
 
 /**
  * Created by jonathan on 2015-06-23.
@@ -11,8 +10,8 @@ public class PlaceOpponentsLetter extends GameState{
     private Cell placedCell;
     private char letter;
 
-    public PlaceOpponentsLetter(GameActivity activity, GridScene scene, GridModel grid) {
-        super(activity, scene, grid);
+    public PlaceOpponentsLetter(GameActivity activity, GridScene scene, GridModel grid, Client client) {
+        super(activity, scene, grid, client);
     }
 
     @Override
@@ -57,6 +56,12 @@ public class PlaceOpponentsLetter extends GameState{
             return StateTransition.STAY_HERE;
         }
         grid.setCharAtCell(letter, placedCell);
-        return StateTransition.change(StateName.PICK_AND_PLACE_LETTER);
+        client.sendMessage(GameClientMessage.placeLetter(placedCell));
+        return StateTransition.change(StateName.WAIT_FOR_SERVER);
+    }
+
+    @Override
+    public StateTransition handleServerMessage(GameServerMessage msg) {
+        return StateTransition.STAY_HERE;
     }
 }

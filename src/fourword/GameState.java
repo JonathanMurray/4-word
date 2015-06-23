@@ -8,11 +8,13 @@ public abstract class GameState {
     protected final GameActivity activity;
     protected final GridScene scene;
     protected final GridModel grid;
+    protected final Client client;
 
-    public GameState(GameActivity activity, GridScene scene, GridModel grid){
+    public GameState(GameActivity activity, GridScene scene, GridModel grid, Client client){
         this.activity = activity;
         this.scene = scene;
         this.grid = grid;
+        this.client = client;
     }
 
     public abstract void enter(Object data);
@@ -21,4 +23,5 @@ public abstract class GameState {
     public abstract StateTransition userClickedCell(Cell cell);
     public abstract StateTransition onUpdate();
     public abstract StateTransition userClickedDone();
+    public abstract StateTransition handleServerMessage(GameServerMessage msg);
 }

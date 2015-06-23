@@ -1,11 +1,5 @@
 package fourword;
 
-import android.content.Context;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.TextView;
-import com.example.android_test.R;
-
 /**
  * Created by jonathan on 2015-06-23.
  */
@@ -14,8 +8,8 @@ public class PickAndPlaceLetter extends GameState {
     private Cell placedCell;
     private char placedLetter;
 
-    public PickAndPlaceLetter(GameActivity activity, GridScene scene, GridModel grid) {
-        super(activity, scene, grid);
+    public PickAndPlaceLetter(GameActivity activity, GridScene scene, GridModel grid, Client client) {
+        super(activity, scene, grid, client);
     }
 
     @Override
@@ -67,6 +61,12 @@ public class PickAndPlaceLetter extends GameState {
             return StateTransition.STAY_HERE;
         }
         grid.setCharAtCell(placedLetter, placedCell);
-        return StateTransition.change(StateName.WAIT_FOR_OPPONENT);
+        client.sendMessage(GameClientMessage.pickAndPlaceLetter(placedLetter, placedCell));
+        return StateTransition.change(StateName.WAIT_FOR_SERVER);
+    }
+
+    @Override
+    public StateTransition handleServerMessage(GameServerMessage msg) {
+        return StateTransition.STAY_HERE;
     }
 }
