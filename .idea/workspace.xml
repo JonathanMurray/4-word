@@ -31,14 +31,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9ce05210-84bf-4659-88fa-42f9577efdbe" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/res/layout/main.xml" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/res/layout/testlayout.xml" afterPath="$PROJECT_DIR$/res/layout/game.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fourword/GameActivity.java" afterPath="$PROJECT_DIR$/src/fourword/GameActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fourword/GridScene.java" afterPath="$PROJECT_DIR$/src/fourword/GridScene.java" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/img/android.svg" afterPath="$USER_HOME$/Documents/AndEngine/ext/img/android.svg" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/img/badge.svg" afterPath="$USER_HOME$/Documents/AndEngine/ext/img/badge.svg" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/scripts/build_texturepacks.sh" afterPath="$USER_HOME$/Documents/AndEngine/ext/scripts/build_texturepacks.sh" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/img/clapboard.svg" afterPath="$USER_HOME$/Documents/AndEngine/ext/img/clapboard.svg" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/img/favicon.svg" afterPath="$USER_HOME$/Documents/AndEngine/ext/img/favicon.svg" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/game.xml" afterPath="$PROJECT_DIR$/res/layout/game.xml" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/img/icon.svg" afterPath="$USER_HOME$/Documents/AndEngine/ext/img/icon.svg" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/img/logo.svg" afterPath="$USER_HOME$/Documents/AndEngine/ext/img/logo.svg" />
       <change type="MODIFICATION" beforePath="$USER_HOME$/Documents/AndEngine/ext/img/logo_icon.svg" afterPath="$USER_HOME$/Documents/AndEngine/ext/img/logo_icon.svg" />
@@ -66,14 +66,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="GridScene.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GridScene.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/fourword/GridScene.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="88" column="32" selection-start-line="88" selection-start-column="32" selection-end-line="88" selection-end-column="32" />
+            <state vertical-scroll-proportion="0.56122446">
+              <caret line="95" column="31" selection-start-line="95" selection-start-column="31" selection-end-line="95" selection-end-column="31" />
               <folding>
-                <element signature="e#5454#5455#0" expanded="true" />
-                <element signature="e#5488#5489#0" expanded="true" />
+                <element signature="e#5462#5463#0" expanded="true" />
+                <element signature="e#5496#5497#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -82,21 +82,21 @@
       <file leaf-file-name="GameActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/fourword/GameActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-3.8709676">
-              <caret line="96" column="38" selection-start-line="96" selection-start-column="30" selection-end-line="96" selection-end-column="38" />
+            <state vertical-scroll-proportion="-7.7419353">
+              <caret line="62" column="26" selection-start-line="62" selection-start-column="26" selection-end-line="62" selection-end-column="26" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1380#1402#0" expanded="true" />
-                <element signature="e#3156#3324#0" expanded="true" />
-                <element signature="e#3323#3324#0" expanded="true" />
-                <element signature="e#4199#4200#0" expanded="true" />
-                <element signature="e#4235#4236#0" expanded="true" />
-                <element signature="e#4295#4296#0" expanded="true" />
-                <element signature="e#4335#4336#0" expanded="true" />
-                <element signature="e#5138#5305#0" expanded="true" />
-                <element signature="e#5304#5305#0" expanded="true" />
-                <element signature="e#5395#5543#0" expanded="true" />
-                <element signature="e#5542#5543#0" expanded="true" />
+                <element signature="e#3183#3351#0" expanded="true" />
+                <element signature="e#3350#3351#0" expanded="true" />
+                <element signature="e#4226#4227#0" expanded="true" />
+                <element signature="e#4262#4263#0" expanded="true" />
+                <element signature="e#4322#4323#0" expanded="true" />
+                <element signature="e#4362#4363#0" expanded="true" />
+                <element signature="e#5165#5332#0" expanded="true" />
+                <element signature="e#5331#5332#0" expanded="true" />
+                <element signature="e#5422#5570#0" expanded="true" />
+                <element signature="e#5569#5570#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -106,7 +106,7 @@
         <entry file="file://$PROJECT_DIR$/src/fourword/PickAndPlaceLetter.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="22" column="53" selection-start-line="22" selection-start-column="53" selection-end-line="22" selection-end-column="53" />
+              <caret line="53" column="24" selection-start-line="53" selection-start-column="24" selection-end-line="53" selection-end-column="24" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#447#448#0" expanded="true" />
@@ -118,11 +118,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UserAction.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="UserAction.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/fourword/UserAction.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6505102">
+            <state vertical-scroll-proportion="0.0">
               <caret line="21" column="1" selection-start-line="21" selection-start-column="1" selection-end-line="21" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="game.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/res/layout/game.xml">
+          <provider editor-type-id="android-designer">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-2.7666667">
+              <caret line="24" column="45" selection-start-line="24" selection-start-column="45" selection-end-line="24" selection-end-column="45" />
               <folding />
             </state>
           </provider>
@@ -247,11 +260,12 @@
         <option value="$PROJECT_DIR$/src/fourword/StateName.java" />
         <option value="$PROJECT_DIR$/src/fourword/StateTransition.java" />
         <option value="$PROJECT_DIR$/src/fourword/GameState.java" />
-        <option value="$PROJECT_DIR$/src/fourword/GameActivity.java" />
-        <option value="$PROJECT_DIR$/src/fourword/GridScene.java" />
         <option value="$PROJECT_DIR$/src/fourword/PlaceOpponentsLetter.java" />
         <option value="$PROJECT_DIR$/src/fourword/WaitForOpponent.java" />
         <option value="$PROJECT_DIR$/src/fourword/PickAndPlaceLetter.java" />
+        <option value="$PROJECT_DIR$/src/fourword/GameActivity.java" />
+        <option value="$PROJECT_DIR$/res/layout/game.xml" />
+        <option value="$PROJECT_DIR$/src/fourword/GridScene.java" />
       </list>
     </option>
   </component>
@@ -259,7 +273,7 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-2343" />
+    <option name="x" value="47" />
     <option name="y" value="764" />
     <option name="width" value="1319" />
     <option name="height" value="772" />
@@ -641,7 +655,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-2343" y="764" width="1319" height="772" extended-state="6" />
+    <frame x="47" y="764" width="1319" height="772" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -711,8 +725,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="196" column="55" selection-start-line="196" selection-start-column="55" selection-end-line="196" selection-end-column="55" />
           <folding>
-            <element signature="e#5454#5455#0" expanded="true" />
-            <element signature="e#5488#5489#0" expanded="true" />
+            <element signature="e#5462#5463#0" expanded="true" />
+            <element signature="e#5496#5497#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -732,16 +746,16 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1380#1402#0" expanded="true" />
-            <element signature="e#3156#3324#0" expanded="true" />
-            <element signature="e#3323#3324#0" expanded="true" />
-            <element signature="e#4199#4200#0" expanded="true" />
-            <element signature="e#4235#4236#0" expanded="true" />
-            <element signature="e#4295#4296#0" expanded="true" />
-            <element signature="e#4335#4336#0" expanded="true" />
-            <element signature="e#5138#5305#0" expanded="true" />
-            <element signature="e#5304#5305#0" expanded="true" />
-            <element signature="e#5395#5543#0" expanded="true" />
-            <element signature="e#5542#5543#0" expanded="true" />
+            <element signature="e#3183#3351#0" expanded="true" />
+            <element signature="e#3350#3351#0" expanded="true" />
+            <element signature="e#4226#4227#0" expanded="true" />
+            <element signature="e#4262#4263#0" expanded="true" />
+            <element signature="e#4322#4323#0" expanded="true" />
+            <element signature="e#4362#4363#0" expanded="true" />
+            <element signature="e#5165#5332#0" expanded="true" />
+            <element signature="e#5331#5332#0" expanded="true" />
+            <element signature="e#5422#5570#0" expanded="true" />
+            <element signature="e#5569#5570#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -894,8 +908,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="196" column="55" selection-start-line="196" selection-start-column="55" selection-end-line="196" selection-end-column="55" />
           <folding>
-            <element signature="e#5454#5455#0" expanded="true" />
-            <element signature="e#5488#5489#0" expanded="true" />
+            <element signature="e#5462#5463#0" expanded="true" />
+            <element signature="e#5496#5497#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -915,16 +929,16 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1380#1402#0" expanded="true" />
-            <element signature="e#3156#3324#0" expanded="true" />
-            <element signature="e#3323#3324#0" expanded="true" />
-            <element signature="e#4199#4200#0" expanded="true" />
-            <element signature="e#4235#4236#0" expanded="true" />
-            <element signature="e#4295#4296#0" expanded="true" />
-            <element signature="e#4335#4336#0" expanded="true" />
-            <element signature="e#5138#5305#0" expanded="true" />
-            <element signature="e#5304#5305#0" expanded="true" />
-            <element signature="e#5395#5543#0" expanded="true" />
-            <element signature="e#5542#5543#0" expanded="true" />
+            <element signature="e#3183#3351#0" expanded="true" />
+            <element signature="e#3350#3351#0" expanded="true" />
+            <element signature="e#4226#4227#0" expanded="true" />
+            <element signature="e#4262#4263#0" expanded="true" />
+            <element signature="e#4322#4323#0" expanded="true" />
+            <element signature="e#4362#4363#0" expanded="true" />
+            <element signature="e#5165#5332#0" expanded="true" />
+            <element signature="e#5331#5332#0" expanded="true" />
+            <element signature="e#5422#5570#0" expanded="true" />
+            <element signature="e#5569#5570#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1107,16 +1121,16 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1380#1402#0" expanded="true" />
-            <element signature="e#3156#3324#0" expanded="true" />
-            <element signature="e#3323#3324#0" expanded="true" />
-            <element signature="e#4199#4200#0" expanded="true" />
-            <element signature="e#4235#4236#0" expanded="true" />
-            <element signature="e#4295#4296#0" expanded="true" />
-            <element signature="e#4335#4336#0" expanded="true" />
-            <element signature="e#5138#5305#0" expanded="true" />
-            <element signature="e#5304#5305#0" expanded="true" />
-            <element signature="e#5395#5543#0" expanded="true" />
-            <element signature="e#5542#5543#0" expanded="true" />
+            <element signature="e#3183#3351#0" expanded="true" />
+            <element signature="e#3350#3351#0" expanded="true" />
+            <element signature="e#4226#4227#0" expanded="true" />
+            <element signature="e#4262#4263#0" expanded="true" />
+            <element signature="e#4322#4323#0" expanded="true" />
+            <element signature="e#4362#4363#0" expanded="true" />
+            <element signature="e#5165#5332#0" expanded="true" />
+            <element signature="e#5331#5332#0" expanded="true" />
+            <element signature="e#5422#5570#0" expanded="true" />
+            <element signature="e#5569#5570#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1126,8 +1140,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
           <folding>
-            <element signature="e#5454#5455#0" expanded="true" />
-            <element signature="e#5488#5489#0" expanded="true" />
+            <element signature="e#5462#5463#0" expanded="true" />
+            <element signature="e#5496#5497#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1180,17 +1194,6 @@
           <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
           <folding />
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/game.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.72584856">
-          <caret line="31" column="39" selection-start-line="31" selection-start-column="39" selection-end-line="31" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/fourword/GridTouchListener.java">
@@ -1257,15 +1260,15 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="20" column="31" selection-start-line="20" selection-start-column="31" selection-end-line="20" selection-end-column="31" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#654#655#0" expanded="true" />
-            <element signature="e#704#705#0" expanded="true" />
-            <element signature="e#747#748#0" expanded="true" />
-            <element signature="e#799#800#0" expanded="true" />
-            <element signature="e#845#846#0" expanded="true" />
-            <element signature="e#900#901#0" expanded="true" />
-            <element signature="e#946#947#0" expanded="true" />
-            <element signature="e#1003#1004#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#654#655#0" expanded="false" />
+            <element signature="e#704#705#0" expanded="false" />
+            <element signature="e#747#748#0" expanded="false" />
+            <element signature="e#799#800#0" expanded="false" />
+            <element signature="e#845#846#0" expanded="false" />
+            <element signature="e#900#901#0" expanded="false" />
+            <element signature="e#946#947#0" expanded="false" />
+            <element signature="e#1003#1004#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1286,43 +1289,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/fourword/GameActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.8709676">
-          <caret line="96" column="38" selection-start-line="96" selection-start-column="30" selection-end-line="96" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1380#1402#0" expanded="true" />
-            <element signature="e#3156#3324#0" expanded="true" />
-            <element signature="e#3323#3324#0" expanded="true" />
-            <element signature="e#4199#4200#0" expanded="true" />
-            <element signature="e#4235#4236#0" expanded="true" />
-            <element signature="e#4295#4296#0" expanded="true" />
-            <element signature="e#4335#4336#0" expanded="true" />
-            <element signature="e#5138#5305#0" expanded="true" />
-            <element signature="e#5304#5305#0" expanded="true" />
-            <element signature="e#5395#5543#0" expanded="true" />
-            <element signature="e#5542#5543#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Documents/AndEngine/src/org/andengine/entity/Entity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33163264">
           <caret line="759" column="19" selection-start-line="759" selection-start-column="19" selection-end-line="759" selection-end-column="19" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fourword/GridScene.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="88" column="32" selection-start-line="88" selection-start-column="32" selection-end-line="88" selection-end-column="32" />
-          <folding>
-            <element signature="e#5454#5455#0" expanded="true" />
-            <element signature="e#5488#5489#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1360,20 +1331,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/fourword/PickAndPlaceLetter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="22" column="53" selection-start-line="22" selection-start-column="53" selection-end-line="22" selection-end-column="53" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#447#448#0" expanded="true" />
-            <element signature="e#491#492#0" expanded="true" />
-            <element signature="e#1731#1732#0" expanded="true" />
-            <element signature="e#1779#1780#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/fourword/StateTransition.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1384,9 +1341,66 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/fourword/UserAction.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6505102">
+        <state vertical-scroll-proportion="0.0">
           <caret line="21" column="1" selection-start-line="21" selection-start-column="1" selection-end-line="21" selection-end-column="1" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fourword/GameActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.7419353">
+          <caret line="62" column="26" selection-start-line="62" selection-start-column="26" selection-end-line="62" selection-end-column="26" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1380#1402#0" expanded="true" />
+            <element signature="e#3183#3351#0" expanded="true" />
+            <element signature="e#3350#3351#0" expanded="true" />
+            <element signature="e#4226#4227#0" expanded="true" />
+            <element signature="e#4262#4263#0" expanded="true" />
+            <element signature="e#4322#4323#0" expanded="true" />
+            <element signature="e#4362#4363#0" expanded="true" />
+            <element signature="e#5165#5332#0" expanded="true" />
+            <element signature="e#5331#5332#0" expanded="true" />
+            <element signature="e#5422#5570#0" expanded="true" />
+            <element signature="e#5569#5570#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout/game.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.7666667">
+          <caret line="24" column="45" selection-start-line="24" selection-start-column="45" selection-end-line="24" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fourword/PickAndPlaceLetter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="53" column="24" selection-start-line="53" selection-start-column="24" selection-end-line="53" selection-end-column="24" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#447#448#0" expanded="true" />
+            <element signature="e#491#492#0" expanded="true" />
+            <element signature="e#1731#1732#0" expanded="true" />
+            <element signature="e#1779#1780#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fourword/GridScene.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.56122446">
+          <caret line="95" column="31" selection-start-line="95" selection-start-column="31" selection-end-line="95" selection-end-column="31" />
+          <folding>
+            <element signature="e#5462#5463#0" expanded="true" />
+            <element signature="e#5496#5497#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

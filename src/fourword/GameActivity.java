@@ -60,6 +60,7 @@ public class GameActivity extends SimpleLayoutGameActivity {
         fsm.put(StateName.WAIT_FOR_OPPONENT, new WaitForOpponent(this, scene, grid));
         fsm.put(StateName.PLACE_OPPONENTS_LETTER, new PlaceOpponentsLetter(this, scene, grid));
         state = fsm.get(StateName.PICK_AND_PLACE_LETTER);
+        state.enter(null);
 
         setGridAndView('A', new Cell(0, 0));
         setGridAndView('X', new Cell(1, 1));

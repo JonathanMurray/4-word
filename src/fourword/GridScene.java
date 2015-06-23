@@ -93,6 +93,7 @@ public class GridScene extends Scene{
                     attachChild(e);
                 }
                 attachQueue.clear();
+                sortChildren();
             }
 
             @Override
@@ -119,7 +120,6 @@ public class GridScene extends Scene{
         highlightedRect.setColor(new Color(0.3f, 0.5f, 0.6f));
         highlightedRect.setZIndex(-100); //far back
         safeAttach(highlightedRect);
-        sortChildren();
     }
 
     public void dehighlightCell(){
