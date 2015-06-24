@@ -66,7 +66,7 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
         grid = new GridModel(NUM_COLS, NUM_ROWS);
 
         //Client client = new GameClient(SERVER_IP, SERVER_PORT);
-        Client client = new OfflineClient(new AI(),NUM_COLS, NUM_ROWS);
+        Client client = new OfflineClient(new AI_ServerBehaviour(new AI(),NUM_COLS, NUM_ROWS));
         client.setMessageListener(this);
 
         ScoreCalculator scoreCalculator = new ScoreCalculator(new Dictionary());

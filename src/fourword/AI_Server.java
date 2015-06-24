@@ -11,6 +11,11 @@ import java.net.Socket;
  */
 public class AI_Server {
 
+    private final AI_ServerBehaviour aiServerBehaviour;
+
+    private final static int NUM_COLS = 4;
+    private final static int NUM_ROWS = 4;
+
     public static void main(String[] args) throws IOException {
 
         if (args.length != 1) {
@@ -19,19 +24,11 @@ public class AI_Server {
         }
 
         int portNumber = Integer.parseInt(args[0]);
-        new AI_Server(new AI(), 4, 4).run(portNumber);
+        new AI_Server(new AI_ServerBehaviour(new AI(), NUM_COLS, NUM_ROWS)).run(portNumber);
     }
 
-    private final int numCols;
-    private final int numRows;
-    private AI ai;
-
-
-    public AI_Server(AI ai, int numCols, int numRows){
-        this.ai = ai;
-        ai.initialize(new GridModel(numCols, numRows));
-        this.numCols = numCols;
-        this.numRows = numRows;
+    public AI_Server(AI_ServerBehaviour aiServerbehaviour){
+        this.aiServerBehaviour = aiServerbehaviour;
     }
 
     public void run(int portNumber){
@@ -68,16 +65,8 @@ public class AI_Server {
             System.out.println("Waiting for message from client ... ");
             GameClientMessage msg = (GameClientMessage) in.readObject();
             System.out.println("    Received message: '" + msg + "'");
-            switch(msg.action()){
-                case PICK_AND_PLACE_LETTER:
-                    ai.placeLetter(msg.letter());
-                    char pickedLetter = ai.pickAndPlaceLetter();
-                    sendMessage(out, GameServerMessage.placeLetter(pickedLetter, ai.getPlayerName()));
-                    break;
-                case PLACE_LETTER:
-                    sendMessage(out, GameServerMessage.pickAndPlaceLetter());
-                    break;
-            }
+            GameServerMessage reply = aiServerBehaviour.act(msg);
+            sendMessage(out, reply);
         }
     }
 
