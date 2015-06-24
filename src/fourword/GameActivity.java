@@ -33,11 +33,13 @@ import java.util.Queue;
 public class GameActivity extends SimpleLayoutGameActivity implements GameClient.Listener{
     private Font font;
     private Camera camera;
-    private static final int NUM_COLS = 2;
-    private static final int NUM_ROWS = 2;
+    private static final int NUM_COLS = 4;
+    private static final int NUM_ROWS = 4;
     private boolean[][] lockedCells = new boolean[NUM_COLS][NUM_ROWS];
     private GridScene scene;
     private GridModel grid;
+
+    private int layoutID = R.layout.game;
 
     private GameState state;
     private boolean hasActiveState = false;
@@ -183,7 +185,7 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
 
     @Override
     protected int getLayoutID() {
-        return R.layout.game;
+        return layoutID;
     }
 
     @Override
@@ -226,5 +228,9 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
         });
     }
 
+    public void changeLayout(int layoutID){
+        this.layoutID = layoutID;
+
+    }
 
 }

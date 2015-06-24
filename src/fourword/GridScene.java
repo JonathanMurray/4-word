@@ -133,7 +133,7 @@ public class GridScene extends Scene{
     }
 
 
-    public boolean highlightedCell(){
+    public boolean hasHighlighted(){
         return hasHighlightedCell;
     }
 

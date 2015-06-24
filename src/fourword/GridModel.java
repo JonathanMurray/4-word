@@ -6,13 +6,14 @@ import org.andengine.entity.text.Text;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by jonathan on 2015-06-22.
  */
-public class GridModel {
+public class GridModel implements Serializable {
     private static final char NULL_CHAR = '\u0000';
     private char[][] charCells;
     private int numCols;

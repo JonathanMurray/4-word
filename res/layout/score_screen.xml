@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:id="@+id/scorescreen_title"
+            android:layout_width="match_parent"
+            android:layout_height="150px"
+            android:text="Results"
+            android:textSize="32dp"/>
+
+    <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+        <TextView
+                android:id="@+id/info_text"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textSize="18dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="[Placeholder]"/>
+    </ScrollView>
+
+
+    <org.andengine.opengl.view.RenderSurfaceView
+            android:id="@+id/score_surface_view"
+            android:layout_width="1dp"
+            android:layout_height="1dp"/>
+
+
+</LinearLayout>

@@ -1,5 +1,9 @@
 package fourword;
 
+import android.content.Intent;
+import android.widget.EditText;
+import com.example.android_test.R;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -18,35 +22,15 @@ public class ScoreScreen extends GameState {
 
     @Override
     public void enter(Object data) {
+        activity.hideKeyboard();
         GameServerMessage msg = (GameServerMessage) data;
         result = msg.result();
-        String s = buildString();
-        activity.hideKeyboard();
-        activity.setInfoText(s);
+        Intent intent = new Intent(activity, ScoreActivity.class);
+        intent.putExtra("data", result);
+        activity.startActivity(intent);
     }
 
-    private String buildString(){
-        StringBuilder sb = new StringBuilder();
-        Iterator<Map.Entry<String, GridModel>> it = result.grids().entrySet().iterator();
-        while(it.hasNext()){
-            Map.Entry<String, GridModel> e = it.next();
-            sb.append("\n");
-            sb.append(e.getKey() + "\n");
-            sb.append("-----------------\n");
-            GridModel grid = e.getValue();
-            sb.append("ROWS:\n");
-            for(String row : grid.getRows()){
-                int score = scoreCalculator.computeScore(row);
-                sb.append(row + " (" + score + ")\n");
-            }
-            sb.append("COLS:\n");
-            for(String col : grid.getCols()){
-                int score = scoreCalculator.computeScore(col);
-                sb.append(col + " (" + score + ")\n");
-            }
-        }
-        return sb.toString();
-    }
+
 
     @Override
     public void exit() {

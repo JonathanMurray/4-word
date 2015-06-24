@@ -29,18 +29,18 @@ public class PickAndPlaceLetter extends GameState {
 
     @Override
     public StateTransition userTypedLetter(char letter) {
-        Cell highlighted = scene.getHighlighted();
-        //boolean cellIsLocked = lockedCells[highlighted.x()][highlighted.y()];
-        boolean cellIsLocked = grid.hasCharAtCell(highlighted);
-        if(!cellIsLocked){
-            boolean alreadyPlacedLetter = placedLetter != 0 && placedCell != highlighted;
-            if(alreadyPlacedLetter){
-                scene.removeCharAtCell(placedCell);
+        if(scene.hasHighlighted()){
+            Cell highlighted = scene.getHighlighted();
+            boolean cellIsLocked = grid.hasCharAtCell(highlighted);
+            if(!cellIsLocked){
+                boolean alreadyPlacedLetter = placedLetter != 0 && placedCell != highlighted;
+                if(alreadyPlacedLetter){
+                    scene.removeCharAtCell(placedCell);
+                }
+                scene.setCharAtCell(letter, highlighted);
+                placedCell = highlighted;
+                placedLetter = letter;
             }
-            //((TextView)findViewById(R.id.title)).setText(s.toString());
-            scene.setCharAtCell(letter, highlighted);
-            placedCell = highlighted;
-            placedLetter = letter;
         }
         return StateTransition.STAY_HERE;
     }
