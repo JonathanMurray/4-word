@@ -6,4 +6,10 @@ package fourword;
  */
 public interface Client {
     public void sendMessage(GameClientMessage msg);
+    public void setMessageListener(Listener listener);
+    public void start();
+
+    public static interface Listener{
+        public void handleServerMessage(GameServerMessage msg);
+    }
 }

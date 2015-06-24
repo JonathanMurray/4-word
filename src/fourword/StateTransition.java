@@ -24,4 +24,11 @@ public class StateTransition {
     public static StateTransition change(StateName newState){
         return new StateTransition(true, newState, null);
     }
+
+    public String toString(){
+        if(!changeState){
+            return "STAY";
+        }
+        return "changeState -> " + newState + (data != null? (" (" + data + ")") : "");
+    }
 }

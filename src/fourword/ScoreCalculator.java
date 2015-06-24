@@ -8,7 +8,11 @@ import java.util.List;
  */
 public class ScoreCalculator {
 
-    Dictionary dictionary = new Dictionary();
+    Dictionary dictionary;
+
+    public ScoreCalculator(Dictionary dictionary){
+        this.dictionary = dictionary;
+    }
 
     public List<String> extractWords(String whole){
         List<String> words = new ArrayList<String>();
@@ -21,6 +25,15 @@ public class ScoreCalculator {
             }
         }
         return words;
+    }
+
+    public int computeScore(String whole){
+        int score = 0;
+        List<String> words = extractWords(whole);
+        for(String word : words){
+            score += word.length(); //TODO
+        }
+        return score;
     }
 
 }

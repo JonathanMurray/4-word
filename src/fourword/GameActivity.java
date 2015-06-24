@@ -24,6 +24,8 @@ import org.andengine.ui.activity.SimpleLayoutGameActivity;
 import org.andengine.util.debug.Debug;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Created by jonathan on 2015-06-20.
@@ -31,15 +33,21 @@ import java.util.HashMap;
 public class GameActivity extends SimpleLayoutGameActivity implements GameClient.Listener{
     private Font font;
     private Camera camera;
-    private static final int NUM_COLS = 4;
-    private static final int NUM_ROWS = 4;
+    private static final int NUM_COLS = 2;
+    private static final int NUM_ROWS = 2;
     private boolean[][] lockedCells = new boolean[NUM_COLS][NUM_ROWS];
     private GridScene scene;
     private GridModel grid;
 
     private GameState state;
+    private boolean hasActiveState = false;
+    private Queue<GameServerMessage> messageQueue = new LinkedList<GameServerMessage>();
     private HashMap<StateName, GameState> fsm = new HashMap<StateName, GameState>();
 
+    private static final int SERVER_PORT = 4444;
+    //String serverIP = "127.0.0.1";
+    //serverIP = "10.0.2.2";
+    private static final String SERVER_IP = "192.168.1.2";
 
 
     @Override
@@ -52,25 +60,26 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
     protected Scene onCreateScene() throws InterruptedException {
         this.mEngine.registerUpdateHandler(new FPSLogger());
 
-        int serverPort = 2224;
-        String serverIP = "127.0.0.1";
-        serverIP = "10.0.2.2";
-        serverIP = "192.168.1.2";
-
-        GameClient client = new GameClient(serverIP, serverPort, this);
-
         scene = new GridScene(this, font, 250, NUM_COLS, NUM_ROWS, this.getVertexBufferObjectManager(), camera);
         grid = new GridModel(NUM_COLS, NUM_ROWS);
+
+        //Client client = new GameClient(SERVER_IP, SERVER_PORT);
+        Client client = new OfflineClient(new AI(),NUM_COLS, NUM_ROWS);
+        client.setMessageListener(this);
+
+        ScoreCalculator scoreCalculator = new ScoreCalculator(new Dictionary());
 
         fsm.put(StateName.PICK_AND_PLACE_LETTER, new PickAndPlaceLetter(this, scene, grid, client));
         fsm.put(StateName.WAIT_FOR_SERVER, new WaitForServer(this, scene, grid, client));
         fsm.put(StateName.PLACE_OPPONENTS_LETTER, new PlaceOpponentsLetter(this, scene, grid, client));
+        fsm.put(StateName.SCORE_SCREEN, new ScoreScreen(scoreCalculator, this, scene, grid, client));
         state = fsm.get(StateName.WAIT_FOR_SERVER);
         state.enter(null);
+        hasActiveState = true;
 
-        setGridAndView('A', new Cell(0, 0));
-        setGridAndView('X', new Cell(1, 1));
-        setGridAndView('B', new Cell(1, 3));
+        //setGridAndView('A', new Cell(0, 0));
+        //setGridAndView('X', new Cell(1, 1));
+        //setGridAndView('B', new Cell(1, 3));
 
         final EditText textInput = (EditText) findViewById(R.id.text_input);
         textInput.addTextChangedListener(new TextWatcher() {
@@ -117,22 +126,59 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
 
     @Override
     public void handleServerMessage(GameServerMessage msg) {
-        StateTransition transition = state.handleServerMessage(msg);
-        handleTransition(transition);
+        Debug.d("   Received msg from server: " + msg);
+
+        if(hasActiveState){
+            Debug.d("   current state: " + state);
+            StateTransition transition = state.handleServerMessage(msg);
+            Debug.d("   transition: " + transition);
+            handleTransition(transition);
+        }else{
+            Debug.d("   No active state to handle message. Putting it in queue.");
+            messageQueue.add(msg);
+        }
     }
 
     private void handleTransition(StateTransition transition){
         if(transition.changeState){
-            state.exit();
-            state = fsm.get(transition.newState);
-            state.enter(transition.data);
+            GameState previousState = state;
+            GameState nextState = fsm.get(transition.newState);
+            hasActiveState = false;
+            previousState.exit();
+            nextState.enter(transition.data);
+            state = nextState;
+            hasActiveState = true;
+            processMessageQueue();
         }
     }
 
-    public void bringUpKeyboard(){
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        final EditText textInput = (EditText) findViewById(R.id.text_input);
-        imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
+    private void processMessageQueue(){
+        while(!messageQueue.isEmpty()){
+            GameServerMessage msg = messageQueue.remove();
+            state.handleServerMessage(msg);
+        }
+    }
+
+    public void showKeyboard(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                final EditText textInput = (EditText) findViewById(R.id.text_input);
+                imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
+            }
+        });
+    }
+
+    public void hideKeyboard(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                final EditText textInput = (EditText) findViewById(R.id.text_input);
+                imm.hideSoftInputFromWindow(textInput.getWindowToken(), 0);
+            }
+        });
     }
 
     @Override

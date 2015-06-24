@@ -44,11 +44,16 @@ public class WaitForServer extends GameState {
     public StateTransition handleServerMessage(GameServerMessage msg) {
         switch(msg.command()){
             case PLACE_LETTER:
-                return StateTransition.change(StateName.PLACE_OPPONENTS_LETTER, msg.letter());
+                return StateTransition.change(StateName.PLACE_OPPONENTS_LETTER, msg);
             case PICK_AND_PLACE_LETTER:
                 return StateTransition.change(StateName.PICK_AND_PLACE_LETTER);
-            default:
-                throw new RuntimeException("unhandled action for msg: " + msg);
+            case GAME_FINISHED:
+                return StateTransition.change(StateName.SCORE_SCREEN, msg);
         }
+        throw new RuntimeException();
+    }
+
+    public String toString(){
+        return StateName.WAIT_FOR_SERVER.toString();
     }
 }

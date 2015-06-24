@@ -16,15 +16,19 @@ public class PlaceOpponentsLetter extends GameState{
 
     @Override
     public void enter(Object data) {
-        letter = (char) data;
+        GameServerMessage msg = (GameServerMessage) data;
+        letter = msg.letter();
+        String pickingPlayer = msg.pickingPlayerName();
         scene.dehighlightCell();
-        activity.setInfoText("Place the letter " + letter);
+        activity.showKeyboard();
+        activity.setInfoText(pickingPlayer + " picked " + letter + ". Place it somewhere!");
         placedCell = null;
     }
 
     @Override
     public void exit() {
-
+        grid.setCharAtCell(letter, placedCell);
+        client.sendMessage(GameClientMessage.placeLetter(placedCell));
     }
 
     @Override
@@ -55,8 +59,7 @@ public class PlaceOpponentsLetter extends GameState{
         if(placedCell == null){
             return StateTransition.STAY_HERE;
         }
-        grid.setCharAtCell(letter, placedCell);
-        client.sendMessage(GameClientMessage.placeLetter(placedCell));
+
         return StateTransition.change(StateName.WAIT_FOR_SERVER);
     }
 
@@ -64,4 +67,9 @@ public class PlaceOpponentsLetter extends GameState{
     public StateTransition handleServerMessage(GameServerMessage msg) {
         return StateTransition.STAY_HERE;
     }
+
+    public String toString(){
+        return StateName.PLACE_OPPONENTS_LETTER.toString();
+    }
+
 }

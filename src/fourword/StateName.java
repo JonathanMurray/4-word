@@ -6,5 +6,6 @@ package fourword;
 public enum StateName {
     WAIT_FOR_SERVER,
     PLACE_OPPONENTS_LETTER,
-    PICK_AND_PLACE_LETTER;
+    PICK_AND_PLACE_LETTER,
+    SCORE_SCREEN;
 }

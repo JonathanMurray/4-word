@@ -5,6 +5,6 @@ package fourword;
  */
 public class Dictionary {
     public boolean isWord(String word){
-        return true;
+        return word.equals("AB") || word.equals("BA");
     }
 }

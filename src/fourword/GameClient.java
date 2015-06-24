@@ -18,9 +18,12 @@ public class GameClient implements Client{
     private ObjectOutputStream toServer;
     private Listener listener;
 
-    public GameClient(String serverAddress, int serverPort, final Listener listener){
+    public GameClient(String serverAddress, int serverPort){
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
+    }
+
+    public void setMessageListener(Listener listener){
         this.listener = listener;
     }
 
@@ -67,7 +70,5 @@ public class GameClient implements Client{
         }
     }
 
-    public static interface Listener{
-        public void handleServerMessage(GameServerMessage msg);
-    }
+
 }

@@ -6,6 +6,9 @@ import org.andengine.entity.text.Text;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by jonathan on 2015-06-22.
  */
@@ -22,7 +25,18 @@ public class GridModel {
     }
 
     public void setCharAtCell(char ch, Cell cell){
+        assertIsLetter(ch);
         charCells[cell.x()][cell.y()] = ch;
+    }
+
+    private boolean isLetter(char letter){
+        return (letter >= 'A' && letter <= 'Z') || letter == 'Å' || letter == 'Ä' || letter == 'Ö';
+    }
+
+    private void assertIsLetter(char letter){
+        if(!isLetter(letter)){
+            throw new IllegalArgumentException("invalid leter: '" + letter + "'  (" + (int)letter + ")");
+        }
     }
 
     public char getCharAtCell(Cell cell){
@@ -37,7 +51,7 @@ public class GridModel {
         charCells[cell.x()][cell.y()] = NULL_CHAR;
     }
 
-    public String getCol(int colIndex){
+    private String getCol(int colIndex){
         StringBuilder s = new StringBuilder();
         for(int y = 0; y < numRows; y++){
             s.append(getCharAtCell(new Cell(colIndex, y)));
@@ -45,11 +59,51 @@ public class GridModel {
         return s.toString();
     }
 
-    public String getRow(int rowIndex){
+    private String getRow(int rowIndex){
         StringBuilder s = new StringBuilder();
         for(int x = 0; x < numCols; x++){
             s.append(getCharAtCell(new Cell(x, rowIndex)));
         }
+        return s.toString();
+    }
+
+    public List<String> getCols(){
+        List<String> cols = new ArrayList<String>();
+        for(int x = 0; x < numCols; x++){
+            cols.add(getCol(x));
+        }
+        return cols;
+    }
+
+    public List<String> getRows(){
+        List<String> rows = new ArrayList<String>();
+        for(int y = 0; y < numRows; y++){
+            rows.add(getRow(y));
+        }
+        return rows;
+    }
+
+    public int getNumCols(){
+        return numCols;
+    }
+
+    public int getNumRows(){
+        return numRows;
+    }
+
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        s.append("\n ----------\n");
+        for(int y = 0; y < numRows; y++){
+            s.append("| ");
+            for(int x = 0; x < numCols; x++){
+                char cell = charCells[x][y];
+                s.append(cell != 0 ? cell : "*");
+                s.append(" ");
+            }
+            s.append("|\n");
+        }
+        s.append(" ----------");
         return s.toString();
     }
 }

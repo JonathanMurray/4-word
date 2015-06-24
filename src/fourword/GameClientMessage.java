@@ -46,6 +46,9 @@ public class GameClientMessage implements Serializable {
     }
 
     public String toString(){
-        return "(" + action + ", " + letter + ", " + cell + ")";
+        if(action == Action.PICK_AND_PLACE_LETTER){
+            return "(" + action + ", " + letter + ", " + cell + ")";
+        }
+        return "(" + action + ", "  + cell + ")";
     }
 }

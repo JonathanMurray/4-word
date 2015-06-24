@@ -14,7 +14,8 @@ public class PickAndPlaceLetter extends GameState {
 
     @Override
     public void enter(Object data) {
-        activity.setInfoText("Pick and place a letter");
+        activity.showKeyboard();
+        activity.setInfoText("Pick a letter and place it somewhere!");
         placedCell = null;
         placedLetter = 0;
         scene.dehighlightCell();
@@ -22,7 +23,8 @@ public class PickAndPlaceLetter extends GameState {
 
     @Override
     public void exit() {
-
+        grid.setCharAtCell(placedLetter, placedCell);
+        client.sendMessage(GameClientMessage.pickAndPlaceLetter(placedLetter, placedCell));
     }
 
     @Override
@@ -46,7 +48,7 @@ public class PickAndPlaceLetter extends GameState {
     @Override
     public StateTransition userClickedCell(Cell cell) {
         scene.highlightCell(cell);
-        activity.bringUpKeyboard();
+        activity.showKeyboard();
         return StateTransition.STAY_HERE;
     }
 
@@ -60,8 +62,7 @@ public class PickAndPlaceLetter extends GameState {
         if(placedCell == null){
             return StateTransition.STAY_HERE;
         }
-        grid.setCharAtCell(placedLetter, placedCell);
-        client.sendMessage(GameClientMessage.pickAndPlaceLetter(placedLetter, placedCell));
+
         return StateTransition.change(StateName.WAIT_FOR_SERVER);
     }
 
@@ -69,4 +70,9 @@ public class PickAndPlaceLetter extends GameState {
     public StateTransition handleServerMessage(GameServerMessage msg) {
         return StateTransition.STAY_HERE;
     }
+
+    public String toString(){
+        return StateName.PICK_AND_PLACE_LETTER.toString();
+    }
+
 }
