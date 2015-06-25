@@ -8,13 +8,11 @@ public abstract class GameState {
     protected final GameActivity activity;
     protected final GridScene scene;
     protected final GridModel grid;
-    protected final Client client;
 
-    public GameState(GameActivity activity, GridScene scene, GridModel grid, Client client){
+    public GameState(GameActivity activity, GridScene scene, GridModel grid){
         this.activity = activity;
         this.scene = scene;
         this.grid = grid;
-        this.client = client;
     }
 
     public abstract void enter(Object data);

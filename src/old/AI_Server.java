@@ -1,6 +1,9 @@
-package fourword;
+package old;
 
-import org.andengine.util.SocketUtils;
+import fourword.AI;
+import fourword.AI_ServerBehaviour;
+import fourword.GameClientMessage;
+import fourword.GameServerMessage;
 
 import java.io.*;
 import java.net.ServerSocket;

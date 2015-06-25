@@ -1,11 +1,6 @@
 package fourword;
 
 import android.content.Intent;
-import android.widget.EditText;
-import com.example.android_test.R;
-
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by jonathan on 2015-06-24.
@@ -13,11 +8,9 @@ import java.util.Map;
 public class ScoreScreen extends GameState {
 
     private GameResult result;
-    private final ScoreCalculator scoreCalculator;
 
-    public ScoreScreen(ScoreCalculator scoreCalculator, GameActivity activity, GridScene scene, GridModel grid, Client client) {
-        super(activity, scene, grid, client);
-        this.scoreCalculator = scoreCalculator;
+    public ScoreScreen(GameActivity activity, GridScene scene, GridModel grid) {
+        super(activity, scene, grid);
     }
 
     @Override

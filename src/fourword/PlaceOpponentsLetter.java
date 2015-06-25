@@ -1,7 +1,5 @@
 package fourword;
 
-import org.andengine.extension.multiplayer.protocol.adt.message.client.ClientMessage;
-
 /**
  * Created by jonathan on 2015-06-23.
  */
@@ -10,8 +8,8 @@ public class PlaceOpponentsLetter extends GameState{
     private Cell placedCell;
     private char letter;
 
-    public PlaceOpponentsLetter(GameActivity activity, GridScene scene, GridModel grid, Client client) {
-        super(activity, scene, grid, client);
+    public PlaceOpponentsLetter(GameActivity activity, GridScene scene, GridModel grid) {
+        super(activity, scene, grid);
     }
 
     @Override
@@ -28,7 +26,7 @@ public class PlaceOpponentsLetter extends GameState{
     @Override
     public void exit() {
         grid.setCharAtCell(letter, placedCell);
-        client.sendMessage(GameClientMessage.placeLetter(placedCell));
+        Connection.instance().sendMessage(GameClientMessage.placeLetter(placedCell));
     }
 
     @Override

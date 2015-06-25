@@ -52,4 +52,9 @@ public class OfflineClient implements Client {
     public void setMessageListener(Listener listener) {
         this.listener = listener;
     }
+
+    @Override
+    public void removeMessageListener() {
+        listener = null;
+    }
 }

@@ -1,7 +1,9 @@
 package fourword;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.widget.TextView;
 import com.example.android_test.R;
 import org.andengine.engine.camera.Camera;
@@ -21,29 +23,29 @@ import java.util.Map;
 /**
  * Created by jonathan on 2015-06-24.
  */
-public class ScoreActivity extends SimpleLayoutGameActivity {
+public class ScoreActivity extends Activity {
 
-    private Font font;
-    private Scene scene;
-    private Camera camera;
     private ScoreCalculator scoreCalculator = new ScoreCalculator(new Dictionary());
 
     @Override
-    protected void onCreateResources() {
-        font = FontFactory.create(this.getFontManager(), this.getTextureManager(), 512, 512, Typeface.create(Typeface.DEFAULT, Typeface.NORMAL), 128, Color.WHITE);
-        font.load();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.score_screen);
     }
 
     @Override
-    protected Scene onCreateScene() throws InterruptedException {
-        this.mEngine.registerUpdateHandler(new FPSLogger());
-        scene = new Scene();
-        ((TextView)findViewById(R.id.info_text)).setText(buildString());
-        return scene;
+    protected void onStart() {
+        super.onStart();
+        GameResult result = (GameResult) getIntent().getExtras().get("data");
+        String text = buildString(result);
+        Debug.d("Finding textView ...");
+        TextView textView = ((TextView) findViewById(R.id.info_text));
+        Debug.d(textView.toString());
+        Debug.d("rendering result text ...");
+        textView.setText(text);
     }
 
-    private String buildString(){
-        GameResult result = (GameResult) getIntent().getExtras().get("data");
+    private String buildString(GameResult result){
         StringBuilder sb = new StringBuilder();
         Iterator<Map.Entry<String, GridModel>> it = result.grids().entrySet().iterator();
         while(it.hasNext()){
@@ -69,22 +71,5 @@ public class ScoreActivity extends SimpleLayoutGameActivity {
         }
         Debug.d(sb.toString());
         return sb.toString();
-    }
-
-    @Override
-    protected int getLayoutID() {
-        return R.layout.score_screen;
-    }
-
-    @Override
-    protected int getRenderSurfaceViewID() {
-        return R.id.score_surface_view;
-    }
-
-    @Override
-    public EngineOptions onCreateEngineOptions() {
-
-        camera = new Camera(0, 0, 1000, 1000);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(camera.getWidth(), camera.getHeight()), camera);
     }
 }

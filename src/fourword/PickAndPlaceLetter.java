@@ -8,8 +8,8 @@ public class PickAndPlaceLetter extends GameState {
     private Cell placedCell;
     private char placedLetter;
 
-    public PickAndPlaceLetter(GameActivity activity, GridScene scene, GridModel grid, Client client) {
-        super(activity, scene, grid, client);
+    public PickAndPlaceLetter(GameActivity activity, GridScene scene, GridModel grid) {
+        super(activity, scene, grid);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class PickAndPlaceLetter extends GameState {
     @Override
     public void exit() {
         grid.setCharAtCell(placedLetter, placedCell);
-        client.sendMessage(GameClientMessage.pickAndPlaceLetter(placedLetter, placedCell));
+        Connection.instance().sendMessage(GameClientMessage.pickAndPlaceLetter(placedLetter, placedCell));
     }
 
     @Override

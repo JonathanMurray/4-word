@@ -25,10 +25,5 @@
     </ScrollView>
 
 
-    <org.andengine.opengl.view.RenderSurfaceView
-            android:id="@+id/score_surface_view"
-            android:layout_width="1dp"
-            android:layout_height="1dp"/>
-
 
 </LinearLayout>

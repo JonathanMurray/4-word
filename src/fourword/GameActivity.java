@@ -28,7 +28,7 @@ import java.util.*;
 /**
  * Created by jonathan on 2015-06-20.
  */
-public class GameActivity extends SimpleLayoutGameActivity implements GameClient.Listener{
+public class GameActivity extends SimpleLayoutGameActivity implements MultiplayerClient.Listener{
     private Font font;
     private Camera camera;
     private static final int NUM_COLS = 2;
@@ -36,6 +36,8 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
     private boolean[][] lockedCells = new boolean[NUM_COLS][NUM_ROWS];
     private GridScene scene;
     private GridModel grid;
+
+//    Client client;
 
     private int layoutID = R.layout.game;
 
@@ -51,11 +53,22 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
     //serverIP = "10.0.2.2";
     private static final String SERVER_IP = "192.168.1.2";
 
+    @Override
+    public void onBackPressed(){
+        //Do nothing
+    }
 
     @Override
     protected void onCreateResources() {
         font = FontFactory.create(this.getFontManager(), this.getTextureManager(), 512, 512, Typeface.create(Typeface.DEFAULT, Typeface.NORMAL), 128, Color.WHITE);
         font.load();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        client = (Client) getIntent().getExtras().get("client");
+//        client.setMessageListener(this);
     }
 
     @Override
@@ -65,26 +78,21 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
         scene = new GridScene(this, font, 250, NUM_COLS, NUM_ROWS, this.getVertexBufferObjectManager(), camera);
         grid = new GridModel(NUM_COLS, NUM_ROWS);
 
-        Client client = new GameClient(SERVER_IP, SERVER_PORT);
-        List<AI> AIs = new ArrayList<AI>();
-        AIs.add(new AI());
-        AIs.add(new AI());
-        //Client client = new OfflineClient(new AI_ServerBehaviour(AIs, NUM_COLS, NUM_ROWS));
-        client.setMessageListener(this);
+//        if(client == null){ //TODO
+//            client = new MultiplayerClient(SERVER_IP, SERVER_PORT);
+//            client.setMessageListener(this);
+//        }
 
-        ScoreCalculator scoreCalculator = new ScoreCalculator(new Dictionary());
+        Connection.instance().setMessageListener(this);
 
-        fsm.put(StateName.PICK_AND_PLACE_LETTER, new PickAndPlaceLetter(this, scene, grid, client));
-        fsm.put(StateName.WAIT_FOR_SERVER, new WaitForServer(this, scene, grid, client));
-        fsm.put(StateName.PLACE_OPPONENTS_LETTER, new PlaceOpponentsLetter(this, scene, grid, client));
-        fsm.put(StateName.SCORE_SCREEN, new ScoreScreen(scoreCalculator, this, scene, grid, client));
+
+        fsm.put(StateName.PICK_AND_PLACE_LETTER, new PickAndPlaceLetter(this, scene, grid));
+        fsm.put(StateName.WAIT_FOR_SERVER, new WaitForServer(this, scene, grid));
+        fsm.put(StateName.PLACE_OPPONENTS_LETTER, new PlaceOpponentsLetter(this, scene, grid));
+        fsm.put(StateName.SCORE_SCREEN, new ScoreScreen(this, scene, grid));
         state = fsm.get(StateName.WAIT_FOR_SERVER);
         state.enter(null);
-        hasActiveState = true;
-
-        //setGridAndView('A', new Cell(0, 0));
-        //setGridAndView('X', new Cell(1, 1));
-        //setGridAndView('B', new Cell(1, 3));
+        hasActiveState = true; //get rid of this variable
 
         final EditText textInput = (EditText) findViewById(R.id.text_input);
         textInput.addTextChangedListener(new TextWatcher() {
@@ -133,7 +141,7 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
             }
         });
 
-        client.start();
+//        client.start();
 
         return scene;
     }

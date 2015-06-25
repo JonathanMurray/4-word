@@ -5,8 +5,8 @@ package fourword;
  */
 public class WaitForServer extends GameState {
 
-    public WaitForServer(GameActivity activity, GridScene scene, GridModel grid, Client client) {
-        super(activity, scene, grid, client);
+    public WaitForServer(GameActivity activity, GridScene scene, GridModel grid) {
+        super(activity, scene, grid);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class WaitForServer extends GameState {
 
     @Override
     public StateTransition handleServerMessage(GameServerMessage msg) {
-        switch(msg.command()){
+        switch(msg.type()){
             case PLACE_LETTER:
                 return StateTransition.change(StateName.PLACE_OPPONENTS_LETTER, msg);
             case PICK_AND_PLACE_LETTER:
