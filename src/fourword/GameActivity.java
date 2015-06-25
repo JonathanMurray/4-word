@@ -23,9 +23,7 @@ import org.andengine.opengl.font.FontFactory;
 import org.andengine.ui.activity.SimpleLayoutGameActivity;
 import org.andengine.util.debug.Debug;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Created by jonathan on 2015-06-20.
@@ -33,8 +31,8 @@ import java.util.Queue;
 public class GameActivity extends SimpleLayoutGameActivity implements GameClient.Listener{
     private Font font;
     private Camera camera;
-    private static final int NUM_COLS = 4;
-    private static final int NUM_ROWS = 4;
+    private static final int NUM_COLS = 2;
+    private static final int NUM_ROWS = 2;
     private boolean[][] lockedCells = new boolean[NUM_COLS][NUM_ROWS];
     private GridScene scene;
     private GridModel grid;
@@ -45,6 +43,8 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
     private boolean hasActiveState = false;
     private Queue<GameServerMessage> messageQueue = new LinkedList<GameServerMessage>();
     private HashMap<StateName, GameState> fsm = new HashMap<StateName, GameState>();
+
+    private final Object stateLock = new Object();
 
     private static final int SERVER_PORT = 4444;
     //String serverIP = "127.0.0.1";
@@ -65,8 +65,11 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
         scene = new GridScene(this, font, 250, NUM_COLS, NUM_ROWS, this.getVertexBufferObjectManager(), camera);
         grid = new GridModel(NUM_COLS, NUM_ROWS);
 
-        //Client client = new GameClient(SERVER_IP, SERVER_PORT);
-        Client client = new OfflineClient(new AI_ServerBehaviour(new AI(),NUM_COLS, NUM_ROWS));
+        Client client = new GameClient(SERVER_IP, SERVER_PORT);
+        List<AI> AIs = new ArrayList<AI>();
+        AIs.add(new AI());
+        AIs.add(new AI());
+        //Client client = new OfflineClient(new AI_ServerBehaviour(AIs, NUM_COLS, NUM_ROWS));
         client.setMessageListener(this);
 
         ScoreCalculator scoreCalculator = new ScoreCalculator(new Dictionary());
@@ -94,7 +97,10 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
                 if(s.length() > 0){
                     char ch = Character.toUpperCase(s.charAt(s.length()-1));
                     if(Character.isLetter(ch)) {
-                        state.userTypedLetter(ch);
+                        synchronized (stateLock){
+                            state.userTypedLetter(ch);
+                        }
+
                     }
                     s.clear();
                 }
@@ -104,15 +110,21 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
         scene.setGridTouchListener(new GridTouchListener() {
             @Override
             public void gridTouchEvent(Cell cell) {
-                state.userClickedCell(cell);
+                synchronized (stateLock){
+                    state.userClickedCell(cell);
+                }
+
             }
         });
 
         scene.registerUpdateHandler(new IUpdateHandler() {
             @Override
             public void onUpdate(float pSecondsElapsed) {
-                StateTransition transition = state.onUpdate();
-                handleTransition(transition);
+                synchronized (stateLock){
+                    StateTransition transition = state.onUpdate();
+                    handleTransition(transition);
+                }
+
             }
 
             @Override
@@ -128,29 +140,34 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
 
     @Override
     public void handleServerMessage(GameServerMessage msg) {
-        Debug.d("   Received msg from server: " + msg);
+        synchronized (stateLock){
+            Debug.d("   Received msg from server: " + msg);
 
-        if(hasActiveState){
-            Debug.d("   current state: " + state);
-            StateTransition transition = state.handleServerMessage(msg);
-            Debug.d("   transition: " + transition);
-            handleTransition(transition);
-        }else{
-            Debug.d("   No active state to handle message. Putting it in queue.");
-            messageQueue.add(msg);
+            if(hasActiveState){
+                Debug.d("   current state: " + state);
+                StateTransition transition = state.handleServerMessage(msg);
+                Debug.d("   transition: " + transition);
+                handleTransition(transition);
+            }else{
+                Debug.d("   No active state to handle message. Putting it in queue.");
+                messageQueue.add(msg);
+            }
         }
     }
 
     private void handleTransition(StateTransition transition){
         if(transition.changeState){
-            GameState previousState = state;
-            GameState nextState = fsm.get(transition.newState);
-            hasActiveState = false;
-            previousState.exit();
-            nextState.enter(transition.data);
-            state = nextState;
-            hasActiveState = true;
-            processMessageQueue();
+            synchronized (stateLock){
+                //hasActiveState = false;
+                GameState previousState = state;
+                GameState nextState = fsm.get(transition.newState);
+                previousState.exit();
+                nextState.enter(transition.data);
+                state = nextState;
+                processMessageQueue();
+    //          hasActiveState = true;
+            }
+
         }
     }
 
@@ -207,8 +224,11 @@ public class GameActivity extends SimpleLayoutGameActivity implements GameClient
     }
 
     public void clickedDone(View view){
-        StateTransition transition = state.userClickedDone();
-        handleTransition(transition);
+        synchronized (stateLock){
+            StateTransition transition = state.userClickedDone();
+            handleTransition(transition);
+        }
+
     }
 
     public void setInfoText(final String text){

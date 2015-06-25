@@ -5,6 +5,8 @@ import org.andengine.util.SocketUtils;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jonathan on 2015-06-23.
@@ -24,7 +26,9 @@ public class AI_Server {
         }
 
         int portNumber = Integer.parseInt(args[0]);
-        new AI_Server(new AI_ServerBehaviour(new AI(), NUM_COLS, NUM_ROWS)).run(portNumber);
+        List<AI> AIs = new ArrayList<AI>();
+        AIs.add(new AI());
+        new AI_Server(new AI_ServerBehaviour(AIs, NUM_COLS, NUM_ROWS)).run(portNumber);
     }
 
     public AI_Server(AI_ServerBehaviour aiServerbehaviour){

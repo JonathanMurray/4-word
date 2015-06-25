@@ -2,6 +2,7 @@ package fourword;
 
 import org.andengine.util.debug.Debug;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,8 +13,8 @@ import java.net.Socket;
  */
 public class GameClient implements Client{
 
-    private int serverPort;
-    private String serverAddress;
+    private final int serverPort;
+    private final String serverAddress;
     private ObjectInputStream fromServer;
     private ObjectOutputStream toServer;
     private Listener listener;
@@ -30,7 +31,7 @@ public class GameClient implements Client{
     public void start(){
         try {
             Debug.e("creating socket...");
-            Socket socket = new Socket(serverAddress, serverPort);
+            final Socket socket = new Socket(serverAddress, serverPort);
             Debug.e("success!");
             fromServer = new ObjectInputStream(socket.getInputStream());
             toServer = new ObjectOutputStream(socket.getOutputStream());
@@ -53,9 +54,21 @@ public class GameClient implements Client{
                         }
 
                     }
+                    close(socket);
+                    close(fromServer);
+                    close(toServer);
+
                 }
             }).start();
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void close(Closeable closeable){
+        try {
+            closeable.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

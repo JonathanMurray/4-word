@@ -12,8 +12,6 @@ public class AI {
     private GridModel grid;
     private final List<Cell> emptyCells = new ArrayList<Cell>();
 
-
-
     public void initialize(GridModel grid){
         this.grid = grid;
         for(int x = 0; x < grid.getNumCols(); x++){
@@ -46,8 +44,5 @@ public class AI {
         return grid.toString();
     }
 
-    public String getPlayerName(){
-        return "Stupid_AI";
-    }
 
 }

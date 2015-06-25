@@ -33,8 +33,8 @@ public class OfflineClient implements Client {
                 Debug.d("   to mockup-server: " + msg);
                 GameServerMessage reply = aiServerBehaviour.act(msg);
                 Debug.d("   from mockup-server: " + reply);
-                Debug.d("   Server grid: ");
-                Debug.d(aiServerBehaviour.ai().toString());
+                //Debug.d("   Server grid: ");
+                //Debug.d(aiServerBehaviour.ai().toString());
                 listener.handleServerMessage(reply);
             }
         }).start();

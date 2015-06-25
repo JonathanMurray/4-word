@@ -1,13 +1,17 @@
 package fourword;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jonathan on 2015-06-24.
  */
 public class AI_ServerBehaviour {
 
-    private AI ai;
+    //private AI ai;
+    private List<AI> AIs;
+    private int currentAI_index;
     private Client.Listener listener;
     private final int numCols;
     private final int numRows;
@@ -18,47 +22,78 @@ public class AI_ServerBehaviour {
     private char pickedLetterByAI;
     private final static String PLAYER_NAME = "PLAYER";
 
-    public AI_ServerBehaviour(AI ai, int numCols, int numRows){
-        this.ai = ai;
+    public AI_ServerBehaviour(List<AI> AIs, int numCols, int numRows){
+        this.AIs = AIs;
         this.numCols = numCols;
         this.numRows = numRows;
         numCells = numRows * numCols;
         numFilledCells = 0;
-        GridModel aiGrid = new GridModel(numCols, numRows);
-        ai.initialize(aiGrid);
         grids = new HashMap<String, GridModel>();
-        grids.put(ai.getPlayerName(), aiGrid);
+        for(int i = 0; i < AIs.size(); i++){
+            AI ai = AIs.get(i);
+            GridModel aiGrid = new GridModel(numCols, numRows);
+            ai.initialize(aiGrid);
+            String name = "AI_" + i;
+            grids.put(name, aiGrid);
+        }
         playerGrid = new GridModel(numCols, numRows);
         grids.put(PLAYER_NAME, playerGrid);
+        currentAI_index = 0;
     }
 
 
     public GameServerMessage act(GameClientMessage msgFromClient){
         switch(msgFromClient.action()){
+
             case PICK_AND_PLACE_LETTER:
                 playerGrid.setCharAtCell(msgFromClient.letter(), msgFromClient.cell());
-                ai.placeLetter(msgFromClient.letter());
+                for(AI ai : AIs){
+                    ai.placeLetter(msgFromClient.letter());
+                }
                 numFilledCells ++;
                 if(numFilledCells == numCells){
                     return GameServerMessage.gameFinished(new GameResult(grids));
                 }else{
-                    pickedLetterByAI = ai.pickAndPlaceLetter();
-                    return GameServerMessage.placeLetter(pickedLetterByAI, ai.getPlayerName());
+                    return aiPickAndPlaceAndOthersPlace(currentAI_index);
                 }
+
             case PLACE_LETTER:
                 playerGrid.setCharAtCell(pickedLetterByAI, msgFromClient.cell());
                 numFilledCells ++;
                 if(numFilledCells == numCells){
                     return GameServerMessage.gameFinished(new GameResult(grids));
                 }else{
-                    return GameServerMessage.pickAndPlaceLetter();
+                    currentAI_index = (currentAI_index + 1) % AIs.size();
+                    if(currentAI_index > 0){
+                        return aiPickAndPlaceAndOthersPlace(currentAI_index);
+                    }else{
+                        return GameServerMessage.pickAndPlaceLetter();
+                    }
                 }
-            default:
-                throw new RuntimeException("Unhandled action for msg: " + msgFromClient);
         }
+
+        throw new RuntimeException("Unhandled action for msg: " + msgFromClient);
     }
 
-    public AI ai(){
-        return ai;
+    private GameServerMessage aiPickAndPlaceAndOthersPlace(int currentAI_index){
+        AI currentAI = AIs.get(currentAI_index);
+        pickedLetterByAI = currentAI.pickAndPlaceLetter();
+        for(int i = 0; i < AIs.size(); i++){
+            if(i != currentAI_index){
+                AIs.get(i).placeLetter(pickedLetterByAI);
+            }
+        }
+        String name = "AI_" + currentAI_index;
+        return GameServerMessage.placeLetter(pickedLetterByAI, name);
     }
+
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        for(Map.Entry<String, GridModel> e : grids.entrySet()){
+            sb.append(e.getKey() + ":\n");
+            sb.append(e.getValue() + "\n\n");
+        }
+        return sb.toString();
+    }
+
 }
