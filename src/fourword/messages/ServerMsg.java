@@ -1,9 +1,6 @@
 package fourword.messages;
 
-import fourword.GameResult;
-
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by jonathan on 2015-06-23.

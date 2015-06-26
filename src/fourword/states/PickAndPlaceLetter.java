@@ -3,6 +3,8 @@ package fourword.states;
 import fourword.*;
 import fourword.messages.ClientMsg;
 import fourword.messages.ServerMsg;
+import fourword.model.Cell;
+import fourword.model.GridModel;
 
 /**
  * Created by jonathan on 2015-06-23.

@@ -1,7 +1,7 @@
 package fourword.protocol;
 
-import fourword.Cell;
-import fourword.GridModel;
+import fourword.model.Cell;
+import fourword.model.GridModel;
 import fourword.messages.ClientMsg;
 import fourword.messages.MsgPlaceLetter;
 import fourword.messages.ServerMsg;

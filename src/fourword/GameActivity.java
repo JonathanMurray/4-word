@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.example.android_test.R;
 import fourword.messages.ServerMsg;
 import fourword.messages.ServerMsgListener;
+import fourword.model.Cell;
+import fourword.model.GridModel;
 import fourword.states.*;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;

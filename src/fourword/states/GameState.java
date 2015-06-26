@@ -1,11 +1,10 @@
 package fourword.states;
 
-import fourword.Cell;
+import fourword.model.Cell;
 import fourword.GameActivity;
-import fourword.GridModel;
+import fourword.model.GridModel;
 import fourword.GridScene;
 import fourword.messages.ServerMsg;
-import fourword.states.StateTransition;
 
 /**
  * Created by jonathan on 2015-06-23.

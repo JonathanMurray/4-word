@@ -1,7 +1,7 @@
 package fourword.messages;
 
 
-import fourword.Cell;
+import fourword.model.Cell;
 
 import java.io.Serializable;
 

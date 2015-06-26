@@ -1,8 +1,8 @@
 package fourword.protocol;
 
-import fourword.Cell;
-import fourword.GameResult;
-import fourword.GridModel;
+import fourword.model.Cell;
+import fourword.model.GameResult;
+import fourword.model.GridModel;
 import fourword.messages.*;
 
 import java.io.IOException;

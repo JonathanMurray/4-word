@@ -3,6 +3,8 @@ package fourword;
 import android.content.Intent;
 import fourword.messages.MsgGameFinished;
 import fourword.messages.ServerMsg;
+import fourword.model.Cell;
+import fourword.model.GridModel;
 import fourword.states.GameState;
 import fourword.states.StateTransition;
 

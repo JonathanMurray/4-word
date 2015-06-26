@@ -1,10 +1,6 @@
-package fourword;
+package fourword.model;
 
-import android.content.Context;
-import org.andengine.engine.camera.Camera;
-import org.andengine.entity.text.Text;
-import org.andengine.opengl.font.Font;
-import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import fourword.model.Cell;
 
 import java.io.Serializable;
 import java.util.ArrayList;

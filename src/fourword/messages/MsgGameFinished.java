@@ -1,7 +1,6 @@
 package fourword.messages;
 
-import fourword.GameResult;
-import org.andengine.extension.multiplayer.protocol.adt.message.server.ServerMessage;
+import fourword.model.GameResult;
 
 /**
  * Created by jonathan on 2015-06-26.

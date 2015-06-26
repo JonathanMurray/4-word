@@ -1,6 +1,6 @@
 package fourword.protocol;
 
-import fourword.GridModel;
+import fourword.model.GridModel;
 import fourword.messages.ServerMsgListener;
 import fourword.messages.ClientMsg;
 import fourword.messages.ServerMsg;

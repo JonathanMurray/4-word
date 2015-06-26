@@ -1,4 +1,4 @@
-package fourword;
+package fourword.model;
 
 import java.io.Serializable;
 

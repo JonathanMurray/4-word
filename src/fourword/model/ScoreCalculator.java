@@ -1,4 +1,6 @@
-package fourword;
+package fourword.model;
+
+import fourword.model.Dictionary;
 
 import java.util.ArrayList;
 import java.util.List;

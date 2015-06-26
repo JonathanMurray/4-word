@@ -1,20 +1,13 @@
 package fourword;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.TextView;
 import com.example.android_test.R;
-import org.andengine.engine.camera.Camera;
-import org.andengine.engine.options.EngineOptions;
-import org.andengine.engine.options.ScreenOrientation;
-import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
-import org.andengine.entity.scene.Scene;
-import org.andengine.entity.util.FPSLogger;
-import org.andengine.opengl.font.Font;
-import org.andengine.opengl.font.FontFactory;
-import org.andengine.ui.activity.SimpleLayoutGameActivity;
+import fourword.model.Dictionary;
+import fourword.model.GameResult;
+import fourword.model.GridModel;
+import fourword.model.ScoreCalculator;
 import org.andengine.util.debug.Debug;
 
 import java.util.Iterator;

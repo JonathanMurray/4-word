@@ -1,6 +1,6 @@
 package fourword.protocol;
 
-import fourword.GridModel;
+import fourword.model.GridModel;
 import fourword.messages.*;
 
 import java.io.*;

@@ -1,4 +1,6 @@
-package fourword;
+package fourword.model;
+
+import fourword.model.GridModel;
 
 import java.io.Serializable;
 import java.util.HashMap;
