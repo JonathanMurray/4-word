@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
 import fourword.messages.ServerMsg;
+import fourword.messages.ServerMsgListener;
 import fourword.states.*;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;
@@ -30,21 +31,15 @@ import java.util.*;
 /**
  * Created by jonathan on 2015-06-20.
  */
-public class GameActivity extends SimpleLayoutGameActivity implements MultiplayerClient.Listener{
+public class GameActivity extends SimpleLayoutGameActivity implements ServerMsgListener {
     private Font font;
     private Camera camera;
-    private static final int NUM_COLS = 2;
-    private static final int NUM_ROWS = 2;
-    private boolean[][] lockedCells = new boolean[NUM_COLS][NUM_ROWS];
     private GridScene scene;
     private GridModel grid;
-
-//    Client client;
 
     private int layoutID = R.layout.game;
 
     private GameState state;
-//    private boolean hasActiveState = false;
     private Queue<ServerMsg> messageQueue = new LinkedList<ServerMsg>();
     private HashMap<StateName, GameState> fsm = new HashMap<StateName, GameState>();
 
@@ -69,23 +64,17 @@ public class GameActivity extends SimpleLayoutGameActivity implements Multiplaye
     @Override
     protected void onStart() {
         super.onStart();
-//        client = (Client) getIntent().getExtras().get("client");
-//        client.setMessageListener(this);
     }
 
     @Override
     protected Scene onCreateScene() throws InterruptedException {
         this.mEngine.registerUpdateHandler(new FPSLogger());
 
-        scene = new GridScene(this, font, 250, NUM_COLS, NUM_ROWS, this.getVertexBufferObjectManager(), camera);
-        grid = new GridModel(NUM_COLS, NUM_ROWS);
+        int numCols = (int) getIntent().getExtras().get("NUM_COLS");
+        int numRows = (int) getIntent().getExtras().get("NUM_ROWS");
 
-//        if(client == null){ //TODO
-//            client = new MultiplayerClient(SERVER_IP, SERVER_PORT);
-//            client.setMessageListener(this);
-//        }
-
-
+        scene = new GridScene(this, font, 250, numCols, numRows, this.getVertexBufferObjectManager(), camera);
+        grid = new GridModel(numCols, numRows);
 
 
         fsm.put(StateName.PICK_AND_PLACE_LETTER, new PickAndPlaceLetter(this, scene, grid));
@@ -94,7 +83,6 @@ public class GameActivity extends SimpleLayoutGameActivity implements Multiplaye
         fsm.put(StateName.SCORE_SCREEN, new ScoreScreen(this, scene, grid));
         state = fsm.get(StateName.WAIT_FOR_SERVER);
         state.enter(null);
-//        hasActiveState = true; //get rid of this variable
         Connection.instance().setMessageListener(this);
 
         final EditText textInput = (EditText) findViewById(R.id.text_input);
@@ -144,41 +132,32 @@ public class GameActivity extends SimpleLayoutGameActivity implements Multiplaye
             }
         });
 
-//        client.start();
 
         return scene;
     }
 
     @Override
-    public void handleServerMessage(ServerMsg msg) {
+    public boolean handleServerMessage(ServerMsg msg) {
         synchronized (stateLock){
             Debug.d("   Received msg from server: " + msg);
-
-//            if(hasActiveState){
             Debug.d("   current state: " + state);
             StateTransition transition = state.handleServerMessage(msg);
             Debug.d("   transition: " + transition);
             handleTransition(transition);
-//            }else{
-//                Debug.d("   No active state to handle message. Putting it in queue.");
-//                messageQueue.add(msg);
-//            }
+            return true;
         }
     }
 
     private void handleTransition(StateTransition transition){
         if(transition.changeState){
             synchronized (stateLock){
-                //hasActiveState = false;
                 GameState previousState = state;
                 GameState nextState = fsm.get(transition.newState);
                 previousState.exit();
                 nextState.enter(transition.data);
                 state = nextState;
                 processMessageQueue();
-    //          hasActiveState = true;
             }
-
         }
     }
 
@@ -227,13 +206,6 @@ public class GameActivity extends SimpleLayoutGameActivity implements Multiplaye
         return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(camera.getWidth(), camera.getHeight()), camera);
     }
 
-
-    private void setGridAndView(char ch, Cell cell){
-        scene.setCharAtCell(ch, cell);
-        grid.setCharAtCell(ch, cell);
-        //lockedCells[cell.x()][cell.y()] = true;
-    }
-
     public void clickedDone(View view){
         synchronized (stateLock){
             StateTransition transition = state.userClickedDone();
@@ -257,11 +229,6 @@ public class GameActivity extends SimpleLayoutGameActivity implements Multiplaye
                 ((Button) findViewById(R.id.doneButton)).setEnabled(enabled);
             }
         });
-    }
-
-    public void changeLayout(int layoutID){
-        this.layoutID = layoutID;
-
     }
 
 }

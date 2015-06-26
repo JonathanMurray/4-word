@@ -12,4 +12,11 @@
             android:layout_width="fill_parent"
             android:layout_height="200dp"/>
 
+    <TextView
+            android:id="@+id/lobby_info_text"
+            android:text="[PlaceHolder]"
+            android:textSize="22sp"
+            android:layout_width="fill_parent"
+            android:layout_height="400dp"/>
+
 </LinearLayout>

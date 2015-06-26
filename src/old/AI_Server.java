@@ -1,16 +1,5 @@
 package old;
 
-import fourword.AI;
-import fourword.AI_ServerBehaviour;
-import fourword.messages.ClientMsg;
-import fourword.messages.ServerMsg;
-
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by jonathan on 2015-06-23.
  */

@@ -3,5 +3,5 @@
 echo "Running server ..."
 
 cd out/production/android-test
-java fourword.MultiplayerServer 4444
+java fourword.protocol.Server 4444
 

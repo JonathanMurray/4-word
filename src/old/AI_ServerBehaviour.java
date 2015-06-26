@@ -1,4 +1,4 @@
-package fourword;
+package old;
 
 import fourword.messages.ClientMsg;
 import fourword.messages.ServerMsg;

@@ -1,5 +1,9 @@
-package fourword;
+package fourword.states;
 
+import fourword.Cell;
+import fourword.GameActivity;
+import fourword.GridModel;
+import fourword.GridScene;
 import fourword.messages.ServerMsg;
 import fourword.states.StateTransition;
 

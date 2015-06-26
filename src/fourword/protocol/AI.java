@@ -1,5 +1,7 @@
-package fourword;
+package fourword.protocol;
 
+import fourword.Cell;
+import fourword.GridModel;
 import fourword.messages.ClientMsg;
 import fourword.messages.MsgPlaceLetter;
 import fourword.messages.ServerMsg;
@@ -11,7 +13,7 @@ import java.util.Random;
 /**
  * Created by jonathan on 2015-06-25.
  */
-public class MessageAI {
+public class AI {
     private GridModel grid;
     private final List<Cell> emptyCells = new ArrayList<Cell>();
 

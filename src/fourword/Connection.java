@@ -1,6 +1,10 @@
 package fourword;
 
 import fourword.messages.ClientMsg;
+import fourword.messages.ServerMsgListener;
+import fourword.protocol.Client;
+import fourword.protocol.OfflineClient;
+import fourword.protocol.OnlineClient;
 
 /**
  * Created by jonathan on 2015-06-25.
@@ -12,15 +16,22 @@ public class Connection {
         return INSTANCE;
     }
 
-    private MultiplayerClient client;
+    private Client client;
 
-    public void start(Client.Listener listener, String serverAddress, int port){
-        client = new MultiplayerClient(serverAddress, port);
+    public void startOnline(ServerMsgListener listener, String serverAddress, int port){
+        client = new OnlineClient(serverAddress, port);
         client.setMessageListener(listener);
         client.start();
     }
 
-    public void setMessageListener(Client.Listener listener){
+    public void startOffline(ServerMsgListener listener, int numAIs, int numCols, int numRows){
+        client = new OfflineClient(numAIs, numCols, numRows);
+        client.setMessageListener(listener);
+        client.start();
+    }
+
+
+    public void setMessageListener(ServerMsgListener listener){
         client.setMessageListener(listener);
     }
 
