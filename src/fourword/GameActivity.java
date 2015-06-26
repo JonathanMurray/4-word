@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
+import fourword.messages.ServerMsg;
+import fourword.states.*;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
@@ -42,8 +44,8 @@ public class GameActivity extends SimpleLayoutGameActivity implements Multiplaye
     private int layoutID = R.layout.game;
 
     private GameState state;
-    private boolean hasActiveState = false;
-    private Queue<GameServerMessage> messageQueue = new LinkedList<GameServerMessage>();
+//    private boolean hasActiveState = false;
+    private Queue<ServerMsg> messageQueue = new LinkedList<ServerMsg>();
     private HashMap<StateName, GameState> fsm = new HashMap<StateName, GameState>();
 
     private final Object stateLock = new Object();
@@ -83,7 +85,7 @@ public class GameActivity extends SimpleLayoutGameActivity implements Multiplaye
 //            client.setMessageListener(this);
 //        }
 
-        Connection.instance().setMessageListener(this);
+
 
 
         fsm.put(StateName.PICK_AND_PLACE_LETTER, new PickAndPlaceLetter(this, scene, grid));
@@ -92,7 +94,8 @@ public class GameActivity extends SimpleLayoutGameActivity implements Multiplaye
         fsm.put(StateName.SCORE_SCREEN, new ScoreScreen(this, scene, grid));
         state = fsm.get(StateName.WAIT_FOR_SERVER);
         state.enter(null);
-        hasActiveState = true; //get rid of this variable
+//        hasActiveState = true; //get rid of this variable
+        Connection.instance().setMessageListener(this);
 
         final EditText textInput = (EditText) findViewById(R.id.text_input);
         textInput.addTextChangedListener(new TextWatcher() {
@@ -147,19 +150,19 @@ public class GameActivity extends SimpleLayoutGameActivity implements Multiplaye
     }
 
     @Override
-    public void handleServerMessage(GameServerMessage msg) {
+    public void handleServerMessage(ServerMsg msg) {
         synchronized (stateLock){
             Debug.d("   Received msg from server: " + msg);
 
-            if(hasActiveState){
-                Debug.d("   current state: " + state);
-                StateTransition transition = state.handleServerMessage(msg);
-                Debug.d("   transition: " + transition);
-                handleTransition(transition);
-            }else{
-                Debug.d("   No active state to handle message. Putting it in queue.");
-                messageQueue.add(msg);
-            }
+//            if(hasActiveState){
+            Debug.d("   current state: " + state);
+            StateTransition transition = state.handleServerMessage(msg);
+            Debug.d("   transition: " + transition);
+            handleTransition(transition);
+//            }else{
+//                Debug.d("   No active state to handle message. Putting it in queue.");
+//                messageQueue.add(msg);
+//            }
         }
     }
 
@@ -181,7 +184,7 @@ public class GameActivity extends SimpleLayoutGameActivity implements Multiplaye
 
     private void processMessageQueue(){
         while(!messageQueue.isEmpty()){
-            GameServerMessage msg = messageQueue.remove();
+            ServerMsg msg = messageQueue.remove();
             state.handleServerMessage(msg);
         }
     }

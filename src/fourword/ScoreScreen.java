@@ -1,13 +1,15 @@
 package fourword;
 
 import android.content.Intent;
+import fourword.messages.MsgGameFinished;
+import fourword.messages.ServerMsg;
+import fourword.states.StateTransition;
 
 /**
  * Created by jonathan on 2015-06-24.
  */
 public class ScoreScreen extends GameState {
 
-    private GameResult result;
 
     public ScoreScreen(GameActivity activity, GridScene scene, GridModel grid) {
         super(activity, scene, grid);
@@ -16,10 +18,9 @@ public class ScoreScreen extends GameState {
     @Override
     public void enter(Object data) {
         activity.hideKeyboard();
-        GameServerMessage msg = (GameServerMessage) data;
-        result = msg.result();
+        MsgGameFinished msg = (MsgGameFinished) data;
         Intent intent = new Intent(activity, ScoreActivity.class);
-        intent.putExtra("data", result);
+        intent.putExtra("data", msg.result);
         activity.startActivity(intent);
     }
 
@@ -51,7 +52,7 @@ public class ScoreScreen extends GameState {
     }
 
     @Override
-    public StateTransition handleServerMessage(GameServerMessage msg) {
+    public StateTransition handleServerMessage(ServerMsg msg) {
         return StateTransition.STAY_HERE;
     }
 }

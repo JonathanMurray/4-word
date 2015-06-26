@@ -1,5 +1,7 @@
 package fourword;
 
+import fourword.messages.*;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -73,21 +75,21 @@ public class MultiplayerServer {
 
     private void setupGame() throws IOException {
 
-        List<GameServerMessage.LobbyPlayer> lobbyPlayers = new ArrayList<GameServerMessage.LobbyPlayer>();
+        List<MsgLobbyWaitingForMore.LobbyPlayer> lobbyPlayers = new ArrayList<MsgLobbyWaitingForMore.LobbyPlayer>();
 
         for(int i = 0; i < numBots; i++){
             MessageAI ai = new MessageAI();
             GridModel aiGrid = new GridModel(NUM_COLS, NUM_ROWS);
             ai.initialize(aiGrid);
             grids.add(aiGrid);
-            PlayerSocket socket = new BotSocket(ai);
+            PlayerSocket socket = new BotSocket(ai, i);
             sockets.add(socket);
             System.out.println("Accepted BotClient_" + i);
-            lobbyPlayers.add(new GameServerMessage.LobbyPlayer("Bot_" + i, false, true));
+            lobbyPlayers.add(new MsgLobbyWaitingForMore.LobbyPlayer("Bot_" + i, false, true));
         }
 
         for(int i = 0; i < numHumans; i++){
-            lobbyPlayers.add(new GameServerMessage.LobbyPlayer("Human_" + i, true, false));
+            lobbyPlayers.add(new MsgLobbyWaitingForMore.LobbyPlayer("Human_" + i, true, false));
         }
 
         System.out.println("Will now wait for " + numHumans + " humans to connect.");
@@ -95,30 +97,31 @@ public class MultiplayerServer {
         for(int i = 0; i < numHumans; i++){
             grids.add(new GridModel(NUM_COLS, NUM_ROWS));
             System.out.println("Waiting for HumanClient_" + i + " ...");
-            PlayerSocket socket = HumanSocket.acceptSocket(serverSocket);
+            PlayerSocket socket = HumanSocket.acceptSocket(serverSocket, i);
             sockets.add(socket);
+            System.out.println("Accepted HumanClient_" + i + ": " + socket.getInetAddress());
             lobbyPlayers.get(numBots + i).hasConnected = true;
             if(i < numHumans - 1){
-                broadcast(GameServerMessage.waitingForMorePlayers(lobbyPlayers));
+                broadcast(new MsgLobbyWaitingForMore(lobbyPlayers));
             }
-            System.out.println("Accepted HumanClient_" + i + ": " + socket.getInetAddress());
+
         }
 
-        broadcast(GameServerMessage.gameIsStarting());
+        broadcast(new MsgGameIsStarting());
     }
 
     private void runProtocolLoop() throws IOException, ClassNotFoundException {
         boolean running = true;
         while(running){
-            sendToPlayer(currentPlayerIndex, GameServerMessage.pickAndPlaceLetter());
-            GameClientMessage pickAndPlaceMsg = receiveFromPlayer(currentPlayerIndex);
+            PlayerSocket currentPlayer = sockets.get(currentPlayerIndex);
+            sendToPlayer(currentPlayer, new MsgPickAndPlaceLetter());
+            broadcast(new MsgWaitingForPlayerMove(currentPlayer.getName()), currentPlayerIndex);
+            ClientMsg pickAndPlaceMsg = receiveFromPlayer(currentPlayer);
             final char letterPickedByCurrentPlayer = pickAndPlaceMsg.letter();
             final Cell cellPickedByCurrentPlayer = pickAndPlaceMsg.cell();
             grids.get(currentPlayerIndex).setCharAtCell(letterPickedByCurrentPlayer, cellPickedByCurrentPlayer);
 
-            String pickingPlayerName = "PLAYER_" + currentPlayerIndex;
-
-            broadcast(GameServerMessage.placeLetter(letterPickedByCurrentPlayer, pickingPlayerName), currentPlayerIndex);
+            broadcast(new MsgPlaceLetter(letterPickedByCurrentPlayer, currentPlayer.getName()), currentPlayerIndex);
             handleAllPlaceReplies(letterPickedByCurrentPlayer);
             numPlacedLetters ++;
 
@@ -141,7 +144,7 @@ public class MultiplayerServer {
             gridMap.put("PLAYER_" + i, grids.get(i));
         }
         GameResult result = new GameResult(gridMap);
-        broadcast(GameServerMessage.gameFinished(result));
+        broadcast(new MsgGameFinished(result));
     }
 
     private void handleAllPlaceReplies(final char pickedLetter){
@@ -152,7 +155,7 @@ public class MultiplayerServer {
                 final int playerIndex = i;
                 new Thread(new Runnable() {
                     public void run() {
-                        GameClientMessage placeLetterMsg = receiveFromPlayer(playerIndex);
+                        ClientMsg placeLetterMsg = receiveFromPlayer(sockets.get(playerIndex));
                         synchronized (grids){
                             GridModel grid = grids.get(playerIndex);
                             grid.setCharAtCell(pickedLetter, placeLetterMsg.cell());
@@ -188,16 +191,16 @@ public class MultiplayerServer {
         }
     }
 
-    private void broadcast(GameServerMessage msg) throws IOException {
-        for(int i = 0; i < numPlayers; i++){
-            sendToPlayer(i, msg);
+    private void broadcast(ServerMsg msg) throws IOException {
+        for(PlayerSocket socket : sockets){
+            sendToPlayer(socket, msg);
         }
     }
 
-    private void broadcast(GameServerMessage msg, int exceptPlayerWithIndex) throws IOException {
-        for(int i = 0; i < numPlayers; i++){
+    private void broadcast(ServerMsg msg, int exceptPlayerWithIndex) throws IOException {
+        for(int i = 0; i < sockets.size(); i++){
             if(i != exceptPlayerWithIndex){
-                sendToPlayer(i, msg);
+                sendToPlayer(sockets.get(i), msg);
             }
         }
     }
@@ -210,15 +213,15 @@ public class MultiplayerServer {
         }
     }
 
-    private void sendToPlayer(int playerIndex, GameServerMessage msg) throws IOException {
-        sockets.get(playerIndex).sendMessage(msg);
-        System.out.println("    Sent message to PLAYER_" + playerIndex + ": " + msg);
+    private void sendToPlayer(PlayerSocket socket, ServerMsg msg) throws IOException {
+        socket.sendMessage(msg);
+        System.out.println("    Sent message to " + socket.getName() + ": " + msg);
     }
 
-    private GameClientMessage receiveFromPlayer(int playerIndex){
-        System.out.println("Waiting for message from PLAYER_" + playerIndex + " ... ");
-        GameClientMessage msg = sockets.get(playerIndex).receiveMessage();
-        System.out.println("    Received message from PLAYER_" + playerIndex + ": " + msg);
+    private ClientMsg receiveFromPlayer(PlayerSocket socket){
+        System.out.println("Waiting for message from " + socket.getName() + " ... ");
+        ClientMsg msg = socket.receiveMessage();
+        System.out.println("    Received message from " + socket.getName() + ": " + msg);
         return msg;
     }
 
@@ -239,33 +242,36 @@ public class MultiplayerServer {
     }
 
     private interface PlayerSocket{
-        void sendMessage(GameServerMessage msg);
-        GameClientMessage receiveMessage();
+        void sendMessage(ServerMsg msg);
+        ClientMsg receiveMessage();
         void close();
         InetAddress getInetAddress();
+        String getName();
     }
 
     private class BotSocket implements PlayerSocket{
 
         private MessageAI ai;
-        private GameClientMessage replyFromAI;
+        private ClientMsg replyFromAI;
+        private String name;
 
-        BotSocket(MessageAI ai){
+        BotSocket(MessageAI ai, int index){
             this.ai = ai;
+            this.name = "Bot_" + index;
         }
 
         @Override
-        public void sendMessage(GameServerMessage msg) {
+        public void sendMessage(ServerMsg msg) {
             replyFromAI = ai.handleServerMessageAndProduceReply(msg);
         }
 
         @Override
-        public GameClientMessage receiveMessage() {
+        public ClientMsg receiveMessage() {
             if(replyFromAI == null){
                 throw new RuntimeException();
             }
             sleep(500);
-            GameClientMessage msg = replyFromAI;
+            ClientMsg msg = replyFromAI;
             replyFromAI = null;
             return msg;
         }
@@ -283,6 +289,11 @@ public class MultiplayerServer {
                 throw new RuntimeException(e);
             }
         }
+
+        @Override
+        public String getName() {
+            return name;
+        }
     }
 
     private static class HumanSocket implements PlayerSocket{
@@ -290,14 +301,15 @@ public class MultiplayerServer {
         private ObjectOutputStream out;
         private ObjectInputStream in;
         private Socket clientSocket;
+        private String name;
 
-        static HumanSocket acceptSocket(ServerSocket serverSocket){
+        static HumanSocket acceptSocket(ServerSocket serverSocket, int index){
             try {
                 HumanSocket socket = new HumanSocket();
                 socket.clientSocket = serverSocket.accept();
                 socket.out = new ObjectOutputStream(socket.clientSocket.getOutputStream());
                 socket.in = new ObjectInputStream(socket.clientSocket.getInputStream());
-
+                socket.name = "Human_" + index;
                 return socket;
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -305,7 +317,7 @@ public class MultiplayerServer {
         }
 
         @Override
-        public void sendMessage(GameServerMessage msg) {
+        public void sendMessage(ServerMsg msg) {
             try {
                 out.writeObject(msg);
             } catch (IOException e) {
@@ -314,9 +326,9 @@ public class MultiplayerServer {
         }
 
         @Override
-        public GameClientMessage receiveMessage() {
+        public ClientMsg receiveMessage() {
             try {
-                return (GameClientMessage) in.readObject();
+                return (ClientMsg) in.readObject();
             } catch (ClassNotFoundException|IOException e) {
                 throw new RuntimeException(e);
             }
@@ -336,6 +348,11 @@ public class MultiplayerServer {
         @Override
         public InetAddress getInetAddress() {
             return clientSocket.getInetAddress();
+        }
+
+        @Override
+        public String getName() {
+            return name;
         }
     }
 }

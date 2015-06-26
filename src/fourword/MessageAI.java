@@ -1,5 +1,9 @@
 package fourword;
 
+import fourword.messages.ClientMsg;
+import fourword.messages.MsgPlaceLetter;
+import fourword.messages.ServerMsg;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,7 +25,7 @@ public class MessageAI {
         }
     }
 
-    public GameClientMessage handleServerMessageAndProduceReply(GameServerMessage msg){
+    public ClientMsg handleServerMessageAndProduceReply(ServerMsg msg){
         assertIsInitialized();
         Cell randomEmptyCell;
         switch (msg.type()){
@@ -29,19 +33,15 @@ public class MessageAI {
                 char letter = randomLetter();
                 randomEmptyCell = randomEmptyCell();
                 grid.setCharAtCell(letter, randomEmptyCell);
-                return GameClientMessage.pickAndPlaceLetter(letter, randomEmptyCell);
+                return ClientMsg.pickAndPlaceLetter(letter, randomEmptyCell);
             case PLACE_LETTER:
                 randomEmptyCell = randomEmptyCell();
-                grid.setCharAtCell(msg.letter(), randomEmptyCell);
-                return GameClientMessage.placeLetter(randomEmptyCell);
-            case GAME_FINISHED:
-                return null;
-            case WAITING_FOR_MORE_PLAYERS:
-                return null;
-            case GAME_IS_STARTING:
+                grid.setCharAtCell(((MsgPlaceLetter)msg).letter, randomEmptyCell);
+                return ClientMsg.placeLetter(randomEmptyCell);
+            default:
                 return null;
         }
-        throw new RuntimeException();
+//        throw new RuntimeException();
     }
 
     private Cell randomEmptyCell(){

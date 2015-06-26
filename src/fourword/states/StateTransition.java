@@ -1,13 +1,13 @@
-package fourword;
+package fourword.states;
 
 /**
  * Created by jonathan on 2015-06-23.
  */
 public class StateTransition {
 
-    boolean changeState;
-    StateName newState;
-    Object data;
+    public boolean changeState;
+    public StateName newState;
+    public Object data;
 
     public static StateTransition STAY_HERE = new StateTransition(false, null, null);
 

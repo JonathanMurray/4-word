@@ -1,5 +1,7 @@
 package fourword;
 
+import fourword.messages.ClientMsg;
+import fourword.messages.ServerMsg;
 import org.andengine.util.debug.Debug;
 
 import java.io.*;
@@ -20,7 +22,7 @@ public class MultiplayerClient implements Client{
     private Listener listener;
     private Object listenerLock = new Object();
 
-    private Queue<GameServerMessage> messageQueue = new LinkedList<GameServerMessage>();
+    private Queue<ServerMsg> messageQueue = new LinkedList<ServerMsg>();
 
     public MultiplayerClient(String serverAddress, int serverPort){
         this.serverAddress = serverAddress;
@@ -59,7 +61,7 @@ public class MultiplayerClient implements Client{
                     while(connected){
                         Debug.e("Client waiting for msg from server ... ");
                         try {
-                            GameServerMessage msg = (GameServerMessage) fromServer.readObject();
+                            ServerMsg msg = (ServerMsg) fromServer.readObject();
                             Debug.e("   Received message: " + msg);
                             synchronized (listenerLock){
                                 if(listener != null){
@@ -101,7 +103,7 @@ public class MultiplayerClient implements Client{
         }
     }
 
-    public void sendMessage(GameClientMessage msg){
+    public void sendMessage(ClientMsg msg){
         try {
             toServer.writeObject(msg);
             Debug.e("   Sent msg: " + msg);

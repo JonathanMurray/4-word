@@ -1,12 +1,9 @@
 package fourword;
 
+import fourword.messages.ClientMsg;
+import fourword.messages.MsgPickAndPlaceLetter;
+import fourword.messages.ServerMsg;
 import org.andengine.util.debug.Debug;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.HashMap;
 
 /**
  * Created by jonathan on 2015-06-24.
@@ -21,7 +18,7 @@ public class OfflineClient implements Client {
     }
 
     @Override
-    public void sendMessage(final GameClientMessage msg) {
+    public void sendMessage(final ClientMsg msg) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -31,11 +28,11 @@ public class OfflineClient implements Client {
                     e.printStackTrace();
                 }
                 Debug.d("   to mockup-server: " + msg);
-                GameServerMessage reply = aiServerBehaviour.act(msg);
-                Debug.d("   from mockup-server: " + reply);
-                //Debug.d("   Server grid: ");
-                //Debug.d(aiServerBehaviour.ai().toString());
-                listener.handleServerMessage(reply);
+//                ServerMsg reply = aiServerBehaviour.act(msg);
+//                Debug.d("   from mockup-server: " + reply);
+//                //Debug.d("   Server grid: ");
+//                //Debug.d(aiServerBehaviour.ai().toString());
+//                listener.handleServerMessage(reply);
             }
         }).start();
     }
@@ -43,7 +40,7 @@ public class OfflineClient implements Client {
     @Override
     public void start(){
         Debug.e("Starting offline client ...");
-        GameServerMessage msg = GameServerMessage.pickAndPlaceLetter();
+        ServerMsg msg = new MsgPickAndPlaceLetter();
         Debug.d("   from mockup-server: " + msg);
         listener.handleServerMessage(msg);
     }

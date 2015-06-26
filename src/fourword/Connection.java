@@ -1,5 +1,7 @@
 package fourword;
 
+import fourword.messages.ClientMsg;
+
 /**
  * Created by jonathan on 2015-06-25.
  */
@@ -25,7 +27,7 @@ public class Connection {
     public void removeMessageListener(){
         client.removeMessageListener();
     }
-    public void sendMessage(GameClientMessage msg){
+    public void sendMessage(ClientMsg msg){
         client.sendMessage(msg);
     }
 

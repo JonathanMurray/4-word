@@ -1,4 +1,8 @@
-package fourword;
+package fourword.states;
+
+import fourword.*;
+import fourword.messages.ClientMsg;
+import fourword.messages.ServerMsg;
 
 /**
  * Created by jonathan on 2015-06-23.
@@ -24,7 +28,7 @@ public class PickAndPlaceLetter extends GameState {
     @Override
     public void exit() {
         grid.setCharAtCell(placedLetter, placedCell);
-        Connection.instance().sendMessage(GameClientMessage.pickAndPlaceLetter(placedLetter, placedCell));
+        Connection.instance().sendMessage(ClientMsg.pickAndPlaceLetter(placedLetter, placedCell));
     }
 
     @Override
@@ -67,7 +71,7 @@ public class PickAndPlaceLetter extends GameState {
     }
 
     @Override
-    public StateTransition handleServerMessage(GameServerMessage msg) {
+    public StateTransition handleServerMessage(ServerMsg msg) {
         return StateTransition.STAY_HERE;
     }
 

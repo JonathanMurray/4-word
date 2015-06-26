@@ -1,12 +1,14 @@
-package fourword;
+package fourword.messages;
 
+
+import fourword.Cell;
 
 import java.io.Serializable;
 
 /**
  * Created by jonathan on 2015-06-23.
  */
-public class GameClientMessage implements Serializable {
+public class ClientMsg implements Serializable {
 
     public static enum Action {
         PLACE_LETTER,
@@ -17,17 +19,17 @@ public class GameClientMessage implements Serializable {
     private Cell cell;
     private char letter;
 
-    private GameClientMessage(Action action, Cell cell, char letter){
+    private ClientMsg(Action action, Cell cell, char letter){
         this.action = action;
         this.cell = cell;
         this.letter = letter;
     }
-    public static GameClientMessage placeLetter(Cell cell){
-        return new GameClientMessage(Action.PLACE_LETTER, cell, (char)0);
+    public static ClientMsg placeLetter(Cell cell){
+        return new ClientMsg(Action.PLACE_LETTER, cell, (char)0);
     }
 
-    public static GameClientMessage pickAndPlaceLetter(char letter, Cell cell){
-        return new GameClientMessage(Action.PICK_AND_PLACE_LETTER, cell, letter);
+    public static ClientMsg pickAndPlaceLetter(char letter, Cell cell){
+        return new ClientMsg(Action.PICK_AND_PLACE_LETTER, cell, letter);
     }
 
     public Action action(){

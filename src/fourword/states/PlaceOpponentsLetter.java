@@ -1,9 +1,14 @@
-package fourword;
+package fourword.states;
+
+import fourword.*;
+import fourword.messages.ClientMsg;
+import fourword.messages.MsgPlaceLetter;
+import fourword.messages.ServerMsg;
 
 /**
  * Created by jonathan on 2015-06-23.
  */
-public class PlaceOpponentsLetter extends GameState{
+public class PlaceOpponentsLetter extends GameState {
 
     private Cell placedCell;
     private char letter;
@@ -14,19 +19,18 @@ public class PlaceOpponentsLetter extends GameState{
 
     @Override
     public void enter(Object data) {
-        GameServerMessage msg = (GameServerMessage) data;
-        letter = msg.letter();
-        String pickingPlayer = msg.pickingPlayerName();
+        MsgPlaceLetter msg = (MsgPlaceLetter) data;
         scene.dehighlightCell();
         activity.showKeyboard();
-        activity.setInfoText(pickingPlayer + " picked " + letter + ". Place it somewhere!");
+        letter = msg.letter;
+        activity.setInfoText(msg.playerName + " picked " + letter + ". Place it somewhere!");
         placedCell = null;
     }
 
     @Override
     public void exit() {
         grid.setCharAtCell(letter, placedCell);
-        Connection.instance().sendMessage(GameClientMessage.placeLetter(placedCell));
+        Connection.instance().sendMessage(ClientMsg.placeLetter(placedCell));
     }
 
     @Override
@@ -62,7 +66,7 @@ public class PlaceOpponentsLetter extends GameState{
     }
 
     @Override
-    public StateTransition handleServerMessage(GameServerMessage msg) {
+    public StateTransition handleServerMessage(ServerMsg msg) {
         return StateTransition.STAY_HERE;
     }
 

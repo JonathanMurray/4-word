@@ -1,5 +1,8 @@
 package fourword;
 
+import fourword.messages.ServerMsg;
+import fourword.states.StateTransition;
+
 /**
  * Created by jonathan on 2015-06-23.
  */
@@ -21,5 +24,5 @@ public abstract class GameState {
     public abstract StateTransition userClickedCell(Cell cell);
     public abstract StateTransition onUpdate();
     public abstract StateTransition userClickedDone();
-    public abstract StateTransition handleServerMessage(GameServerMessage msg);
+    public abstract StateTransition handleServerMessage(ServerMsg msg);
 }

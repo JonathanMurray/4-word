@@ -1,4 +1,8 @@
-package fourword;
+package fourword.states;
+
+import fourword.*;
+import fourword.messages.MsgWaitingForPlayerMove;
+import fourword.messages.ServerMsg;
 
 /**
  * Created by jonathan on 2015-06-23.
@@ -41,7 +45,7 @@ public class WaitForServer extends GameState {
     }
 
     @Override
-    public StateTransition handleServerMessage(GameServerMessage msg) {
+    public StateTransition handleServerMessage(ServerMsg msg) {
         switch(msg.type()){
             case PLACE_LETTER:
                 return StateTransition.change(StateName.PLACE_OPPONENTS_LETTER, msg);
@@ -49,6 +53,10 @@ public class WaitForServer extends GameState {
                 return StateTransition.change(StateName.PICK_AND_PLACE_LETTER);
             case GAME_FINISHED:
                 return StateTransition.change(StateName.SCORE_SCREEN, msg);
+            case WAITING_FOR_PLAYER_MOVE:
+                String opponentName = ((MsgWaitingForPlayerMove)msg).playerName;
+                activity.setInfoText("Waiting for " + opponentName + " to make a move...");
+                return StateTransition.STAY_HERE;
         }
         throw new RuntimeException();
     }

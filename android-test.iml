@@ -16,6 +16,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="AndEngine" exported="" />
-    <orderEntry type="module" module-name="AndEngineMultiplayerExtension" exported="" />
+    <orderEntry type="module" module-name="AndEngineMultiplayerExtension" />
   </component>
 </module>

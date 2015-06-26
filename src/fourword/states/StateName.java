@@ -1,4 +1,4 @@
-package fourword;
+package fourword.states;
 
 /**
  * Created by jonathan on 2015-06-23.
