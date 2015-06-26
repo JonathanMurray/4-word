@@ -79,7 +79,7 @@ public class GameServerMessage implements Serializable{
         return "(" + type + ")" + (letter != 0 ? "[" + letter + ":" + pickingPlayerName +  "]" : "");
     }
 
-    public static class LobbyPlayer{
+    public static class LobbyPlayer implements Serializable{
         String name;
         boolean isHuman;
         boolean hasConnected;
