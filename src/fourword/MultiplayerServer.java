@@ -18,7 +18,7 @@ public class MultiplayerServer {
     private final static int NUM_COLS = 2;
     private final static int NUM_ROWS = 2;
     private final static int NUM_CELLS = NUM_COLS * NUM_ROWS;
-    private final static int NUM_HUMANS = 1;
+    private final static int NUM_HUMANS = 2;
     private final static int NUM_BOTS = 2;
     private final int numHumans;
     private final int numBots;
