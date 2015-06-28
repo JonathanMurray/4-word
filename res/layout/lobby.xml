@@ -10,13 +10,66 @@
             android:text="LOBBY"
             android:textSize="32sp"
             android:layout_width="fill_parent"
-            android:layout_height="200dp"/>
+            android:layout_height="50dp"/>
 
-    <TextView
-            android:id="@+id/lobby_info_text"
-            android:text="[PlaceHolder]"
-            android:textSize="22sp"
+    <LinearLayout
+            android:id="@+id/avatar_row"
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="400dp"/>
+            android:layout_height="wrap_content">
+
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/lobby_host_section"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:text="Add player:"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            <EditText
+                    android:id="@+id/lobby_player_name"
+                    android:hint="player name"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"/>
+            <Button
+                    android:id="@+id/lobby_add_button"
+                    android:onClick="clickedAddPlayer"
+                    android:text="Add!"
+                    android:layout_width="160dp"
+                    android:layout_height="80dp"/>
+
+        </LinearLayout>
+
+        <Button
+                android:id="@+id/lobby_start_button"
+                android:onClick="clickedStartGame"
+                android:text="Start game!"
+                android:layout_width="fill_parent"
+                android:layout_height="80dp"/>
+
+        <TextView
+                android:id="@+id/lobby_info_text"
+                android:textColor="@android:color/holo_red_dark"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
+
+
+
 
 </LinearLayout>

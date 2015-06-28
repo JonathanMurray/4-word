@@ -5,11 +5,11 @@ import fourword.model.GameResult;
 /**
  * Created by jonathan on 2015-06-26.
  */
-public class MsgGameFinished extends ServerMsg {
+public class MsgGameFinished extends Msg<ServerMsg> {
     public GameResult result;
 
-    public MsgGameFinished(GameResult result) {
-        super(ServerMsgType.GAME_FINISHED);
+    public MsgGameFinished( GameResult result) {
+        super(ServerMsg.GAME_FINISHED);
         this.result = result;
     }
 }

@@ -2,7 +2,7 @@ package fourword;
 
 import android.content.Intent;
 import fourword.messages.MsgGameFinished;
-import fourword.messages.ServerMsg;
+import fourword.messages.Msg;
 import fourword.model.Cell;
 import fourword.model.GridModel;
 import fourword.states.GameState;
@@ -55,7 +55,7 @@ public class ScoreScreen extends GameState {
     }
 
     @Override
-    public StateTransition handleServerMessage(ServerMsg msg) {
+    public StateTransition handleServerMessage(Msg msg) {
         return StateTransition.STAY_HERE;
     }
 }

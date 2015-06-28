@@ -1,8 +1,9 @@
 package fourword.protocol;
 
 
-import fourword.messages.ServerMsgListener;
 import fourword.messages.ClientMsg;
+import fourword.messages.Msg;
+import fourword.messages.MsgListener;
 import fourword.messages.ServerMsg;
 import org.andengine.util.debug.Debug;
 
@@ -14,21 +15,21 @@ import java.util.Queue;
  * Created by jonathan on 2015-06-24.
  */
 public abstract class Client implements Serializable{
-    public abstract void sendMessage(ClientMsg msg);
+    public abstract void sendMessage(Msg<ClientMsg> msg);
     public abstract void start();
 
-    private Queue<ServerMsg> messageQueue = new LinkedList<ServerMsg>();
+    private Queue<Msg<ServerMsg>> messageQueue = new LinkedList<Msg<ServerMsg>>();
     private Object listenerLock = new Object();
-    private ServerMsgListener listener;
+    private MsgListener listener;
 
-    public void setMessageListener(ServerMsgListener listener){
+    public void setMessageListener(MsgListener<ServerMsg> listener){
         synchronized (listenerLock){
             this.listener = listener;
             while(!messageQueue.isEmpty()){
                 Debug.d("Client.setMessageListener -> process messageQueue");
-                ServerMsg msgInQueue = messageQueue.remove();
+                Msg msgInQueue = messageQueue.remove();
                 Debug.d("Found in queue: " + msgInQueue);
-                boolean handledByListener = listener.handleServerMessage(msgInQueue);
+                boolean handledByListener = listener.handleMessage(msgInQueue);
                 if(!handledByListener){
                     throw new RuntimeException(msgInQueue + " not handled by " + listener);
                 }
@@ -42,12 +43,12 @@ public abstract class Client implements Serializable{
         }
     }
 
-    protected void delegateToListener(ServerMsg msg){
+    protected void delegateToListener(Msg<ServerMsg> msg){
         synchronized (listenerLock){
             boolean handledByListener = false;
             if(listener != null){
                 Debug.d("delegateToListener -> listener tries to handle it now");
-                handledByListener = listener.handleServerMessage(msg);
+                handledByListener = listener.handleMessage(msg);
             }
 
             if(!handledByListener){

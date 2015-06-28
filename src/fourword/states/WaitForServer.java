@@ -1,7 +1,8 @@
 package fourword.states;
 
 import fourword.*;
-import fourword.messages.MsgWaitingForPlayerMove;
+import fourword.messages.Msg;
+import fourword.messages.MsgText;
 import fourword.messages.ServerMsg;
 import fourword.model.Cell;
 import fourword.model.GridModel;
@@ -47,7 +48,7 @@ public class WaitForServer extends GameState {
     }
 
     @Override
-    public StateTransition handleServerMessage(ServerMsg msg) {
+    public StateTransition handleServerMessage(Msg<ServerMsg> msg) {
         switch(msg.type()){
             case PLACE_LETTER:
                 return StateTransition.change(StateName.PLACE_OPPONENTS_LETTER, msg);
@@ -56,7 +57,7 @@ public class WaitForServer extends GameState {
             case GAME_FINISHED:
                 return StateTransition.change(StateName.SCORE_SCREEN, msg);
             case WAITING_FOR_PLAYER_MOVE:
-                String opponentName = ((MsgWaitingForPlayerMove)msg).playerName;
+                String opponentName = ((MsgText)msg).text;
                 activity.setInfoText("Waiting for " + opponentName + " to make a move...");
                 return StateTransition.STAY_HERE;
         }

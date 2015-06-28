@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
-import fourword.messages.ServerMsg;
-import fourword.messages.ServerMsgListener;
+import fourword.messages.Msg;
+import fourword.messages.MsgListener;
 import fourword.model.Cell;
 import fourword.model.GridModel;
 import fourword.states.*;
@@ -33,7 +33,7 @@ import java.util.*;
 /**
  * Created by jonathan on 2015-06-20.
  */
-public class GameActivity extends SimpleLayoutGameActivity implements ServerMsgListener {
+public class GameActivity extends SimpleLayoutGameActivity implements MsgListener {
     private Font font;
     private Camera camera;
     private GridScene scene;
@@ -42,7 +42,7 @@ public class GameActivity extends SimpleLayoutGameActivity implements ServerMsgL
     private int layoutID = R.layout.game;
 
     private GameState state;
-    private Queue<ServerMsg> messageQueue = new LinkedList<ServerMsg>();
+    private Queue<Msg> messageQueue = new LinkedList<Msg>();
     private HashMap<StateName, GameState> fsm = new HashMap<StateName, GameState>();
 
     private final Object stateLock = new Object();
@@ -139,7 +139,7 @@ public class GameActivity extends SimpleLayoutGameActivity implements ServerMsgL
     }
 
     @Override
-    public boolean handleServerMessage(ServerMsg msg) {
+    public boolean handleMessage(Msg msg) {
         synchronized (stateLock){
             Debug.d("   Received msg from server: " + msg);
             Debug.d("   current state: " + state);
@@ -165,7 +165,7 @@ public class GameActivity extends SimpleLayoutGameActivity implements ServerMsgL
 
     private void processMessageQueue(){
         while(!messageQueue.isEmpty()){
-            ServerMsg msg = messageQueue.remove();
+            Msg msg = messageQueue.remove();
             state.handleServerMessage(msg);
         }
     }

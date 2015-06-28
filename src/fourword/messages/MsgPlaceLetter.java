@@ -1,15 +1,17 @@
 package fourword.messages;
 
-/**
- * Created by jonathan on 2015-06-26.
- */
-public class MsgPlaceLetter extends ServerMsg {
-    public char letter;
-    public String playerName;
+import fourword.model.Cell;
+import fourword.protocol.Client;
 
-    public MsgPlaceLetter(char letter, String playerName) {
-        super(ServerMsgType.PLACE_LETTER);
-        this.letter = letter;
-        this.playerName = playerName;
+/**
+ * Created by jonathan on 2015-06-27.
+ */
+public class MsgPlaceLetter extends Msg<ClientMsg> {
+
+    public final Cell cell;
+
+    public MsgPlaceLetter(Cell cell) {
+        super(ClientMsg.PLACE_LETTER);
+        this.cell = cell;
     }
 }

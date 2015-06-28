@@ -1,56 +1,26 @@
 package fourword.messages;
 
-
-import fourword.model.Cell;
-
-import java.io.Serializable;
-
 /**
- * Created by jonathan on 2015-06-23.
+ * Created by jonathan on 2015-06-27.
  */
-public class ClientMsg implements Serializable {
+public enum ClientMsg implements MsgType {
 
-    public static enum Action {
-        PLACE_LETTER,
-        PICK_AND_PLACE_LETTER;
-    }
+    LOGIN,
+    CREATE_GAME,
+    INVITE,
+    KICK,
+    JOIN,
+    DECLINE,
+    START_GAME,
+    CLOSE_GAME,
 
-    private Action action;
-    private Cell cell;
-    private char letter;
+    PLACE_LETTER,
+    PICK_AND_PLACE_LETTER;
 
-    private ClientMsg(Action action, Cell cell, char letter){
-        this.action = action;
-        this.cell = cell;
-        this.letter = letter;
-    }
-    public static ClientMsg placeLetter(Cell cell){
-        return new ClientMsg(Action.PLACE_LETTER, cell, (char)0);
-    }
-
-    public static ClientMsg pickAndPlaceLetter(char letter, Cell cell){
-        return new ClientMsg(Action.PICK_AND_PLACE_LETTER, cell, letter);
-    }
-
-    public Action action(){
-        return action;
-    }
-
-    public Cell cell(){
-        return cell;
-    }
-
-    public char letter(){
-        if(action == Action.PLACE_LETTER){
-            throw new UnsupportedOperationException();
-        }
-        return letter;
-    }
-
-    public String toString(){
-        if(action == Action.PICK_AND_PLACE_LETTER){
-            return "(" + action + ", " + letter + ", " + cell + ")";
-        }
-        return "(" + action + ", "  + cell + ")";
-    }
+//    public static Class<?> getClass(ClientMsg type){
+//        switch(type){
+//            case LOGIN:
+//                return Msg.class;
+//        }
+//    }
 }

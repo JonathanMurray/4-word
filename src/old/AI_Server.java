@@ -43,7 +43,7 @@ public class AI_Server {
 //            ) {
 //                System.out.println("Accepted socket!");
 //                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-//                sendMessage(out, ServerMsg.pickAndPlaceLetter());
+//                sendMessage(out, Msg.pickAndPlaceLetter());
 //                ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
 //                communicationLoop(in, out);
 //            }
@@ -61,7 +61,7 @@ public class AI_Server {
 //            System.out.println("Waiting for message from client ... ");
 //            ClientMsg msg = (ClientMsg) in.readObject();
 //            System.out.println("    Received message: '" + msg + "'");
-//            ServerMsg reply = aiServerBehaviour.act(msg);
+//            Msg reply = aiServerBehaviour.act(msg);
 //            sendMessage(out, reply);
 //        }
 //    }
@@ -74,7 +74,7 @@ public class AI_Server {
 //        System.out.println();
 //    }
 //
-//    private void sendMessage(ObjectOutputStream out, ServerMsg msg) throws IOException {
+//    private void sendMessage(ObjectOutputStream out, Msg msg) throws IOException {
 //        out.writeObject(msg);
 //        System.out.println("    Sent message: " + msg);
 //    }

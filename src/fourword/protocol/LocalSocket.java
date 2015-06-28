@@ -1,9 +1,10 @@
 package fourword.protocol;
 
-import fourword.messages.ClientMsgListener;
-import fourword.messages.ServerMsgListener;
 import fourword.messages.ClientMsg;
+import fourword.messages.MsgListener;
+import fourword.messages.Msg;
 import fourword.messages.ServerMsg;
+import org.andengine.extension.multiplayer.protocol.adt.message.client.ClientMessage;
 import org.andengine.util.debug.Debug;
 
 import java.net.InetAddress;
@@ -14,29 +15,29 @@ import java.util.Queue;
 /**
  * Created by jonathan on 2015-06-26.
  */
-public class LocalSocket implements PlayerSocket, ClientMsgListener {
+public class LocalSocket implements PlayerSocket, MsgListener<ClientMsg> {
 
     private final String name;
-    private final ServerMsgListener serverMsgListener;
-    private final Queue<ClientMsg> clientMsgQueue = new LinkedList<ClientMsg>();
+    private final MsgListener<ServerMsg> serverMsgListener;
+    private final Queue<Msg<ClientMsg>> clientMsgQueue = new LinkedList<Msg<ClientMsg>>();
 
-    public LocalSocket(String name, ServerMsgListener serverMsgListener){
+    public LocalSocket(String name, MsgListener<ServerMsg> serverMsgListener){
         this.name = name;
         this.serverMsgListener = serverMsgListener;
     }
 
     @Override
-    public void sendMessage(ServerMsg msg) {
+    public void sendMessage(Msg msg) {
         Debug.d("LocalSocket.sendMessage(" + msg + ")");
-        serverMsgListener.handleServerMessage(msg);
+        serverMsgListener.handleMessage(msg);
     }
 
     @Override
-    public ClientMsg receiveMessage() {
+    public Msg<ClientMsg> receiveMessage() {
         while(clientMsgQueue.isEmpty()){
             sleep(500);
         }
-        ClientMsg msg = clientMsgQueue.remove();
+        Msg<ClientMsg> msg = clientMsgQueue.remove();
         Debug.d("LocalSocket.receiveMessage(" + msg + ")");
         return msg;
     }
@@ -61,8 +62,9 @@ public class LocalSocket implements PlayerSocket, ClientMsgListener {
     }
 
     @Override
-    public void handleClientMessage(ClientMsg msg) {
+    public boolean handleMessage(Msg<ClientMsg> msg) {
         clientMsgQueue.add(msg);
+        return true;
     }
 
     private void sleep(int millis){

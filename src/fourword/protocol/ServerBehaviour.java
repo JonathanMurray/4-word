@@ -32,20 +32,20 @@ public class ServerBehaviour {
         numPlayers = sockets.size();
     }
 
-    public void runProtocolLoop(){
+    public void runGameLoop(){
         try{
             broadcast(new MsgGameIsStarting(numCols, numRows));
             boolean running = true;
             while(running){
                 PlayerSocket currentPlayer = sockets.get(currentPlayerIndex);
-                sendToPlayer(currentPlayer, new MsgPickAndPlaceLetter());
-                broadcast(new MsgWaitingForPlayerMove(currentPlayer.getName()), currentPlayerIndex);
-                ClientMsg pickAndPlaceMsg = receiveFromPlayer(currentPlayer);
-                final char letterPickedByCurrentPlayer = pickAndPlaceMsg.letter();
-                final Cell cellPickedByCurrentPlayer = pickAndPlaceMsg.cell();
+                sendToPlayer(currentPlayer, new Msg(ServerMsg.PICK_AND_PLACE_LETTER));
+                broadcast(new MsgText(ServerMsg.WAITING_FOR_PLAYER_MOVE, currentPlayer.getName()), currentPlayerIndex);
+                MsgPickAndPlaceLetter pickAndPlaceMsg = (MsgPickAndPlaceLetter) receiveFromPlayer(currentPlayer);
+                final char letterPickedByCurrentPlayer = pickAndPlaceMsg.letter;
+                final Cell cellPickedByCurrentPlayer = pickAndPlaceMsg.cell;
                 grids.get(currentPlayerIndex).setCharAtCell(letterPickedByCurrentPlayer, cellPickedByCurrentPlayer);
 
-                broadcast(new MsgPlaceLetter(letterPickedByCurrentPlayer, currentPlayer.getName()), currentPlayerIndex);
+                broadcast(new MsgRequestPlaceLetter(letterPickedByCurrentPlayer, currentPlayer.getName()), currentPlayerIndex);
                 handleAllPlaceReplies(letterPickedByCurrentPlayer);
                 numPlacedLetters ++;
 
@@ -83,10 +83,15 @@ public class ServerBehaviour {
                 final int playerIndex = i;
                 new Thread(new Runnable() {
                     public void run() {
-                        ClientMsg placeLetterMsg = receiveFromPlayer(sockets.get(playerIndex));
+                        MsgPlaceLetter placeLetterMsg = null;
+                        try {
+                            placeLetterMsg = (MsgPlaceLetter) receiveFromPlayer(sockets.get(playerIndex));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         synchronized (grids){
                             GridModel grid = grids.get(playerIndex);
-                            grid.setCharAtCell(pickedLetter, placeLetterMsg.cell());
+                            grid.setCharAtCell(pickedLetter, placeLetterMsg.cell);
                             numPlayersHavePlaced.incrementAndGet();
                         }
                     }
@@ -119,13 +124,13 @@ public class ServerBehaviour {
         }
     }
 
-    private void broadcast(ServerMsg msg) throws IOException {
+    private void broadcast(Msg<ServerMsg> msg) throws IOException {
         for(PlayerSocket socket : sockets){
             sendToPlayer(socket, msg);
         }
     }
 
-    private void broadcast(ServerMsg msg, int exceptPlayerWithIndex) throws IOException {
+    private void broadcast(Msg<ServerMsg> msg, int exceptPlayerWithIndex) throws IOException {
         for(int i = 0; i < sockets.size(); i++){
             if(i != exceptPlayerWithIndex){
                 sendToPlayer(sockets.get(i), msg);
@@ -133,14 +138,14 @@ public class ServerBehaviour {
         }
     }
 
-    private void sendToPlayer(PlayerSocket socket, ServerMsg msg) throws IOException {
+    private void sendToPlayer(PlayerSocket socket, Msg<ServerMsg> msg) throws IOException {
         socket.sendMessage(msg);
         System.out.println("    Sent message to " + socket.getName() + ": " + msg);
     }
 
-    private ClientMsg receiveFromPlayer(PlayerSocket socket){
+    private Msg<ClientMsg> receiveFromPlayer(PlayerSocket socket) throws IOException {
         System.out.println("Waiting for message from " + socket.getName() + " ... ");
-        ClientMsg msg = socket.receiveMessage();
+        Msg<ClientMsg> msg = socket.receiveMessage();
         System.out.println("    Received message from " + socket.getName() + ": " + msg);
         return msg;
     }

@@ -1,9 +1,9 @@
 package fourword.states;
 
 import fourword.*;
-import fourword.messages.ClientMsg;
 import fourword.messages.MsgPlaceLetter;
-import fourword.messages.ServerMsg;
+import fourword.messages.MsgRequestPlaceLetter;
+import fourword.messages.Msg;
 import fourword.model.Cell;
 import fourword.model.GridModel;
 
@@ -21,7 +21,7 @@ public class PlaceOpponentsLetter extends GameState {
 
     @Override
     public void enter(Object data) {
-        MsgPlaceLetter msg = (MsgPlaceLetter) data;
+        MsgRequestPlaceLetter msg = (MsgRequestPlaceLetter) data;
         scene.dehighlightCell();
         activity.showKeyboard();
         letter = msg.letter;
@@ -32,7 +32,7 @@ public class PlaceOpponentsLetter extends GameState {
     @Override
     public void exit() {
         grid.setCharAtCell(letter, placedCell);
-        Connection.instance().sendMessage(ClientMsg.placeLetter(placedCell));
+        Connection.instance().sendMessage(new MsgPlaceLetter(placedCell));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class PlaceOpponentsLetter extends GameState {
     }
 
     @Override
-    public StateTransition handleServerMessage(ServerMsg msg) {
+    public StateTransition handleServerMessage(Msg msg) {
         return StateTransition.STAY_HERE;
     }
 

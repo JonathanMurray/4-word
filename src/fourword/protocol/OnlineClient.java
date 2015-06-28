@@ -1,8 +1,8 @@
 package fourword.protocol;
 
 import fourword.messages.ClientMsg;
+import fourword.messages.Msg;
 import fourword.messages.ServerMsg;
-import fourword.protocol.Client;
 import org.andengine.util.debug.Debug;
 
 import java.io.*;
@@ -38,8 +38,9 @@ public class OnlineClient extends Client {
                     boolean connected = true;
                     while(connected){
                         Debug.e("Client waiting for msg from server ... ");
-                        ServerMsg msg = (ServerMsg) fromServer.readObject();
-                        Debug.e("   Received message: " + msg);
+                        Msg<ServerMsg> msg = (Msg<ServerMsg>) fromServer.readObject();
+                        Debug.e("   Received message: " + msg + ", id: " + msg.id());
+
                         delegateToListener(msg);
                     }
                 } catch (StreamCorruptedException e) {
@@ -67,7 +68,7 @@ public class OnlineClient extends Client {
         }
     }
 
-    public void sendMessage(ClientMsg msg){
+    public void sendMessage(Msg<ClientMsg> msg){
         try {
             toServer.writeObject(msg);
             Debug.e("   Sent msg: " + msg);

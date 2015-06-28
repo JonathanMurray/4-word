@@ -1,8 +1,8 @@
 package fourword.states;
 
 import fourword.*;
-import fourword.messages.ClientMsg;
-import fourword.messages.ServerMsg;
+import fourword.messages.Msg;
+import fourword.messages.MsgPickAndPlaceLetter;
 import fourword.model.Cell;
 import fourword.model.GridModel;
 
@@ -30,7 +30,7 @@ public class PickAndPlaceLetter extends GameState {
     @Override
     public void exit() {
         grid.setCharAtCell(placedLetter, placedCell);
-        Connection.instance().sendMessage(ClientMsg.pickAndPlaceLetter(placedLetter, placedCell));
+        Connection.instance().sendMessage(new MsgPickAndPlaceLetter(placedLetter, placedCell));
     }
 
     @Override
@@ -73,7 +73,7 @@ public class PickAndPlaceLetter extends GameState {
     }
 
     @Override
-    public StateTransition handleServerMessage(ServerMsg msg) {
+    public StateTransition handleServerMessage(Msg msg) {
         return StateTransition.STAY_HERE;
     }
 

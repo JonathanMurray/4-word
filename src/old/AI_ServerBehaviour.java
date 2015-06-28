@@ -1,12 +1,5 @@
 package old;
 
-import fourword.messages.ClientMsg;
-import fourword.messages.ServerMsg;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by jonathan on 2015-06-24.
  */
@@ -45,7 +38,7 @@ public class AI_ServerBehaviour {
 //    }
 //
 //
-//    public ServerMsg act(ClientMsg msgFromClient){
+//    public Msg act(ClientMsg msgFromClient){
 //        switch(msgFromClient.action()){
 //
 //            case PICK_AND_PLACE_LETTER:
@@ -55,7 +48,7 @@ public class AI_ServerBehaviour {
 //                }
 //                numFilledCells ++;
 //                if(numFilledCells == numCells){
-//                    return ServerMsg.gameFinished(new GameResult(grids));
+//                    return Msg.gameFinished(new GameResult(grids));
 //                }else{
 //                    return aiPickAndPlaceAndOthersPlace(currentAI_index);
 //                }
@@ -64,13 +57,13 @@ public class AI_ServerBehaviour {
 //                playerGrid.setCharAtCell(pickedLetterByAI, msgFromClient.cell());
 //                numFilledCells ++;
 //                if(numFilledCells == numCells){
-//                    return ServerMsg.gameFinished(new GameResult(grids));
+//                    return Msg.gameFinished(new GameResult(grids));
 //                }else{
 //                    currentAI_index = (currentAI_index + 1) % AIs.size();
 //                    if(currentAI_index > 0){
 //                        return aiPickAndPlaceAndOthersPlace(currentAI_index);
 //                    }else{
-//                        return ServerMsg.pickAndPlaceLetter();
+//                        return Msg.pickAndPlaceLetter();
 //                    }
 //                }
 //        }
@@ -78,7 +71,7 @@ public class AI_ServerBehaviour {
 //        throw new RuntimeException("Unhandled action for msg: " + msgFromClient);
 //    }
 //
-//    private ServerMsg aiPickAndPlaceAndOthersPlace(int currentAI_index){
+//    private Msg aiPickAndPlaceAndOthersPlace(int currentAI_index){
 //        AI currentAI = AIs.get(currentAI_index);
 //        pickedLetterByAI = currentAI.pickAndPlaceLetter();
 //        for(int i = 0; i < AIs.size(); i++){
@@ -87,7 +80,7 @@ public class AI_ServerBehaviour {
 //            }
 //        }
 //        String name = "AI_" + currentAI_index;
-//        return ServerMsg.placeLetter(pickedLetterByAI, name);
+//        return Msg.placeLetter(pickedLetterByAI, name);
 //    }
 //
 //    public String toString(){

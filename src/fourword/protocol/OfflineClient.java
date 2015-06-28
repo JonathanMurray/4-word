@@ -1,9 +1,9 @@
 package fourword.protocol;
 
-import fourword.model.GridModel;
-import fourword.messages.ServerMsgListener;
 import fourword.messages.ClientMsg;
-import fourword.messages.ServerMsg;
+import fourword.messages.Msg;
+import fourword.model.GridModel;
+import fourword.messages.MsgListener;
 import org.andengine.util.debug.Debug;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by jonathan on 2015-06-24.
  */
-public class OfflineClient extends Client implements ServerMsgListener {
+public class OfflineClient extends Client implements MsgListener {
 
     private final ServerBehaviour behaviour;
     private final LocalSocket localSocket;
@@ -40,8 +40,8 @@ public class OfflineClient extends Client implements ServerMsgListener {
     }
 
     @Override
-    public void sendMessage(final ClientMsg msg) {
-        localSocket.handleClientMessage(msg);
+    public void sendMessage(final Msg<ClientMsg> msg) {
+        localSocket.handleMessage(msg);
     }
 
     @Override
@@ -50,14 +50,14 @@ public class OfflineClient extends Client implements ServerMsgListener {
             @Override
             public void run() {
                 Debug.e("Starting offline client ...");
-                behaviour.runProtocolLoop();
+                behaviour.runGameLoop();
             }
         }).start();
     }
 
     @Override
-    public boolean handleServerMessage(ServerMsg msg) {
-        Debug.d("OfflineClient.handleServerMessage(" + msg + ")");
+    public boolean handleMessage(Msg msg) {
+        Debug.d("OfflineClient.handleMessage(" + msg + ")");
         delegateToListener(msg);
         return true;
     }

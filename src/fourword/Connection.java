@@ -1,7 +1,9 @@
 package fourword;
 
 import fourword.messages.ClientMsg;
-import fourword.messages.ServerMsgListener;
+import fourword.messages.Msg;
+import fourword.messages.MsgListener;
+import fourword.messages.ServerMsg;
 import fourword.protocol.Client;
 import fourword.protocol.OfflineClient;
 import fourword.protocol.OnlineClient;
@@ -18,27 +20,27 @@ public class Connection {
 
     private Client client;
 
-    public void startOnline(ServerMsgListener listener, String serverAddress, int port){
+    public void startOnline(MsgListener<ServerMsg> listener, String serverAddress, int port){
         client = new OnlineClient(serverAddress, port);
         client.setMessageListener(listener);
         client.start();
     }
 
-    public void startOffline(ServerMsgListener listener, int numAIs, int numCols, int numRows){
+    public void startOffline(MsgListener<ServerMsg> listener, int numAIs, int numCols, int numRows){
         client = new OfflineClient(numAIs, numCols, numRows);
         client.setMessageListener(listener);
         client.start();
     }
 
 
-    public void setMessageListener(ServerMsgListener listener){
+    public void setMessageListener(MsgListener<ServerMsg> listener){
         client.setMessageListener(listener);
     }
 
     public void removeMessageListener(){
         client.removeMessageListener();
     }
-    public void sendMessage(ClientMsg msg){
+    public void sendMessage(Msg<ClientMsg> msg){
         client.sendMessage(msg);
     }
 

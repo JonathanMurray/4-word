@@ -1,10 +1,8 @@
 package fourword.protocol;
 
+import fourword.messages.*;
 import fourword.model.Cell;
 import fourword.model.GridModel;
-import fourword.messages.ClientMsg;
-import fourword.messages.MsgPlaceLetter;
-import fourword.messages.ServerMsg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +25,7 @@ public class AI {
         }
     }
 
-    public ClientMsg handleServerMessageAndProduceReply(ServerMsg msg){
+    public Msg<ClientMsg> handleServerMessageAndProduceReply(Msg<ServerMsg> msg){
         assertIsInitialized();
         Cell randomEmptyCell;
         switch (msg.type()){
@@ -35,11 +33,11 @@ public class AI {
                 char letter = randomLetter();
                 randomEmptyCell = randomEmptyCell();
                 grid.setCharAtCell(letter, randomEmptyCell);
-                return ClientMsg.pickAndPlaceLetter(letter, randomEmptyCell);
+                return new MsgPickAndPlaceLetter(letter, randomEmptyCell);
             case PLACE_LETTER:
                 randomEmptyCell = randomEmptyCell();
-                grid.setCharAtCell(((MsgPlaceLetter)msg).letter, randomEmptyCell);
-                return ClientMsg.placeLetter(randomEmptyCell);
+                grid.setCharAtCell(((MsgRequestPlaceLetter)msg).letter, randomEmptyCell);
+                return new MsgPlaceLetter(randomEmptyCell);
             default:
                 return null;
         }

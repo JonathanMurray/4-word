@@ -1,6 +1,7 @@
 package fourword.protocol;
 
 import fourword.messages.ClientMsg;
+import fourword.messages.Msg;
 import fourword.messages.ServerMsg;
 
 import java.net.InetAddress;
@@ -12,7 +13,7 @@ import java.net.UnknownHostException;
 public class BotSocket implements PlayerSocket{
 
     private AI ai;
-    private ClientMsg replyFromAI;
+    private Msg<ClientMsg> replyFromAI;
     private String name;
 
     public BotSocket(AI ai, int index){
@@ -21,17 +22,17 @@ public class BotSocket implements PlayerSocket{
     }
 
     @Override
-    public void sendMessage(ServerMsg msg) {
+    public void sendMessage(Msg<ServerMsg> msg) {
         replyFromAI = ai.handleServerMessageAndProduceReply(msg);
     }
 
     @Override
-    public ClientMsg receiveMessage() {
+    public Msg<ClientMsg> receiveMessage() {
         if(replyFromAI == null){
             throw new RuntimeException();
         }
         sleep(500);
-        ClientMsg msg = replyFromAI;
+        Msg<ClientMsg> msg = replyFromAI;
         replyFromAI = null;
         return msg;
     }

@@ -1,10 +1,11 @@
 package fourword.states;
 
+import fourword.messages.ServerMsg;
 import fourword.model.Cell;
 import fourword.GameActivity;
 import fourword.model.GridModel;
 import fourword.GridScene;
-import fourword.messages.ServerMsg;
+import fourword.messages.Msg;
 
 /**
  * Created by jonathan on 2015-06-23.
@@ -27,5 +28,5 @@ public abstract class GameState {
     public abstract StateTransition userClickedCell(Cell cell);
     public abstract StateTransition onUpdate();
     public abstract StateTransition userClickedDone();
-    public abstract StateTransition handleServerMessage(ServerMsg msg);
+    public abstract StateTransition handleServerMessage(Msg<ServerMsg> msg);
 }
