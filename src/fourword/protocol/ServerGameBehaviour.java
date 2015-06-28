@@ -13,7 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by jonathan on 2015-06-26.
  */
-public class ServerBehaviour {
+public class ServerGameBehaviour implements Runnable{
+    private final GameObject game;
     private final int numPlayers;
     private int currentPlayerIndex;
     private final List<PlayerSocket> sockets;
@@ -23,22 +24,24 @@ public class ServerBehaviour {
     private final int numRows;
     private final int numCells;
 
-    public ServerBehaviour(List<PlayerSocket> sockets, List<GridModel> grids){
-        this.sockets = sockets;
-        this.grids = grids;
+    public ServerGameBehaviour(GameFinishedListener listener, GameObject game){
+        this.sockets = game.playerSockets;
+        this.grids = game.grids;
         numCols = grids.get(0).getNumCols();
         numRows = grids.get(0).getNumRows();
         numCells = numCols * numRows;
         numPlayers = sockets.size();
+        this.game = game;
     }
 
-    public void runGameLoop(){
+    @Override
+    public void run(){
         try{
-            broadcast(new MsgGameIsStarting(numCols, numRows));
+//            broadcast(new MsgGameIsStarting(numCols, numRows)); //already sent in other thread
             boolean running = true;
             while(running){
                 PlayerSocket currentPlayer = sockets.get(currentPlayerIndex);
-                sendToPlayer(currentPlayer, new Msg(ServerMsg.PICK_AND_PLACE_LETTER));
+                sendToPlayer(currentPlayer, new Msg(ServerMsg.DO_PICK_AND_PLACE_LETTER));
                 broadcast(new MsgText(ServerMsg.WAITING_FOR_PLAYER_MOVE, currentPlayer.getName()), currentPlayerIndex);
                 MsgPickAndPlaceLetter pickAndPlaceMsg = (MsgPickAndPlaceLetter) receiveFromPlayer(currentPlayer);
                 final char letterPickedByCurrentPlayer = pickAndPlaceMsg.letter;
@@ -54,13 +57,15 @@ public class ServerBehaviour {
                 boolean isGameFinished = numPlacedLetters == numCells;
                 if(isGameFinished){
                     broadcastResults();
+
                     running = false;
                 }else{
                     currentPlayerIndex = (currentPlayerIndex + 1) % numPlayers;
                 }
             }
+            game.setFinished();
             System.out.println("Game is over!");
-        } catch (IOException e) {
+        } catch (IOException|ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -69,7 +74,8 @@ public class ServerBehaviour {
     private void broadcastResults() throws IOException {
         HashMap<String, GridModel> gridMap = new HashMap<String, GridModel>();
         for(int i = 0; i < numPlayers; i++){
-            gridMap.put("PLAYER_" + i, grids.get(i));
+            String playerName = sockets.get(i).getName();
+            gridMap.put(playerName, grids.get(i));
         }
         GameResult result = new GameResult(gridMap);
         broadcast(new MsgGameFinished(result));
@@ -86,7 +92,7 @@ public class ServerBehaviour {
                         MsgPlaceLetter placeLetterMsg = null;
                         try {
                             placeLetterMsg = (MsgPlaceLetter) receiveFromPlayer(sockets.get(playerIndex));
-                        } catch (IOException e) {
+                        } catch (IOException|ClassNotFoundException e) {
                             e.printStackTrace();
                         }
                         synchronized (grids){
@@ -143,7 +149,7 @@ public class ServerBehaviour {
         System.out.println("    Sent message to " + socket.getName() + ": " + msg);
     }
 
-    private Msg<ClientMsg> receiveFromPlayer(PlayerSocket socket) throws IOException {
+    private Msg<ClientMsg> receiveFromPlayer(PlayerSocket socket) throws IOException, ClassNotFoundException {
         System.out.println("Waiting for message from " + socket.getName() + " ... ");
         Msg<ClientMsg> msg = socket.receiveMessage();
         System.out.println("    Received message from " + socket.getName() + ": " + msg);
@@ -160,6 +166,9 @@ public class ServerBehaviour {
 
 
 
+    interface GameFinishedListener {
+        void gameFinished(GameObject game);
+    }
 
 
 

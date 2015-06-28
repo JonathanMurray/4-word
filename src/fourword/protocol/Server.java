@@ -11,15 +11,17 @@ import java.util.List;
 /**
  * Created by jonathan on 2015-06-23.
  */
-public class Server {
+public class Server implements ServerGameBehaviour.GameFinishedListener {
 
     public static final int PORT = 4444;
     public static final String IP_ADDRESS = "192.168.1.2";
 
-    private List<String> players = new ArrayList<String>();
+    private List<String> playerNames = new ArrayList<String>();
 //    private List<LobbyPlayer> lobbyState = new ArrayList<LobbyPlayer>();
-    private List<GameObject> games = new ArrayList<GameObject>();
-    private HashMap<String, Lobby> lobbies = new HashMap<String, Lobby>();
+//    private List<GameObject> games = new ArrayList<GameObject>();
+    private HashMap<String, Lobby> hostLobbyMap = new HashMap<String, Lobby>();
+
+    private int freeBotIndex = 1;
 
 //    private final static int NUM_COLS = 2;
 //    private final static int NUM_ROWS = 2;
@@ -28,9 +30,13 @@ public class Server {
 //    private final int numHumans;
 //    private final int numBots;
     private ServerSocket serverSocket;
-    private List<PlayerSocket> sockets = new ArrayList<PlayerSocket>();
-    private HashMap<String, RemoteSocket> nameSocketMap = new HashMap<String, RemoteSocket>();
+//    private List<PlayerSocket> sockets = new ArrayList<PlayerSocket>();
+    private HashMap<String, PlayerSocket> nameSocketMap = new HashMap<String, PlayerSocket>();
 //    private List<GridModel> grids = new ArrayList<GridModel>();
+
+//    private List<ServerPlayerThread> playerThreads = new ArrayList<>();
+
+    private HashMap<String, GameObject> hostedGames = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
 //        if (args.length != 1) {
@@ -57,19 +63,47 @@ public class Server {
             while(true){
                 final RemoteSocket socket = RemoteSocket.acceptSocket(serverSocket, 0);
                 System.out.println("Accepted new playerSocket : " + socket);
-                new Thread(new ServerPlayerThread(socket, players, lobbies, nameSocketMap)).start();
+                ServerPlayerThread newPlayerThread = new ServerPlayerThread(this, socket, playerNames, hostLobbyMap, nameSocketMap);
+//                playerThreads.add(newPlayerThread);
+                new Thread(newPlayerThread).start();
             }
 
 //            setupGame();
-//            new ServerBehaviour(sockets, grids).runGameLoop();
+//            new ServerGameBehaviour(sockets, grids).runGameLoop();
         } catch (IOException e) {
             e.printStackTrace();
         }  finally {
             close(serverSocket);
-            for(PlayerSocket socket : sockets){
-                socket.close();
-            }
+//            for(PlayerSocket socket : sockets){
+//                socket.close();
+//            }
         }
+    }
+
+    void startGameHostedBy(String hostName, int numPlayers, int numCols, int numRows){
+        hostedGames.put(hostName, new GameObject(numPlayers, hostName, numCols, numRows));
+    }
+
+    boolean joinGameHostedBy(String hostName, PlayerSocket joiningSocket){
+        GameObject game = hostedGames.get(hostName);
+        game.join(joiningSocket);
+        if(game.isReadyToStart()){
+            ServerGameBehaviour gameThread = new ServerGameBehaviour(this, game);
+            new Thread(gameThread).start();
+            return true;
+        }
+        return false;
+    }
+
+    String generateBotName(){
+        boolean alreadyTaken = true;
+        String name = "";
+        while(alreadyTaken){
+            name = "BOT_" + freeBotIndex;
+            alreadyTaken = playerNames.contains(name);
+            freeBotIndex ++;
+        }
+        return name;
     }
 
 
@@ -131,11 +165,11 @@ public class Server {
         }
     }
 
-    private void broadcast(Msg msg) throws IOException {
-        for(PlayerSocket socket : sockets){
-            sendToPlayer(socket, msg);
-        }
-    }
+//    private void broadcast(Msg msg) throws IOException {
+//        for(PlayerSocket socket : sockets){
+//            sendToPlayer(socket, msg);
+//        }
+//    }
 
     private void close(Closeable closeable){
         try {
@@ -156,5 +190,17 @@ public class Server {
         System.out.println("----------- Multiplayer_Server -----------");
         System.out.println("------------------------------------------");
         System.out.println();
+    }
+
+    @Override
+    public void gameFinished(GameObject game) {
+        for(PlayerSocket socket : game.playerSockets){
+            if(socket.isRemote()){
+                RemoteSocket remoteSocket = (RemoteSocket) socket;
+                new Thread(
+                        new ServerPlayerThread(this, remoteSocket, playerNames, hostLobbyMap, nameSocketMap)).start();
+            }
+
+        }
     }
 }

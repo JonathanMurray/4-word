@@ -29,12 +29,12 @@ public class AI {
         assertIsInitialized();
         Cell randomEmptyCell;
         switch (msg.type()){
-            case PICK_AND_PLACE_LETTER:
+            case DO_PICK_AND_PLACE_LETTER:
                 char letter = randomLetter();
                 randomEmptyCell = randomEmptyCell();
                 grid.setCharAtCell(letter, randomEmptyCell);
                 return new MsgPickAndPlaceLetter(letter, randomEmptyCell);
-            case PLACE_LETTER:
+            case DO_PLACE_LETTER:
                 randomEmptyCell = randomEmptyCell();
                 grid.setCharAtCell(((MsgRequestPlaceLetter)msg).letter, randomEmptyCell);
                 return new MsgPlaceLetter(randomEmptyCell);

@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"/>
 
     <Button
-            android:onClick="clickedStartGame"
+            android:onClick="clickedCreateGame"
             android:text="Create new game"
             android:textSize="20sp"
             android:layout_width="fill_parent"

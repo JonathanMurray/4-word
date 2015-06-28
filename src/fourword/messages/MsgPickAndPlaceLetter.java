@@ -12,7 +12,15 @@ public class MsgPickAndPlaceLetter extends Msg<ClientMsg> {
 
     public MsgPickAndPlaceLetter(char letter, Cell cell) {
         super(ClientMsg.PICK_AND_PLACE_LETTER);
-        this.letter = 0;
-        this.cell = null;
+        if(letter == 0 || cell == null){
+            throw new IllegalArgumentException("" + letter + " , " + cell);
+        }
+        this.letter = letter;
+        this.cell = cell;
     }
+
+    public String toString(){
+        return "MsgPickAndPlace{" + letter + ", " + cell + "}";
+    }
+
 }

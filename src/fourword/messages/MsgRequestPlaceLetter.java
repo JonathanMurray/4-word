@@ -8,7 +8,7 @@ public class MsgRequestPlaceLetter extends Msg<ServerMsg> {
     public String playerName;
 
     public MsgRequestPlaceLetter(char letter, String playerName) {
-        super(ServerMsg.PLACE_LETTER);
+        super(ServerMsg.DO_PLACE_LETTER);
         this.letter = letter;
         this.playerName = playerName;
     }

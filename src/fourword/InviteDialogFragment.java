@@ -18,7 +18,6 @@ public class InviteDialogFragment extends DialogFragment{
     private Bundle args;
 
     public final static String INVITER_NAME = "INVITER_NAME";
-    public final static String PLAYER_NAME = "PLAYER_NAME";
 
     @Override
     public void setArguments(Bundle args) {

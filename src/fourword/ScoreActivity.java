@@ -1,22 +1,26 @@
 package fourword;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import com.example.android_test.R;
-import fourword.model.Dictionary;
-import fourword.model.GameResult;
-import fourword.model.GridModel;
-import fourword.model.ScoreCalculator;
+import fourword.messages.Msg;
+import fourword.messages.MsgListener;
+import fourword.messages.MsgText;
+import fourword.messages.ServerMsg;
+import fourword.model.*;
 import org.andengine.util.debug.Debug;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 /**
  * Created by jonathan on 2015-06-24.
  */
-public class ScoreActivity extends Activity {
+public class ScoreActivity extends Activity implements MsgListener<ServerMsg>{
 
     private ScoreCalculator scoreCalculator = new ScoreCalculator(new Dictionary());
 
@@ -24,18 +28,26 @@ public class ScoreActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.score_screen);
+        Connection.instance().setMessageListener(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        GameResult result = (GameResult) getIntent().getExtras().get("data");
+        GameResult result = (GameResult) getIntent().getSerializableExtra("data");
+        if(result == null){
+            result = MockupFactory.createResult();
+        }
         String text = buildString(result);
         Debug.d("Finding textView ...");
         TextView textView = ((TextView) findViewById(R.id.info_text));
         Debug.d(textView.toString());
         Debug.d("rendering result text ...");
         textView.setText(text);
+    }
+
+    public void clickedReturn(View view){
+        ChangeActivity.change(this, MenuActivity.class, new Bundle());
     }
 
     private String buildString(GameResult result){
@@ -64,5 +76,21 @@ public class ScoreActivity extends Activity {
         }
         Debug.d(sb.toString());
         return sb.toString();
+    }
+
+    @Override
+    public boolean handleMessage(Msg<ServerMsg> msg) {
+        switch (msg.type()){
+            case YOU_ARE_INVITED:
+                String inviterName = ((MsgText)msg).text;
+                DialogFragment dialog = new InviteDialogFragment();
+                Bundle args = new Bundle();
+                args.putString(InviteDialogFragment.INVITER_NAME, inviterName);
+                dialog.setArguments(args);
+                dialog.show(getFragmentManager(), "Invitation");
+                return true;
+            default:
+                throw new RuntimeException(msg.toString());
+        }
     }
 }

@@ -1,6 +1,7 @@
 package fourword.messages;
 
 import fourword.model.LobbyPlayer;
+import fourword.protocol.Lobby;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,15 +10,15 @@ import java.util.List;
  * Created by jonathan on 2015-06-26.
  */
 public class MsgLobbyState extends Msg {
-    public HashMap<String, LobbyPlayer> lobbyPlayers;
+    public final Lobby lobby;
 
-    public MsgLobbyState(HashMap<String, LobbyPlayer> lobbyPlayers) {
+    public MsgLobbyState(Lobby lobby) {
         super(ServerMsg.LOBBY_STATE);
-        this.lobbyPlayers = lobbyPlayers;
+        this.lobby = lobby;
     }
 
     public String toString(){
-        return "MsgLobbyState(" + lobbyPlayers + ")";
+        return "MsgLobbyState(" + lobby + ")";
     }
 
 }

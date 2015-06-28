@@ -6,10 +6,11 @@ package fourword.messages;
 public enum ServerMsg implements MsgType {
     OK,
     NO,
-    INVITE,
+    YOU_ARE_INVITED,
+    YOU_WERE_KICKED,
 
-    PLACE_LETTER,
-    PICK_AND_PLACE_LETTER,
+    DO_PLACE_LETTER,
+    DO_PICK_AND_PLACE_LETTER,
     GAME_FINISHED,
     LOBBY_STATE,
     GAME_IS_STARTING,

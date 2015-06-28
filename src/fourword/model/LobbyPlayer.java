@@ -6,18 +6,30 @@ import java.io.Serializable;
  * Created by jonathan on 2015-06-27.
  */
 public class LobbyPlayer implements Serializable, Cloneable {
-    public String name;
-    public boolean isHuman;
+    final public String name;
+    final public boolean isHuman;
     public boolean hasConnected;
 
-    public LobbyPlayer(String name, boolean isHuman, boolean hasConnected) {
+    private LobbyPlayer(String name, boolean isHuman, boolean hasConnected) {
         this.name = name;
         this.isHuman = isHuman;
         this.hasConnected = hasConnected;
     }
 
+    public static LobbyPlayer connectedHuman(String name){
+        return new LobbyPlayer(name, true, true);
+    }
+
+    public static LobbyPlayer pendingHuman(String name){
+        return new LobbyPlayer(name, true, false);
+    }
+
+    public static LobbyPlayer bot(String name){
+        return new LobbyPlayer(name, false, true);
+    }
+
     public String toString(){
-        return "LobbyPlayer{" + name + ", isHuman: " + isHuman + ", hasCOnnected: " + hasConnected + "}";
+        return "P{" + name + ", hum: " + isHuman + ", conn: " + hasConnected + "}";
     }
 
     public LobbyPlayer getCopy(){

@@ -21,6 +21,7 @@ public class GridModel implements Serializable {
         this.numRows = numRows;
     }
 
+
     public void setCharAtCell(char ch, Cell cell){
         assertIsLetter(ch);
         charCells[cell.x()][cell.y()] = ch;

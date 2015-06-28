@@ -1,28 +1,29 @@
 package fourword;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
 import fourword.messages.*;
-import fourword.model.LobbyPlayer;
+import fourword.protocol.Lobby;
 import org.andengine.util.debug.Debug;
-
-import java.util.HashMap;
 
 /**
  * Created by jonathan on 2015-06-25.
  */
 public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
 
-    private String playerName;
     private boolean isPlayerHost;
 
-    private HashMap<String, LobbyPlayer> lobbyState = new HashMap<>();
+    private Lobby lobby;
     private boolean waitingForServer;
 
     public final static String IS_HOST = "IS_HOST"; //Instead of R.string since the string is also used by a dialogfragment
@@ -33,7 +34,6 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lobby);
 
-        playerName = getIntent().getStringExtra(getString(R.string.PLAYER_NAME));
         isPlayerHost = getIntent().getBooleanExtra(IS_HOST, false);
         Debug.e("lobby, isHost: " + isPlayerHost);
 
@@ -41,11 +41,8 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
             findViewById(R.id.lobby_host_section).setVisibility(View.VISIBLE);
         }
 
-        System.out.println("playername from intent: " + playerName);
-        if(playerName == null){
-            throw new RuntimeException(getIntent().toString());
-        }
-        lobbyState.put(playerName, new LobbyPlayer(playerName, true, true));
+        lobby = new Lobby(Account.instance().playerName());
+//        lobby.addPlayer(LobbyPlayer.connectedHuman(thisPlayerName)); //already added in constructor
         updateLayout();
         Connection.instance().setMessageListener(this);
 //        Connection.instance().startOnline(this, IP_ADDRESS, PORT);
@@ -57,18 +54,20 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ViewGroup avatarRow =((ViewGroup)findViewById(R.id.avatar_row));
+                ViewGroup avatarRow = ((ViewGroup) findViewById(R.id.avatar_row));
                 avatarRow.removeAllViews();
                 int i = 0;
-                for(LobbyPlayer player : lobbyState.values()){
+                for (String lobbyPlayer : lobby.sortedNames()) {
                     final int playerIndex = i;
                     ViewGroup avatarView = (ViewGroup) View.inflate(LobbyActivity.this, R.layout.lobby_avatar, null);
-                    ((TextView)avatarView.findViewById(R.id.avatar_name)).setText(player.name);
-                    if(!player.hasConnected){
-                        ((TextView)avatarView.findViewById(R.id.avatar_pending_text)).setText("Pending");
+                    ((TextView) avatarView.findViewById(R.id.avatar_name)).setText(lobbyPlayer);
+                    boolean connected = lobby.getPlayer(lobbyPlayer).hasConnected;
+                    if (!connected) {
+                        ((TextView) avatarView.findViewById(R.id.avatar_pending_text)).setText("Pending");
                     }
-                    if(isPlayerHost){
-                        Button kickButton = ((Button)avatarView.findViewById(R.id.avatar_kick_button));
+                    boolean selfAvatar = lobbyPlayer.equals(Account.instance().playerName());
+                    if (isPlayerHost && !selfAvatar) {
+                        Button kickButton = ((Button) avatarView.findViewById(R.id.avatar_kick_button));
                         kickButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -79,7 +78,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
                     }
 
                     avatarRow.addView(avatarView);
-                    i ++;
+                    i++;
                 }
             }
         });
@@ -87,7 +86,20 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
     }
 
     private void clickedKickPlayer(int playerIndex){
-        Debug.e("Klicked kick player " + playerIndex);
+        String name = lobby.getNameAtIndex(playerIndex);
+        Debug.e("Klicked kick player " + name);
+        Connection.instance().sendMessage(new MsgText<>(ClientMsg.KICK, name));
+    }
+
+    public void hideKeyboard(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                final EditText textInput = (EditText) findViewById(R.id.lobby_player_name);
+                imm.hideSoftInputFromWindow(textInput.getWindowToken(), 0);
+            }
+        });
     }
 
 
@@ -98,6 +110,11 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
         waitingForServer = true;
         setButtonsEnabled(false);
         setInfoText("Waiting for server...");
+        hideKeyboard();
+    }
+
+    public void clickedAddBot(View view){
+        Connection.instance().sendMessage(new Msg(ClientMsg.ADD_BOT));
     }
 
     public void clickedStartGame(View view){
@@ -111,7 +128,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                findViewById(R.id.lobby_add_button).setEnabled(enabled);
+                findViewById(R.id.lobby_add_human_button).setEnabled(enabled);
                 findViewById(R.id.lobby_start_button).setEnabled(enabled);
             }
         });
@@ -151,16 +168,38 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
                 }
 
             case GAME_IS_STARTING:
+                Connection.instance().sendMessage(new Msg(ClientMsg.CONFIRM_GAME_STARTING));
                 Bundle extras = new Bundle();
                 extras.putInt(getString(R.string.NUM_COLS), ((MsgGameIsStarting) msg).numCols);
                 extras.putInt(getString(R.string.NUM_ROWS), ((MsgGameIsStarting) msg).numRows);
                 ChangeActivity.change(this, GameActivity.class, extras);
                 return true;
             case LOBBY_STATE:
-                this.lobbyState = ((MsgLobbyState)msg).lobbyPlayers;
+                this.lobby = ((MsgLobbyState)msg).lobby;
                 updateLayout();
 //                ((TextView)findViewById(R.id.lobby_info_text)).setText("Waiting for more players ...");
                 return true;
+
+            case YOU_WERE_KICKED:
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog dialog = new AlertDialog.Builder(LobbyActivity.this)
+                                .setCancelable(false)
+                                .setTitle("You were kicked!")
+                                .setMessage("You have been kicked from the lobby by the hosting player.")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
+                                    }
+                                })
+                                .create();
+                        dialog.show();
+                    }
+                });
+                return true;
+
             default:
                 Debug.e("Received in lobby: " + msg.toString());
                 //It may happen that server sends game-related messages even though we are still in the lobby.

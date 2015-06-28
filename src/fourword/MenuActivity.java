@@ -1,7 +1,6 @@
 package fourword;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.View;
@@ -14,21 +13,18 @@ import fourword.messages.*;
  */
 public class MenuActivity extends Activity implements MsgListener<ServerMsg>{
 
-    private String playerName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        playerName = getIntent().getStringExtra(getString(R.string.PLAYER_NAME));
         setContentView(R.layout.menu);
-        ((TextView)findViewById(R.id.menu_name)).setText("Your name: " + playerName);
+        ((TextView)findViewById(R.id.menu_name)).setText("Your name: " + Account.instance().playerName());
         Connection.instance().setMessageListener(this);
     }
 
-    public void clickedStartGame(View view){
-        Connection.instance().sendMessage(new Msg(ClientMsg.START_GAME));
+    public void clickedCreateGame(View view){
+        Connection.instance().sendMessage(new Msg(ClientMsg.CREATE_GAME));
         Bundle extras = new Bundle();
-        extras.putString(getString(R.string.PLAYER_NAME), playerName);
         extras.putBoolean(LobbyActivity.IS_HOST, true);
         ChangeActivity.change(this, LobbyActivity.class, extras);
     }
@@ -36,12 +32,11 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>{
     @Override
     public boolean handleMessage(Msg<ServerMsg> msg) {
         switch (msg.type()){
-            case INVITE:
+            case YOU_ARE_INVITED:
                 String inviterName = ((MsgText)msg).text;
                 DialogFragment dialog = new InviteDialogFragment();
                 Bundle args = new Bundle();
                 args.putString(InviteDialogFragment.INVITER_NAME, inviterName);
-                args.putString(InviteDialogFragment.PLAYER_NAME, playerName);
                 dialog.setArguments(args);
                 dialog.show(getFragmentManager(), "Invitation");
                 return true;

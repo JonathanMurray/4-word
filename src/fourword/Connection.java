@@ -7,6 +7,7 @@ import fourword.messages.ServerMsg;
 import fourword.protocol.Client;
 import fourword.protocol.OfflineClient;
 import fourword.protocol.OnlineClient;
+import org.andengine.util.debug.Debug;
 
 /**
  * Created by jonathan on 2015-06-25.
@@ -34,7 +35,12 @@ public class Connection {
 
 
     public void setMessageListener(MsgListener<ServerMsg> listener){
-        client.setMessageListener(listener);
+        if(client == null){
+            Debug.e("Connection.setMessageListener(), but client has not been initialized yet!");
+        }else{
+            client.setMessageListener(listener);
+        }
+
     }
 
     public void removeMessageListener(){

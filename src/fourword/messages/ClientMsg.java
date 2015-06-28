@@ -8,19 +8,14 @@ public enum ClientMsg implements MsgType {
     LOGIN,
     CREATE_GAME,
     INVITE,
+    ADD_BOT,
     KICK,
     JOIN,
     DECLINE,
     START_GAME,
     CLOSE_GAME,
+    CONFIRM_GAME_STARTING,
 
     PLACE_LETTER,
     PICK_AND_PLACE_LETTER;
-
-//    public static Class<?> getClass(ClientMsg type){
-//        switch(type){
-//            case LOGIN:
-//                return Msg.class;
-//        }
-//    }
 }

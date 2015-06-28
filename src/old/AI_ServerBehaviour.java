@@ -41,7 +41,7 @@ public class AI_ServerBehaviour {
 //    public Msg act(ClientMsg msgFromClient){
 //        switch(msgFromClient.action()){
 //
-//            case PICK_AND_PLACE_LETTER:
+//            case DO_PICK_AND_PLACE_LETTER:
 //                playerGrid.setCharAtCell(msgFromClient.letter(), msgFromClient.cell());
 //                for(AI ai : AIs){
 //                    ai.placeLetter(msgFromClient.letter());
@@ -53,7 +53,7 @@ public class AI_ServerBehaviour {
 //                    return aiPickAndPlaceAndOthersPlace(currentAI_index);
 //                }
 //
-//            case PLACE_LETTER:
+//            case DO_PLACE_LETTER:
 //                playerGrid.setCharAtCell(pickedLetterByAI, msgFromClient.cell());
 //                numFilledCells ++;
 //                if(numFilledCells == numCells){

@@ -12,13 +12,17 @@
             android:layout_width="fill_parent"
             android:layout_height="50dp"/>
 
+    <TextView
+            android:id="@+id/lobby_info_text"
+            android:textColor="@android:color/holo_red_dark"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"/>
+
     <LinearLayout
             android:id="@+id/avatar_row"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -40,30 +44,33 @@
 
             <EditText
                     android:id="@+id/lobby_player_name"
-                    android:hint="player name"
+                    android:hint="name"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"/>
             <Button
-                    android:id="@+id/lobby_add_button"
+                    android:id="@+id/lobby_add_human_button"
                     android:onClick="clickedAddPlayer"
                     android:text="Add!"
                     android:layout_width="160dp"
-                    android:layout_height="80dp"/>
+                    android:layout_height="70dp"/>
 
         </LinearLayout>
+
+        <Button
+                android:id="@+id/lobby_add_bot_button"
+                android:onClick="clickedAddBot"
+                android:text="Add a bot!"
+                android:layout_width="fill_parent"
+                android:layout_height="70dp"/>
 
         <Button
                 android:id="@+id/lobby_start_button"
                 android:onClick="clickedStartGame"
                 android:text="Start game!"
                 android:layout_width="fill_parent"
-                android:layout_height="80dp"/>
+                android:layout_height="70dp"/>
 
-        <TextView
-                android:id="@+id/lobby_info_text"
-                android:textColor="@android:color/holo_red_dark"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+
 
 
     </LinearLayout>

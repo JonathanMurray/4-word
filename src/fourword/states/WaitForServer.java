@@ -50,9 +50,9 @@ public class WaitForServer extends GameState {
     @Override
     public StateTransition handleServerMessage(Msg<ServerMsg> msg) {
         switch(msg.type()){
-            case PLACE_LETTER:
+            case DO_PLACE_LETTER:
                 return StateTransition.change(StateName.PLACE_OPPONENTS_LETTER, msg);
-            case PICK_AND_PLACE_LETTER:
+            case DO_PICK_AND_PLACE_LETTER:
                 return StateTransition.change(StateName.PICK_AND_PLACE_LETTER);
             case GAME_FINISHED:
                 return StateTransition.change(StateName.SCORE_SCREEN, msg);
@@ -61,7 +61,7 @@ public class WaitForServer extends GameState {
                 activity.setInfoText("Waiting for " + opponentName + " to make a move...");
                 return StateTransition.STAY_HERE;
         }
-        throw new RuntimeException();
+        throw new RuntimeException(msg.toString());
     }
 
     public String toString(){

@@ -11,6 +11,7 @@ import java.util.HashMap;
 public class GameResult implements Serializable{
     private HashMap<String, GridModel> grids;
 
+
     public GameResult(HashMap<String, GridModel> grids){
         this.grids = grids;
     }

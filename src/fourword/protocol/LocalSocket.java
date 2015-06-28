@@ -4,6 +4,7 @@ import fourword.messages.ClientMsg;
 import fourword.messages.MsgListener;
 import fourword.messages.Msg;
 import fourword.messages.ServerMsg;
+import fourword.model.GridModel;
 import org.andengine.extension.multiplayer.protocol.adt.message.client.ClientMessage;
 import org.andengine.util.debug.Debug;
 
@@ -15,14 +16,13 @@ import java.util.Queue;
 /**
  * Created by jonathan on 2015-06-26.
  */
-public class LocalSocket implements PlayerSocket, MsgListener<ClientMsg> {
+public class LocalSocket extends PlayerSocket implements MsgListener<ClientMsg> {
 
-    private final String name;
     private final MsgListener<ServerMsg> serverMsgListener;
     private final Queue<Msg<ClientMsg>> clientMsgQueue = new LinkedList<Msg<ClientMsg>>();
 
     public LocalSocket(String name, MsgListener<ServerMsg> serverMsgListener){
-        this.name = name;
+        super(name);
         this.serverMsgListener = serverMsgListener;
     }
 
@@ -57,8 +57,13 @@ public class LocalSocket implements PlayerSocket, MsgListener<ClientMsg> {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public void initializeWithGrid(GridModel grid) {
+        //DO nothing
+    }
+
+    @Override
+    public boolean isRemote() {
+        return false;
     }
 
     @Override

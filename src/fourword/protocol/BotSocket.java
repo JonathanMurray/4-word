@@ -3,6 +3,7 @@ package fourword.protocol;
 import fourword.messages.ClientMsg;
 import fourword.messages.Msg;
 import fourword.messages.ServerMsg;
+import fourword.model.GridModel;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -10,20 +11,36 @@ import java.net.UnknownHostException;
 /**
  * Created by jonathan on 2015-06-26.
  */
-public class BotSocket implements PlayerSocket{
+public class BotSocket extends PlayerSocket{
 
     private AI ai;
     private Msg<ClientMsg> replyFromAI;
-    private String name;
 
-    public BotSocket(AI ai, int index){
+    public BotSocket(AI ai, String name){
+        super(name);
         this.ai = ai;
-        this.name = "Bot_" + index;
+    }
+
+    public void initializeWithGrid(GridModel grid){
+        ai.initialize(grid);
+    }
+
+    @Override
+    public boolean isRemote() {
+        return false;
     }
 
     @Override
     public void sendMessage(Msg<ServerMsg> msg) {
-        replyFromAI = ai.handleServerMessageAndProduceReply(msg);
+        System.out.println("   server-msg to " + getName() + ": " + msg);
+        switch (msg.type()){
+            case GAME_IS_STARTING:
+                replyFromAI = new Msg(ClientMsg.CONFIRM_GAME_STARTING);
+                break;
+            default:
+                replyFromAI = ai.handleServerMessageAndProduceReply(msg);
+                break;
+        }
     }
 
     @Override
@@ -33,6 +50,7 @@ public class BotSocket implements PlayerSocket{
         }
         sleep(500);
         Msg<ClientMsg> msg = replyFromAI;
+        System.out.println("Receive client-msg from " + getName() + ": " + msg);
         replyFromAI = null;
         return msg;
     }
@@ -49,11 +67,6 @@ public class BotSocket implements PlayerSocket{
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     private void sleep(int millis){

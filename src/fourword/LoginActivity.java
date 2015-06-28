@@ -69,12 +69,8 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
     }
 
     private void startMenuActivity(String userName){
-        Bundle extras = new Bundle();
-        extras.putString(getString(R.string.PLAYER_NAME), userName);
-        ChangeActivity.change(this, MenuActivity.class, extras);
+        Account.instance().init(userName);
+        ChangeActivity.change(this, MenuActivity.class, new Bundle());
     }
-
-
-
 
 }
