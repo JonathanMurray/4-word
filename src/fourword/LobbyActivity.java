@@ -49,6 +49,31 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
 //        Connection.instance().startOffline(this, 2, 2, 3);
     }
 
+    @Override
+    public void onBackPressed() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog dialog = new AlertDialog.Builder(LobbyActivity.this)
+                        .setTitle("Leave lobby?")
+                        .setMessage("Are you sure you want to leave the lobby?")
+                        .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Connection.instance().sendMessage(new Msg(ClientMsg.LEAVE_LOBBY));
+                                ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
+                            }
+                        })
+                        .setNegativeButton("Stay", new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int which) {
+                                //Do nothing
+                            }
+                        })
+                        .create();
+                dialog.show();
+            }
+        });
+    }
+
     private void updateLayout(){
         Debug.e("LobbyActivity.updateLayout()");
         runOnUiThread(new Runnable() {
@@ -182,22 +207,22 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
 
             case YOU_WERE_KICKED:
                 runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlertDialog dialog = new AlertDialog.Builder(LobbyActivity.this)
-                                .setCancelable(false)
-                                .setTitle("You were kicked!")
-                                .setMessage("You have been kicked from the lobby by the hosting player.")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
-                                    }
-                                })
-                                .create();
-                        dialog.show();
-                    }
-                });
+                @Override
+                public void run() {
+                    AlertDialog dialog = new AlertDialog.Builder(LobbyActivity.this)
+                            .setCancelable(false)
+                            .setTitle("You were kicked!")
+                            .setMessage("You have been kicked from the lobby by the hosting player.")
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
+                                }
+                            })
+                            .create();
+                    dialog.show();
+                }
+            });
                 return true;
 
             default:

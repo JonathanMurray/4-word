@@ -52,7 +52,11 @@ public class OnlineClient extends Client {
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } finally {
-                    close(socket);
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     close(fromServer);
                     close(toServer);
                 }

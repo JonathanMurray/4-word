@@ -29,7 +29,17 @@ public class LobbyPlayer implements Serializable, Cloneable {
     }
 
     public String toString(){
-        return "P{" + name + ", hum: " + isHuman + ", conn: " + hasConnected + "}";
+        String info;
+        if(isHuman){
+            if(hasConnected){
+                info = "connected";
+            }else{
+                info = "invited";
+            }
+        }else{
+            info = "bot";
+        }
+        return name + "-" + info;
     }
 
     public LobbyPlayer getCopy(){

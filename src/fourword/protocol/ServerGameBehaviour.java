@@ -23,6 +23,7 @@ public class ServerGameBehaviour implements Runnable{
     private final int numCols;
     private final int numRows;
     private final int numCells;
+    private final GameFinishedListener listener;
 
     public ServerGameBehaviour(GameFinishedListener listener, GameObject game){
         this.sockets = game.playerSockets;
@@ -32,6 +33,7 @@ public class ServerGameBehaviour implements Runnable{
         numCells = numCols * numRows;
         numPlayers = sockets.size();
         this.game = game;
+        this.listener = listener;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class ServerGameBehaviour implements Runnable{
                     currentPlayerIndex = (currentPlayerIndex + 1) % numPlayers;
                 }
             }
-            game.setFinished();
+            listener.gameFinished(game);
             System.out.println("Game is over!");
         } catch (IOException|ClassNotFoundException e) {
             e.printStackTrace();

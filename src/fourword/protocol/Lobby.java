@@ -49,6 +49,23 @@ public class Lobby implements Serializable{
         return bots;
     }
 
+    public ArrayList<LobbyPlayer> getAllHumans(){
+        ArrayList<LobbyPlayer> humans = new ArrayList<>();
+        for(LobbyPlayer player : players.values()){
+            if(player.isHuman){
+                humans.add(player);
+            }
+        }
+        return humans;
+    }
+
+    public void setNewHost(String host){
+        if(!sortedNames.contains(host)){
+            throw new IllegalArgumentException("host " + host + " is not in lobby: " + sortedNames);
+        }
+        hostingPlayer = host;
+    }
+
     public String getHost(){
         return hostingPlayer;
     }

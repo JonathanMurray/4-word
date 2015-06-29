@@ -37,6 +37,9 @@ public class BotSocket extends PlayerSocket{
             case GAME_IS_STARTING:
                 replyFromAI = new Msg(ClientMsg.CONFIRM_GAME_STARTING);
                 break;
+            case YOU_WERE_KICKED:
+                //No reply needed. Just need to consume message
+                break;
             default:
                 replyFromAI = ai.handleServerMessageAndProduceReply(msg);
                 break;

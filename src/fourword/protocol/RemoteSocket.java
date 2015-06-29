@@ -108,4 +108,8 @@ public class RemoteSocket extends PlayerSocket {
         return clientSocket.getInetAddress();
     }
 
+    public String toString(){
+        return "RemoteSocket{" + getName() + ", " + clientSocket + (isInvited()? ", " + getInvitedBy() : "") + "}";
+    }
+
 }

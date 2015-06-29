@@ -4,6 +4,7 @@ import fourword.messages.*;
 import fourword.model.LobbyPlayer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,14 +19,16 @@ public class ServerPlayerThread implements Runnable {
     private final static int NUM_ROWS = 1;
 
     private Object playersLock = new Object();
+    private boolean isLoggedIn;
 
     private final Server server;
     private final List<String> playerNames;
     private final HashMap<String, Lobby> hostLobbyMap;
     private final HashMap<String, PlayerSocket> nameSocketMap;
 
-    ServerPlayerThread(Server server, RemoteSocket socket, List<String> playerNames, HashMap<String, Lobby> hostLobbyMap, HashMap<String, PlayerSocket> nameSocketMap) {
+    ServerPlayerThread(Server server, boolean isLoggedIn, RemoteSocket socket, List<String> playerNames, HashMap<String, Lobby> hostLobbyMap, HashMap<String, PlayerSocket> nameSocketMap) {
         this.server = server;
+        this.isLoggedIn = isLoggedIn;
         this.thisSocket = socket;
         this.playerNames = playerNames;
         this.hostLobbyMap = hostLobbyMap;
@@ -35,7 +38,11 @@ public class ServerPlayerThread implements Runnable {
     @Override
     public void run() {
         try{
-            waitForSucessfulLogin();
+            if(!isLoggedIn){
+                waitForSucessfulLogin();
+                isLoggedIn = true;
+            }
+
 
             while(true){
 
@@ -50,20 +57,27 @@ public class ServerPlayerThread implements Runnable {
                             otherLobby.setConnected(thisSocket.getName());
                             broadcastLobbyState(otherLobby);
                             thisSocket.joinLobby(otherLobby);
+                            server.printState();
                             break;
                         case DECLINE:
                             thisSocket.removeInvite();
                             otherLobby.removePlayer(thisSocket.getName());
                             broadcastLobbyState(otherLobby);
+                            server.printState();
                             break;
                         default:
                             throw new RuntimeException(msg.toString());
                     }
                 }else{
                     switch (msg.type()){
+                        case LOGOUT:
+                            playerNames.remove(thisSocket.getName());
+                            nameSocketMap.remove(thisSocket.getName());
+                            break;
                         case CREATE_GAME:
                             thisSocket.joinLobby(new Lobby(thisSocket.getName()));
                             hostLobbyMap.put(thisSocket.getName(), thisSocket.getLobby());
+                            server.printState();
                             break;
                         case INVITE:
                             handleInvite((MsgText) msg);
@@ -79,9 +93,13 @@ public class ServerPlayerThread implements Runnable {
                                 thisSocket.getLobby().addPlayer(LobbyPlayer.bot(botName));
                                 broadcastLobbyState(thisSocket.getLobby());
                             }
+                            server.printState();
                             break;
                         case KICK:
                             handleKick((MsgText) msg);
+                            break;
+                        case LEAVE_LOBBY:
+                            leaveLobby(thisSocket);
                             break;
                         case START_GAME:
                             Lobby lobby = thisSocket.getLobby();
@@ -96,6 +114,7 @@ public class ServerPlayerThread implements Runnable {
                                 for(LobbyPlayer bot : lobby.getAllBots()){
                                     server.joinGameHostedBy(thisSocket.getName(), nameSocketMap.get(bot.name));
                                 }
+                                server.printState();
                             }else{
                                 thisSocket.sendMessage(new MsgText(ServerMsg.NO, "Not enough playerNames!"));
                             }
@@ -106,6 +125,7 @@ public class ServerPlayerThread implements Runnable {
                                 hostLobbyMap.remove(thisSocket.getLobby().getHost());
                             }
                             thisSocket.leaveLobby();
+                            server.printState();
                             return; //Return from this runnable. It's job is done!
                     }
                 }
@@ -146,6 +166,7 @@ public class ServerPlayerThread implements Runnable {
                     nameSocketMap.put(name, thisSocket);
                     System.out.println("Successful login: " + name);
                     System.out.println("Players: " + playerNames);
+                    server.printState();
                 }
                 return;
             }else{
@@ -159,10 +180,39 @@ public class ServerPlayerThread implements Runnable {
         String kickedPlayer = kickMsg.text;
         PlayerSocket kickedSocket = nameSocketMap.get(kickedPlayer);
         kickedSocket.sendMessage(new Msg(ServerMsg.YOU_WERE_KICKED));
-        kickedSocket.leaveLobby();
-        thisSocket.getLobby().removePlayer(kickedPlayer);
-        broadcastLobbyState(thisSocket.getLobby());
+//        kickedSocket.leaveLobby();
+//        thisSocket.getLobby().removePlayer(kickedPlayer);
+//        if(!kickedSocket.isRemote()){
+//            playerNames.remove(kickedSocket.getName());
+//        }
+//        broadcastLobbyState(thisSocket.getLobby());
+//        server.printState();
+
+        leaveLobby(kickedSocket);
     }
+
+    private void leaveLobby(PlayerSocket socket) throws IOException {
+        Lobby lobby = socket.getLobby();
+        boolean isHost = socket.isHostOfLobby();
+        socket.leaveLobby();
+        lobby.removePlayer(socket.getName());
+        if(!socket.isRemote()){
+            playerNames.remove(socket.getName());
+            nameSocketMap.remove(socket.getName());
+        }
+        if(isHost){
+            ArrayList<LobbyPlayer> otherHumansInLobby = lobby.getAllHumans();
+            if(otherHumansInLobby.isEmpty()){
+                hostLobbyMap.remove(socket.getName());
+            }else{
+                String newHost = otherHumansInLobby.get(0).name;
+                lobby.setNewHost(newHost);
+            }
+        }
+        broadcastLobbyState(lobby);
+        server.printState();
+    }
+
 
 
     //Not sent to bots
@@ -207,6 +257,7 @@ public class ServerPlayerThread implements Runnable {
             invitedSocket.sendMessage(new MsgText(ServerMsg.YOU_ARE_INVITED, inviterName));
             broadcastLobbyState(thisSocket.getLobby());
             invitedSocket.setInvitedBy(inviterName);
+            server.printState();
         }
     }
 

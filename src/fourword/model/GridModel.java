@@ -104,4 +104,8 @@ public class GridModel implements Serializable {
         s.append(" ----------");
         return s.toString();
     }
+
+    public String shortString(){
+        return numCols + "x" + numRows;
+    }
 }

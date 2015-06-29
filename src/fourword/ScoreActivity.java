@@ -46,7 +46,16 @@ public class ScoreActivity extends Activity implements MsgListener<ServerMsg>{
         textView.setText(text);
     }
 
+    @Override
+    public void onBackPressed() {
+        goToMenu();
+    }
+
     public void clickedReturn(View view){
+        goToMenu();
+    }
+
+    private void goToMenu(){
         ChangeActivity.change(this, MenuActivity.class, new Bundle());
     }
 

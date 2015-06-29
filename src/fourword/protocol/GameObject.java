@@ -14,7 +14,6 @@ public class GameObject {
     public ArrayList<GridModel> grids = new ArrayList<>();
     private final int numCols;
     private final int numRows;
-    private boolean hasFinished = false;
 
 
     public GameObject(int numPlayers, String host, int numCols, int numRows){
@@ -31,15 +30,16 @@ public class GameObject {
         socket.initializeWithGrid(grid);
     }
 
+    public String getHostName(){
+        return host;
+    }
+
     public boolean isReadyToStart(){
         return playerSockets.size() == numPlayers;
     }
 
-    public boolean hasFinished(){
-        return hasFinished;
+    public String toString(){
+        return "Game(" + host + "){#" + numPlayers + ", " + playerSockets + "}";
     }
 
-    public void setFinished(){
-        hasFinished = true;
-    }
 }

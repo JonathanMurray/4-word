@@ -16,14 +16,13 @@ import java.util.HashMap;
 public abstract class PlayerSocket{
 
     private String name;
+    private String invitedBy;
+    private Lobby currentLobby;
 
     public abstract void sendMessage(Msg<ServerMsg> msg) throws IOException;
     public abstract Msg<ClientMsg> receiveMessage() throws IOException, ClassNotFoundException;
     public abstract void close();
     public abstract InetAddress getInetAddress();
-
-    private String invitedBy;
-    private Lobby currentLobby;
 
     public PlayerSocket(String name){
         this.name = name;
@@ -62,6 +61,10 @@ public abstract class PlayerSocket{
         return currentLobby;
     }
 
+    public boolean isHostOfLobby(){
+        return currentLobby.getHost().equals(getName());
+    }
+
     public void leaveLobby()  {
         currentLobby = null;
     }
@@ -73,4 +76,8 @@ public abstract class PlayerSocket{
     }
 
     public abstract boolean isRemote();
+
+    public String toString(){
+        return name + (isInvited() ? "(inv. by " + invitedBy + ")" : "");
+    }
 }

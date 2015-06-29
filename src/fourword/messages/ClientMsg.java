@@ -6,7 +6,9 @@ package fourword.messages;
 public enum ClientMsg implements MsgType {
 
     LOGIN,
+    LOGOUT,
     CREATE_GAME,
+    LEAVE_LOBBY,
     INVITE,
     ADD_BOT,
     KICK,
