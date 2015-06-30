@@ -32,7 +32,7 @@ public class BotSocket extends PlayerSocket{
 
     @Override
     public void sendMessage(Msg<ServerMsg> msg) {
-        System.out.println("   server-msg to " + getName() + ": " + msg);
+        System.out.println("(TO " + getName() + ": " + msg + ")");
         switch (msg.type()){
             case GAME_IS_STARTING:
                 replyFromAI = new Msg(ClientMsg.CONFIRM_GAME_STARTING);
@@ -53,7 +53,7 @@ public class BotSocket extends PlayerSocket{
         }
         sleep(500);
         Msg<ClientMsg> msg = replyFromAI;
-        System.out.println("Receive client-msg from " + getName() + ": " + msg);
+        System.out.println("(FROM " + getName() + ": " + msg + ")");
         replyFromAI = null;
         return msg;
     }

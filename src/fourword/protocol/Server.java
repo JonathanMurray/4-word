@@ -23,7 +23,6 @@ public class Server implements ServerGameBehaviour.GameFinishedListener {
     private HashMap<String, PlayerSocket> nameSocketMap = new HashMap<String, PlayerSocket>();
     private HashMap<String, Lobby> hostLobbyMap = new HashMap<String, Lobby>();
     private HashMap<String, GameObject> hostGameMap = new HashMap<>();
-    private int freeBotIndex = 1;
 
     public static void main(String[] args) throws IOException {
 //        if (args.length != 1) {
@@ -44,10 +43,10 @@ public class Server implements ServerGameBehaviour.GameFinishedListener {
 
             while(true){
                 final RemoteSocket socket = RemoteSocket.acceptSocket(serverSocket, 0);
-                System.out.println("Accepted new playerSocket : " + socket);
+                System.out.println("Accepted new socket: " + socket);
                 printState();
                 boolean isLoggedIn = false;
-                ServerPlayerThread newPlayerThread = new ServerPlayerThread(this, isLoggedIn, socket, playerNames, hostLobbyMap, nameSocketMap);
+                ServerPlayerThread newPlayerThread = new ServerPlayerThread(this, isLoggedIn, socket);
 //                playerThreads.add(newPlayerThread);
                 new Thread(newPlayerThread).start();
             }
@@ -66,9 +65,9 @@ public class Server implements ServerGameBehaviour.GameFinishedListener {
         hostGameMap.put(hostName, new GameObject(numPlayers, hostName, numCols, numRows));
     }
 
-    boolean joinGameHostedBy(String hostName, PlayerSocket joiningSocket){
+    boolean joinGameHostedBy(String hostName, String joiningPlayer){
         GameObject game = hostGameMap.get(hostName);
-        game.join(joiningSocket);
+        game.join(nameSocketMap.get(joiningPlayer));
         if(game.isReadyToStart()){
             ServerGameBehaviour gameThread = new ServerGameBehaviour(this, game);
             new Thread(gameThread).start();
@@ -105,17 +104,34 @@ public class Server implements ServerGameBehaviour.GameFinishedListener {
                 HELPER-METHODS BELOW
       ---------------------------------------  */
 
+    void broadcastOnlineInfo(){
+        try {
+            ArrayList<String> humanNames = new ArrayList<String>();
+            for(PlayerSocket socket : nameSocketMap.values()){
+                if(socket.isRemote()){
+                    humanNames.add(socket.getName());
+                }
+            }
+            broadcastToHumans(new MsgStringList(ServerMsg.ONLINE_PLAYERS, humanNames));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void broadcastToHumans(Msg<ServerMsg> msg) throws IOException {
+        for(PlayerSocket socket : nameSocketMap.values()){
+            if(socket.isRemote()){
+                socket.sendMessage(msg);
+            }
+        }
+    }
+
     private void sleep(int millis){
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    private void sendToPlayer(PlayerSocket socket, Msg msg) throws IOException {
-        socket.sendMessage(msg);
-        System.out.println("    Sent message to " + socket.getName() + ": " + msg);
     }
 
     private void printTitle() {
@@ -134,43 +150,99 @@ public class Server implements ServerGameBehaviour.GameFinishedListener {
                 RemoteSocket remoteSocket = (RemoteSocket) socket;
                 final boolean isLoggedIn = true;
                 new Thread(
-                        new ServerPlayerThread(this, isLoggedIn, remoteSocket, playerNames, hostLobbyMap, nameSocketMap)).start();
+                        new ServerPlayerThread(this, isLoggedIn, remoteSocket)).start();
             }else{
                 //Remote all data for the bot. It's job is done.
                 playerNames.remove(socket.getName());
                 nameSocketMap.remove(socket.getName());
             }
         }
+        broadcastOnlineInfo();
         printState();
     }
 
     public void printState(){
         System.out.println();
-        System.out.println(" -----------------------------------------");
+//        System.out.println(" -----------------------------------------");
         System.out.println("|             Server state:               |");
         System.out.println(" -----------------------------------------");
+        System.out.print(getStateString());
+//        System.out.println(" -----------------------------------------");
         System.out.println();
-        System.out.println(getStateString());
-        System.out.println(" -----------------------------------------");
-        System.out.println("\n");
     }
 
     private String getStateString(){
         StringBuilder sb = new StringBuilder();
-        sb.append("Player names: " + playerNames + "\n\n");
-        sb.append("nameSocketMap:\n");
-        appendMapToString(sb, nameSocketMap).append("\n");
-        sb.append("hostLobbyMap:\n");
-        appendMapToString(sb, hostLobbyMap).append("\n");
-        sb.append("hostGameMap:\n");
-        appendMapToString(sb, hostGameMap).append("\n");
+        sb.append("Players: " + playerNames + "\n");
+        if(nameSocketMap.isEmpty()){
+            sb.append("Sockets: {}\n");
+        }else{
+            sb.append("Sockets:\n");
+            appendMapToString(sb, nameSocketMap);
+        }
+
+        if(hostLobbyMap.isEmpty()){
+            sb.append("Lobbies: {}\n");
+        }else{
+            sb.append("Lobbies:\n");
+            appendMapToString(sb, hostLobbyMap);
+        }
+
+        if(hostGameMap.isEmpty()){
+            sb.append("Games: {}\n");
+        }else{
+            sb.append("Games:\n");
+            appendMapToString(sb, hostGameMap);
+        }
+
         return sb.toString();
     }
 
     private <K,V> StringBuilder appendMapToString(StringBuilder sb, HashMap<K, V> map){
         for(Map.Entry e : map.entrySet()) {
-            sb.append(e.getKey() + ":  " + e.getValue() + "\n");
+            sb.append("\t" + e.getKey() + ":  " + e.getValue() + "\n");
         }
         return sb;
     }
+
+    synchronized Lobby getLobbyOfHost(String invitedBy) {
+        return hostLobbyMap.get(invitedBy);
+    }
+
+    synchronized void removePlayer(String name) throws IOException {
+        playerNames.remove(name);
+        nameSocketMap.remove(name);
+        hostLobbyMap.remove(name);
+        broadcastOnlineInfo();
+    }
+
+    synchronized public void addLobby(String name, Lobby newLobby) {
+        hostLobbyMap.put(name, newLobby);
+    }
+
+    synchronized void addPlayer(String name, PlayerSocket socket) throws IOException {
+        playerNames.add(name);
+        nameSocketMap.put(name, socket);
+        broadcastOnlineInfo();
+    }
+
+    synchronized void removeLobby(String host) {
+        hostLobbyMap.remove(host);
+    }
+
+    synchronized boolean validPlayerName(String name) {
+        return !playerNames.contains(name) && name.length() > 0;
+    }
+
+    synchronized PlayerSocket getSocket(String playerName) {
+        return nameSocketMap.get(playerName);
+    }
+
+    synchronized boolean containsPlayer(String name) {
+        return playerNames.contains(name);
+    }
+
+//    synchronized List<String> getPlayerNames(){
+//        return playerNames;
+//    }
 }

@@ -12,4 +12,8 @@ public class MsgGameFinished extends Msg<ServerMsg> {
         super(ServerMsg.GAME_FINISHED);
         this.result = result;
     }
+
+    public String toString(){
+        return type() + "(" + result + ")";
+    }
 }

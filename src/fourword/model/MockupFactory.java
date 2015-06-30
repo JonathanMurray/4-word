@@ -1,6 +1,7 @@
 package fourword.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by jonathan on 2015-06-29.
@@ -11,7 +12,7 @@ public class MockupFactory {
         HashMap<String,GridModel> grids = new HashMap<>();
         grids.put("PLAYER_1", createGrid(4, 4));
         grids.put("PLAYER_2", createGrid(4, 4));
-        return new GameResult(grids);
+        return new GameResult(grids, new HashSet<String>());
     }
 
     public static GridModel createGrid(int numCols, int numRows){

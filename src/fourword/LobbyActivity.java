@@ -41,7 +41,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
             findViewById(R.id.lobby_host_section).setVisibility(View.VISIBLE);
         }
 
-        lobby = new Lobby(Account.instance().playerName());
+        lobby = new Lobby(Persistent.instance().playerName());
 //        lobby.addPlayer(LobbyPlayer.connectedHuman(thisPlayerName)); //already added in constructor
         updateLayout();
         Connection.instance().setMessageListener(this);
@@ -55,15 +55,15 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
             @Override
             public void run() {
                 AlertDialog dialog = new AlertDialog.Builder(LobbyActivity.this)
-                        .setTitle("Leave lobby?")
-                        .setMessage("Are you sure you want to leave the lobby?")
-                        .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                        .setTitle("Leave lobby")
+                        .setMessage("Are you sure?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 Connection.instance().sendMessage(new Msg(ClientMsg.LEAVE_LOBBY));
                                 ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
                             }
                         })
-                        .setNegativeButton("Stay", new DialogInterface.OnClickListener(){
+                        .setNegativeButton("No", new DialogInterface.OnClickListener(){
                             public void onClick(DialogInterface dialog, int which) {
                                 //Do nothing
                             }
@@ -90,7 +90,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
                     if (!connected) {
                         ((TextView) avatarView.findViewById(R.id.avatar_pending_text)).setText("Pending");
                     }
-                    boolean selfAvatar = lobbyPlayer.equals(Account.instance().playerName());
+                    boolean selfAvatar = lobbyPlayer.equals(Persistent.instance().playerName());
                     if (isPlayerHost && !selfAvatar) {
                         Button kickButton = ((Button) avatarView.findViewById(R.id.avatar_kick_button));
                         kickButton.setOnClickListener(new View.OnClickListener() {

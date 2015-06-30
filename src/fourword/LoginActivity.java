@@ -69,7 +69,7 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
     }
 
     private void startMenuActivity(String userName){
-        Account.instance().init(userName);
+        Persistent.instance().init(userName);
         ChangeActivity.change(this, MenuActivity.class, new Bundle());
     }
 

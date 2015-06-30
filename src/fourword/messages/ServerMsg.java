@@ -14,5 +14,6 @@ public enum ServerMsg implements MsgType {
     GAME_FINISHED,
     LOBBY_STATE,
     GAME_IS_STARTING,
-    WAITING_FOR_PLAYER_MOVE;
+    WAITING_FOR_PLAYER_MOVE,
+    ONLINE_PLAYERS;
 }

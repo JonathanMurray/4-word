@@ -1,19 +1,27 @@
 package fourword.protocol;
 
-import fourword.model.Cell;
-import fourword.model.GameResult;
-import fourword.model.GridModel;
+import fourword.model.*;
 import fourword.messages.*;
+import fourword.model.Dictionary;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by jonathan on 2015-06-26.
  */
 public class ServerGameBehaviour implements Runnable{
+    private static final String HOME_DIR = System.getenv("FOUR_WORD_HOME");
+
+    private static final File[] WORDLIST_FILES = new File[]{
+            new File(HOME_DIR, "swedish-word-list-2-letters"),
+            new File(HOME_DIR, "swedish-word-list-3-letters"),
+            new File(HOME_DIR, "swedish-word-list-4-letters"),
+            new File(HOME_DIR, "swedish-word-list-5-letters")};
+    private final Dictionary dictionary = Dictionary.fromFiles(WORDLIST_FILES);
+    private final ScoreCalculator scoreCalculator = new ScoreCalculator(dictionary);
     private final GameObject game;
     private final int numPlayers;
     private int currentPlayerIndex;
@@ -54,7 +62,7 @@ public class ServerGameBehaviour implements Runnable{
                 handleAllPlaceReplies(letterPickedByCurrentPlayer);
                 numPlacedLetters ++;
 
-                printAllGrids();
+//                printAllGrids();
 
                 boolean isGameFinished = numPlacedLetters == numCells;
                 if(isGameFinished){
@@ -74,18 +82,27 @@ public class ServerGameBehaviour implements Runnable{
     }
 
     private void broadcastResults() throws IOException {
+        HashSet<String> lowerWords = new HashSet<>();
         HashMap<String, GridModel> gridMap = new HashMap<String, GridModel>();
         for(int i = 0; i < numPlayers; i++){
             String playerName = sockets.get(i).getName();
-            gridMap.put(playerName, grids.get(i));
+            GridModel grid = grids.get(i);
+            gridMap.put(playerName, grid);
+            for(String row : grid.getRows()){
+                List<String> words = scoreCalculator.extractLowerWords(row);
+                lowerWords.addAll(words);
+            }
+            for(String col : grid.getCols()){
+                List<String> words = scoreCalculator.extractLowerWords(col);
+                lowerWords.addAll(words);
+            }
         }
-        GameResult result = new GameResult(gridMap);
+        GameResult result = new GameResult(gridMap, lowerWords);
         broadcast(new MsgGameFinished(result));
     }
 
     private void handleAllPlaceReplies(final char pickedLetter){
         final AtomicInteger numPlayersHavePlaced = new AtomicInteger(0);
-        System.out.println("Waiting for PLACE-replies ...");
         for(int i = 0; i < numPlayers; i++){
             if(i != currentPlayerIndex){ //One player already placed the letter (pick and place at the same time)
                 final int playerIndex = i;
@@ -148,13 +165,10 @@ public class ServerGameBehaviour implements Runnable{
 
     private void sendToPlayer(PlayerSocket socket, Msg<ServerMsg> msg) throws IOException {
         socket.sendMessage(msg);
-        System.out.println("    Sent message to " + socket.getName() + ": " + msg);
     }
 
     private Msg<ClientMsg> receiveFromPlayer(PlayerSocket socket) throws IOException, ClassNotFoundException {
-        System.out.println("Waiting for message from " + socket.getName() + " ... ");
         Msg<ClientMsg> msg = socket.receiveMessage();
-        System.out.println("    Received message from " + socket.getName() + ": " + msg);
         return msg;
     }
 

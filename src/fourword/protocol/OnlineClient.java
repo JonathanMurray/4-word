@@ -1,13 +1,16 @@
 package fourword.protocol;
 
+import fourword.Persistent;
 import fourword.messages.ClientMsg;
 import fourword.messages.Msg;
+import fourword.messages.MsgStringList;
 import fourword.messages.ServerMsg;
 import org.andengine.util.debug.Debug;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.List;
 
 /**
  * Created by jonathan on 2015-06-23.
@@ -40,8 +43,17 @@ public class OnlineClient extends Client {
                         Debug.e("Client waiting for msg from server ... ");
                         Msg<ServerMsg> msg = (Msg<ServerMsg>) fromServer.readObject();
                         Debug.e("   Received message: " + msg + ", id: " + msg.id());
-
-                        delegateToListener(msg);
+                        switch (msg.type()){
+                            case ONLINE_PLAYERS:
+                                List<String> onlinePlayers = ((MsgStringList)msg).list;
+                                onlinePlayers.remove(Persistent.instance().playerName());
+                                Persistent.instance().notifyOnlinePlayers(onlinePlayers);
+                                Debug.e("Not delegating to listener. Handled by OnlineClient.");
+                                break;
+                            default:
+                                delegateToListener(msg);
+                                break;
+                        }
                     }
                 } catch (StreamCorruptedException e) {
                     e.printStackTrace();

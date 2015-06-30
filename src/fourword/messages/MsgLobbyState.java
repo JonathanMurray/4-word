@@ -14,7 +14,7 @@ public class MsgLobbyState extends Msg {
 
     public MsgLobbyState(Lobby lobby) {
         super(ServerMsg.LOBBY_STATE);
-        this.lobby = lobby;
+        this.lobby = lobby.getCopy();
     }
 
     public String toString(){

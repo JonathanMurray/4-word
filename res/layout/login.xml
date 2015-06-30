@@ -5,10 +5,16 @@
               android:layout_height="match_parent">
 
     <TextView
-            android:text="LOGIN"
+            android:text="Welcome!"
             android:textSize="32sp"
             android:layout_width="fill_parent"
             android:layout_height="50dp"/>
+
+    <TextView
+            android:textColor="@android:color/holo_red_dark"
+            android:id="@+id/login_info"
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"/>
 
     <LinearLayout
             android:orientation="horizontal"
@@ -19,13 +25,13 @@
                 android:text="Your name:"
                 android:textSize="20sp"
                 android:layout_width="140dp"
-                android:layout_height="70dp"/>
+                android:layout_height="wrap_content"/>
 
         <EditText
                 android:id="@+id/login_input"
                 android:textSize="20sp"
                 android:layout_width="140dp"
-                android:layout_height="70dp"/>
+                android:layout_height="wrap_content"/>
 
 
 
@@ -39,10 +45,6 @@
             android:layout_width="fill_parent"
             android:layout_height="130dp"/>
 
-    <TextView
-            android:textColor="@android:color/holo_red_dark"
-            android:id="@+id/login_info"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+
 
 </LinearLayout>

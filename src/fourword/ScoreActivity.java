@@ -13,7 +13,6 @@ import fourword.messages.ServerMsg;
 import fourword.model.*;
 import org.andengine.util.debug.Debug;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -21,8 +20,6 @@ import java.util.Map;
  * Created by jonathan on 2015-06-24.
  */
 public class ScoreActivity extends Activity implements MsgListener<ServerMsg>{
-
-    private ScoreCalculator scoreCalculator = new ScoreCalculator(new Dictionary());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +57,7 @@ public class ScoreActivity extends Activity implements MsgListener<ServerMsg>{
     }
 
     private String buildString(GameResult result){
+        Dictionary dict = new Dictionary(result.lowerWords());
         StringBuilder sb = new StringBuilder();
         Iterator<Map.Entry<String, GridModel>> it = result.grids().entrySet().iterator();
         while(it.hasNext()){
@@ -71,13 +69,13 @@ public class ScoreActivity extends Activity implements MsgListener<ServerMsg>{
             GridModel grid = e.getValue();
             sb.append("ROWS:\n");
             for(String row : grid.getRows()){
-                int score = scoreCalculator.computeScore(row);
+                int score = ScoreCalculator.computeScore(row, dict);
                 totalScore += score;
                 sb.append(row + " (" + score + ")\n");
             }
             sb.append("COLS:\n");
             for(String col : grid.getCols()){
-                int score = scoreCalculator.computeScore(col);
+                int score = ScoreCalculator.computeScore(col, dict);
                 totalScore += score;
                 sb.append(col + " (" + score + ")\n");
             }

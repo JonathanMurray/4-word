@@ -51,10 +51,8 @@ public class RemoteSocket extends PlayerSocket {
     @Override
     synchronized public void sendMessage(Msg msg) throws IOException {
         msg.setId(counter);
-        System.out.print("   server-msg to " + getName() + ": " + msg + " ... ");
-        System.out.println("   id: " + counter);
+        System.out.println("TO " + getName() + ": " + msg);
         out.writeObject(msg);
-        System.out.println("[x]");
         counter ++;
     }
 
@@ -67,6 +65,7 @@ public class RemoteSocket extends PlayerSocket {
                 sleep(500); // sleep and try again
             } catch(ClassCastException e){
                 e.printStackTrace();
+                System.out.println("--------------------------------------");
                 System.out.println("out: " + out);
                 System.out.println("in: " + in);
                 System.out.println("clientSocket: " + clientSocket);
@@ -74,13 +73,14 @@ public class RemoteSocket extends PlayerSocket {
                 System.out.println("name: " + getName());
                 System.out.println("lobby: " + getLobby());
                 System.out.println("invitedBy: " + getInvitedBy());
+                System.out.println("--------------------------------------");
             }
         }
     }
 
     synchronized private Msg<ClientMsg> receiveNotBlocking() throws IOException, ClassNotFoundException {
         Msg<ClientMsg> msg = (Msg<ClientMsg>) in.readObject();
-        System.out.println("   client-msg from " + getName() + ": " + msg);
+        System.out.println("FROM " + getName() + ": " + msg);
         return msg;
     }
 

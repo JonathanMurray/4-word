@@ -14,6 +14,7 @@ public class ChangeActivity {
         Intent intent = new Intent(context, newActivity);
         intent.putExtras(extras);
         Connection.instance().removeMessageListener();
+        Persistent.instance().removeOnlineListener();
         context.startActivity(intent);
     }
 }
