@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
 import fourword.messages.*;
-import fourword.protocol.Lobby;
+import fourword.model.Lobby;
 import org.andengine.util.debug.Debug;
 
 /**

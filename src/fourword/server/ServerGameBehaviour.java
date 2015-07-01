@@ -1,4 +1,4 @@
-package fourword.protocol;
+package fourword.server;
 
 import fourword.model.*;
 import fourword.messages.*;
@@ -182,7 +182,7 @@ public class ServerGameBehaviour implements Runnable{
 
 
 
-    interface GameFinishedListener {
+    public interface GameFinishedListener {
         void gameFinished(GameObject game);
     }
 

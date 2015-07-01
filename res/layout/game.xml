@@ -21,6 +21,7 @@
                 android:layout_height="match_parent"/>
         <TextView
                 android:id="@+id/info_text"
+                android:layout_marginTop="40dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:textSize="18dp"

@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$USER_HOME$/Documents/AndEngine/AndEngine.iml" filepath="$USER_HOME$/Documents/AndEngine/AndEngine.iml" />
       <module fileurl="file://$USER_HOME$/Documents/AndEngineMultiplayerExtension/AndEngineMultiplayerExtension.iml" filepath="$USER_HOME$/Documents/AndEngineMultiplayerExtension/AndEngineMultiplayerExtension.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android-test.iml" filepath="$PROJECT_DIR$/android-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fourword.iml" filepath="$PROJECT_DIR$/fourword.iml" />
     </modules>
   </component>
 </project>

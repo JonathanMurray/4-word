@@ -1,10 +1,10 @@
-package fourword.protocol;
+package fourword.server;
 
 import fourword.messages.*;
+import fourword.model.Lobby;
 
 import java.io.*;
 import java.net.ServerSocket;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

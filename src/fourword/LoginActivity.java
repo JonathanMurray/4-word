@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.example.android_test.R;
 import fourword.messages.*;
-import fourword.protocol.Server;
+import fourword.server.Server;
 
 /**
  * Created by jonathan on 2015-06-27.

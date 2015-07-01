@@ -1,11 +1,11 @@
-package fourword.protocol;
+package fourword.client;
 
 import fourword.messages.ClientMsg;
 import fourword.messages.MsgListener;
 import fourword.messages.Msg;
 import fourword.messages.ServerMsg;
 import fourword.model.GridModel;
-import org.andengine.extension.multiplayer.protocol.adt.message.client.ClientMessage;
+import fourword.server.PlayerSocket;
 import org.andengine.util.debug.Debug;
 
 import java.net.InetAddress;

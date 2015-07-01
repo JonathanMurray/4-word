@@ -1,4 +1,4 @@
-package fourword.protocol;
+package fourword.server;
 
 import fourword.messages.*;
 import fourword.model.Cell;

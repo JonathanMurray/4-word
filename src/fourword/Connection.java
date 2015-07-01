@@ -4,9 +4,9 @@ import fourword.messages.ClientMsg;
 import fourword.messages.Msg;
 import fourword.messages.MsgListener;
 import fourword.messages.ServerMsg;
-import fourword.protocol.Client;
-import fourword.protocol.OfflineClient;
-import fourword.protocol.OnlineClient;
+import fourword.client.Client;
+import fourword.client.OfflineClient;
+import fourword.client.OnlineClient;
 import org.andengine.util.debug.Debug;
 
 /**

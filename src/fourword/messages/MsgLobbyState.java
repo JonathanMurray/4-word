@@ -1,10 +1,6 @@
 package fourword.messages;
 
-import fourword.model.LobbyPlayer;
-import fourword.protocol.Lobby;
-
-import java.util.HashMap;
-import java.util.List;
+import fourword.model.Lobby;
 
 /**
  * Created by jonathan on 2015-06-26.

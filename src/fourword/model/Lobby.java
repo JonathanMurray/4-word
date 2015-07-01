@@ -1,11 +1,5 @@
-package fourword.protocol;
+package fourword.model;
 
-import fourword.messages.Msg;
-import fourword.messages.MsgLobbyState;
-import fourword.messages.ServerMsg;
-import fourword.model.LobbyPlayer;
-
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;

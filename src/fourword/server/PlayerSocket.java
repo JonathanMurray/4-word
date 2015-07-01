@@ -1,14 +1,13 @@
-package fourword.protocol;
+package fourword.server;
 
 import fourword.messages.ClientMsg;
 import fourword.messages.Msg;
 import fourword.messages.ServerMsg;
 import fourword.model.GridModel;
+import fourword.model.Lobby;
 
 import java.io.IOException;
-import java.io.OptionalDataException;
 import java.net.InetAddress;
-import java.util.HashMap;
 
 /**
  * Created by jonathan on 2015-06-26.

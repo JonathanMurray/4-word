@@ -1,9 +1,10 @@
-package fourword.protocol;
+package fourword.client;
 
 import fourword.messages.ClientMsg;
 import fourword.messages.Msg;
 import fourword.model.GridModel;
 import fourword.messages.MsgListener;
+import fourword.server.*;
 import org.andengine.util.debug.Debug;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package fourword.protocol;
+package fourword.server;
 
 import fourword.messages.ClientMsg;
 import fourword.messages.Msg;
@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 /**
  * Created by jonathan on 2015-06-26.
  */
-public class BotSocket extends PlayerSocket{
+public class BotSocket extends PlayerSocket {
 
     private AI ai;
     private Msg<ClientMsg> replyFromAI;

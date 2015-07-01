@@ -1,4 +1,4 @@
-package fourword.protocol;
+package fourword.client;
 
 import fourword.Persistent;
 import fourword.messages.ClientMsg;
