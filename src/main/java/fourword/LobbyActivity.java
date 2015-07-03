@@ -16,15 +16,20 @@ import fourword.messages.*;
 import fourword.model.Lobby;
 import org.andengine.util.debug.Debug;
 
+import java.util.ArrayList;
+
 /**
  * Created by jonathan on 2015-06-25.
  */
-public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
+public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, HorizontalNumberPicker.ValueListener {
 
     private boolean isPlayerHost;
 
     private Lobby lobby;
     private boolean waitingForServer;
+
+    private HorizontalNumberPicker colPicker;
+    private HorizontalNumberPicker rowPicker;
 
     public final static String IS_HOST = "IS_HOST"; //Instead of R.string since the string is also used by a dialogfragment
     //that doesn't have access to R.string (not attached to an activity yet)
@@ -37,9 +42,19 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
         isPlayerHost = getIntent().getBooleanExtra(IS_HOST, false);
         Debug.e("lobby, isHost: " + isPlayerHost);
 
+        ViewGroup hostSection= (ViewGroup) findViewById(R.id.lobby_host_section);
+
         if(isPlayerHost){
-            findViewById(R.id.lobby_host_section).setVisibility(View.VISIBLE);
+            hostSection.setVisibility(View.VISIBLE);
+        }else{
+            hostSection.setVisibility(View.GONE);
         }
+
+        colPicker = ((HorizontalNumberPicker)findViewById(R.id.col_picker));
+        rowPicker = ((HorizontalNumberPicker)findViewById(R.id.row_picker));
+        colPicker.setValueListener(this);
+        rowPicker.setValueListener(this);
+
 
         lobby = new Lobby(Persistent.instance().playerName());
 //        lobby.addPlayer(LobbyPlayer.connectedHuman(thisPlayerName)); //already added in constructor
@@ -48,6 +63,8 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
 //        Connection.instance().startOnline(this, IP_ADDRESS, PORT);
 //        Connection.instance().startOffline(this, 2, 2, 3);
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -63,7 +80,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
                                 ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
                             }
                         })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener(){
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 //Do nothing
                             }
@@ -87,12 +104,12 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
                     ViewGroup avatarView = (ViewGroup) View.inflate(LobbyActivity.this, R.layout.lobby_avatar, null);
                     ((TextView) avatarView.findViewById(R.id.avatar_name)).setText(lobbyPlayer);
                     boolean connected = lobby.getPlayer(lobbyPlayer).hasConnected;
-                    if (!connected) {
-                        ((TextView) avatarView.findViewById(R.id.avatar_pending_text)).setText("Pending");
+                    if (connected) {
+                        ((TextView) avatarView.findViewById(R.id.avatar_pending_text)).setText("");
                     }
                     boolean selfAvatar = lobbyPlayer.equals(Persistent.instance().playerName());
+                    Button kickButton = ((Button) avatarView.findViewById(R.id.avatar_kick_button));
                     if (isPlayerHost && !selfAvatar) {
-                        Button kickButton = ((Button) avatarView.findViewById(R.id.avatar_kick_button));
                         kickButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -100,6 +117,8 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
                             }
                         });
                         kickButton.setVisibility(View.VISIBLE);
+                    }else{
+                        kickButton.setVisibility(View.GONE);
                     }
 
                     avatarRow.addView(avatarView);
@@ -112,8 +131,8 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
 
     private void clickedKickPlayer(int playerIndex){
         String name = lobby.getNameAtIndex(playerIndex);
-        Debug.e("Klicked kick player " + name);
-        Connection.instance().sendMessage(new MsgText<>(ClientMsg.KICK, name));
+        Debug.e("Clicked kick player " + name);
+        Connection.instance().sendMessage(new MsgText<>(ClientMsg.KICK_FROM_LOBBY, name));
     }
 
     public void hideKeyboard(){
@@ -131,7 +150,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
 
     public void clickedAddPlayer(View view){
         String playerName = ((EditText)findViewById(R.id.lobby_player_name)).getText().toString();
-        Connection.instance().sendMessage(new MsgText(ClientMsg.INVITE, playerName));
+        Connection.instance().sendMessage(new MsgText(ClientMsg.INVITE_TO_LOBBY, playerName));
         waitingForServer = true;
         setButtonsEnabled(false);
         setInfoText("Waiting for server...");
@@ -139,11 +158,12 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
     }
 
     public void clickedAddBot(View view){
-        Connection.instance().sendMessage(new Msg(ClientMsg.ADD_BOT));
+        Connection.instance().sendMessage(new Msg(ClientMsg.ADD_BOT_TO_LOBBY));
     }
 
     public void clickedStartGame(View view){
-        Connection.instance().sendMessage(new Msg(ClientMsg.START_GAME));
+
+        Connection.instance().sendMessage(new Msg(ClientMsg.START_GAME_FROM_LOBBY));
         waitingForServer = true;
         setInfoText("Waiting for server...");
         setButtonsEnabled(false);
@@ -193,16 +213,17 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
                 }
 
             case GAME_IS_STARTING:
-                Connection.instance().sendMessage(new Msg(ClientMsg.CONFIRM_GAME_STARTING));
+                Connection.instance().sendMessage(new MsgText(ClientMsg.CONFIRM_GAME_STARTING, lobby.getHost()));
                 Bundle extras = new Bundle();
                 extras.putInt(getString(R.string.NUM_COLS), ((MsgGameIsStarting) msg).numCols);
                 extras.putInt(getString(R.string.NUM_ROWS), ((MsgGameIsStarting) msg).numRows);
+                String[] playerNames = ((MsgGameIsStarting)msg).sortedPlayerNames;
+                extras.putStringArray(getString(R.string.PLAYER_NAMES), playerNames);
                 ChangeActivity.change(this, GameActivity.class, extras);
                 return true;
             case LOBBY_STATE:
                 this.lobby = ((MsgLobbyState)msg).lobby;
                 updateLayout();
-//                ((TextView)findViewById(R.id.lobby_info_text)).setText("Waiting for more players ...");
                 return true;
 
             case YOU_WERE_KICKED:
@@ -231,5 +252,10 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg> {
                 //This is our way of saying that the message should be sent later to a new listener.
                 return false;
         }
+    }
+
+    @Override
+    public void onChange(int newValue) {
+        Connection.instance().sendMessage(new MsgLobbySetDim(colPicker.getValue(), rowPicker.getValue()));
     }
 }

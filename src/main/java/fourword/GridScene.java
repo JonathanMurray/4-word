@@ -1,6 +1,7 @@
 package fourword;
 
 import android.content.Context;
+import com.example.android_test.R;
 import fourword.model.Cell;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;
@@ -14,6 +15,7 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.color.Color;
+import org.andengine.util.debug.Debug;
 
 import java.util.ArrayList;
 
@@ -22,12 +24,17 @@ import java.util.ArrayList;
  */
 public class GridScene extends Scene{
 
-    private static int LINE_WIDTH = 4;
-    private static int MARGIN = 0;
-    private static Font font;
-    private static Color LINE_COLOR = Color.WHITE;
+    private static int LINE_WIDTH = 10;
+    private static Font smallFont;
+    private static Font bigFont;
+    private static Color lineColor;
+    private static Color HIGHLIGHT_COLOR = new Color(0.3f, 0.3f, 0.4f);
+    private static Color FILLED_GRID_COLOR = new Color(0.3f, 0.3f, 0.3f);
+    private int backgroundColor;
+
     private final Context context;
-    private int cellSize;
+    private final int cellSize;
+    private final int margin;
     private int numCols;
     private int numRows;
     private int gridWidth;
@@ -36,20 +43,33 @@ public class GridScene extends Scene{
     private Text[][] textCells;
     private Cell highlighted;
     private Rectangle highlightedRect;
+    private Rectangle[][] filledCells;
     private boolean hasHighlightedCell;
     private VertexBufferObjectManager vboManager;
     private GridTouchListener gridTouchListener;
     private final Camera camera;
 
+    private Text bigLetter;
+
     private ArrayList<IEntity> attachQueue = new ArrayList<IEntity>();
     private ArrayList<IEntity> detachQueue = new ArrayList<IEntity>();
 
-    public GridScene(Context context, Font font, final int cellSize, int numCols, int numRows, VertexBufferObjectManager vboManager, Camera camera){
+    public GridScene(Context context, Color backgroundColor, Font smallFont, Font bigFont, final int margin, final int cellSize, int numCols, int numRows, VertexBufferObjectManager vboManager, Camera camera){
         this.context = context;
-        this.font = font;
-        this.cellSize = cellSize;
+        this.smallFont = smallFont;
+        this.bigFont = bigFont;
+
+        this.margin = margin;
+
+
+        lineColor = backgroundColor;
+
+
+//        this.cellSize = cellSize;
         this.numCols = numCols;
         this.numRows = numRows;
+
+        this.cellSize = cellSize;
         gridWidth = cellSize * numCols;
         gridHeight = cellSize * numRows;
         //charCells = new char[numCols][numRows];
@@ -57,25 +77,47 @@ public class GridScene extends Scene{
         this.vboManager = vboManager;
         this.camera = camera;
 
-        for(int x = MARGIN; x <= gridWidth + MARGIN; x += cellSize){
-            Line line = new Line(x, MARGIN, x, gridHeight + MARGIN, LINE_WIDTH, vboManager);
-            line.setColor(LINE_COLOR);
+        for(int x = margin; x <= gridWidth + margin; x += cellSize){
+            Line line = new Line(x, margin, x, gridHeight + margin, LINE_WIDTH, vboManager);
+            line.setColor(lineColor);
             attachChild(line);
         }
-        for(int y = MARGIN; y <= gridHeight + MARGIN; y += cellSize){
-            Line line = new Line(MARGIN, y, gridWidth + MARGIN, y, LINE_WIDTH, vboManager);
-            line.setColor(LINE_COLOR);
+        for(int y = margin; y <= gridHeight + margin; y += cellSize){
+            Line line = new Line(margin, y, gridWidth + margin, y, LINE_WIDTH, vboManager);
+            line.setColor(lineColor);
             attachChild(line);
         }
+
+//        for(int x = 0; x < numCols; x++){
+//            for(int y = 0; y < numRows; y++){
+//                Rectangle rect = new Rectangle(
+//                        x * cellSize + margin,
+//                        y * cellSize + margin,
+//                        cellSize,
+//                        cellSize,
+//                        vboManager);
+//
+//                rect.setColor(FILLED_CELL_COLOR);
+//                rect.setZIndex(-100); //far black_border
+//                attachChild(rect);
+//            }
+//        }
+
+
+
+        Rectangle filledGrid = new Rectangle(margin, margin, cellSize*numCols, cellSize*numRows, vboManager);
+        filledGrid.setColor(FILLED_GRID_COLOR);
+        filledGrid.setZIndex(-100);
+        attachChild(filledGrid);
 
         setOnSceneTouchListener(new IOnSceneTouchListener() {
             @Override
             public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
-                if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN){
+                if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
                     float x = pSceneTouchEvent.getX();
                     float y = pSceneTouchEvent.getY();
-                    Cell cell = new Cell((int) ((x-MARGIN) / cellSize), (int) ((y-MARGIN) / cellSize));
-                    if(gridTouchListener != null && isValidCell(cell)){
+                    Cell cell = new Cell((int) ((x - margin) / cellSize), (int) ((y - margin) / cellSize));
+                    if (gridTouchListener != null && isValidCell(cell)) {
                         gridTouchListener.gridTouchEvent(cell);
                     }
                 }
@@ -83,14 +125,21 @@ public class GridScene extends Scene{
             }
         });
 
+        //Must be initialized with non-empty string since the max lngth of the text is set in the constructor
+        Debug.d("bigFont.getTexture.getWidth: " + bigFont.getTexture().getWidth());
+
+        bigLetter = new Text(750-100, 250-150, bigFont, "X", vboManager);
+        attachChild(bigLetter);
+        Debug.d("new Text(" + bigLetter.getX() + ", " + bigLetter.getY());
+
         registerUpdateHandler(new IUpdateHandler() {
             @Override
             public void onUpdate(float pSecondsElapsed) { //
-                for(IEntity e : detachQueue){
+                for (IEntity e : detachQueue) {
                     detachChild(e);
                 }
                 detachQueue.clear();
-                for(IEntity e : attachQueue){
+                for (IEntity e : attachQueue) {
                     attachChild(e);
                 }
                 attachQueue.clear();
@@ -112,14 +161,14 @@ public class GridScene extends Scene{
         hasHighlightedCell = true;
         highlighted = cell;
         highlightedRect = new Rectangle(
-                cell.x() * cellSize + MARGIN,
-                cell.y() * cellSize + MARGIN,
+                cell.x() * cellSize + margin,
+                cell.y() * cellSize + margin,
                 cellSize,
                 cellSize,
                 vboManager);
 
-        highlightedRect.setColor(new Color(0.3f, 0.5f, 0.6f));
-        highlightedRect.setZIndex(-100); //far back
+        highlightedRect.setColor(HIGHLIGHT_COLOR);
+        highlightedRect.setZIndex(-100); //far black_border
         safeAttach(highlightedRect);
     }
 
@@ -147,7 +196,7 @@ public class GridScene extends Scene{
         removeCharAtCell(cell);
 
         //charCells[cell.x()][cell.y()] = ch;
-        Text text = new Text((float) (cell.x()+0.3) * cellSize, (float) (cell.y()+0.2) * cellSize, font, "" + ch, vboManager);
+        Text text = new Text(margin + (float) (cell.x()+0.2) * cellSize, margin + (float) (cell.y()) * cellSize, smallFont, "" + ch, vboManager);
         text.setZIndex(0);
         safeAttach(text);
         textCells[cell.x()][cell.y()] = text;
@@ -171,6 +220,14 @@ public class GridScene extends Scene{
         if(currentText != null){
             safeDetach(currentText);
         }
+    }
+
+    public void setBigLetter(char letter){
+        String text = "" + letter;
+        Debug.d("setBigLetter(" + text + ")");
+        bigLetter.setText(text);
+
+
     }
 
     public void setGridTouchListener(GridTouchListener gridTouchListener) {

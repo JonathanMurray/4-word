@@ -17,6 +17,7 @@ public abstract class PlayerSocket{
     private String name;
     private String invitedBy;
     private Lobby currentLobby;
+    private boolean hasDisconnected;
 
     public abstract void sendMessage(Msg<ServerMsg> msg) throws IOException;
     public abstract Msg<ClientMsg> receiveMessage() throws IOException, ClassNotFoundException;
@@ -75,6 +76,14 @@ public abstract class PlayerSocket{
     }
 
     public abstract boolean isRemote();
+
+    public boolean hasDisconnected(){
+        return hasDisconnected;
+    }
+
+    protected void setDisconnected(){
+        hasDisconnected = true;
+    }
 
     public String toString(){
         return name + (isInvited() ? "(inv. by " + invitedBy + ")" : "");

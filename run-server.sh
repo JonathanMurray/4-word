@@ -2,6 +2,6 @@
 
 echo "Running server ..."
 
-cd out/production/android-test
+cd target/classes 
 java fourword.server.Server 4444
 

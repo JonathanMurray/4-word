@@ -1,12 +1,12 @@
 package fourword;
 
+import fourword.client.Client;
+import fourword.client.OfflineClient;
+import fourword.client.OnlineClient;
 import fourword.messages.ClientMsg;
 import fourword.messages.Msg;
 import fourword.messages.MsgListener;
 import fourword.messages.ServerMsg;
-import fourword.client.Client;
-import fourword.client.OfflineClient;
-import fourword.client.OnlineClient;
 import org.andengine.util.debug.Debug;
 
 /**

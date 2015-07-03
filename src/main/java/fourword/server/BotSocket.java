@@ -7,6 +7,7 @@ import fourword.model.GridModel;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 /**
  * Created by jonathan on 2015-06-26.
@@ -15,6 +16,8 @@ public class BotSocket extends PlayerSocket {
 
     private AI ai;
     private Msg<ClientMsg> replyFromAI;
+    private static final int MIN_SLEEP = 500;
+    private static final int MAX_SLEEP = 2500;
 
     public BotSocket(AI ai, String name){
         super(name);
@@ -31,11 +34,11 @@ public class BotSocket extends PlayerSocket {
     }
 
     @Override
-    public void sendMessage(Msg<ServerMsg> msg) {
+    public synchronized void sendMessage(Msg<ServerMsg> msg) {
         System.out.println("(TO " + getName() + ": " + msg + ")");
         switch (msg.type()){
             case GAME_IS_STARTING:
-                replyFromAI = new Msg(ClientMsg.CONFIRM_GAME_STARTING);
+//                replyFromAI = new Msg(ClientMsg.CONFIRM_GAME_STARTING);
                 break;
             case YOU_WERE_KICKED:
                 //No reply needed. Just need to consume message
@@ -47,11 +50,11 @@ public class BotSocket extends PlayerSocket {
     }
 
     @Override
-    public Msg<ClientMsg> receiveMessage() {
+    public synchronized Msg<ClientMsg> receiveMessage() {
         if(replyFromAI == null){
             throw new RuntimeException();
         }
-        sleep(500);
+        sleep(MIN_SLEEP + new Random().nextInt(MAX_SLEEP-MIN_SLEEP));
         Msg<ClientMsg> msg = replyFromAI;
         System.out.println("(FROM " + getName() + ": " + msg + ")");
         replyFromAI = null;

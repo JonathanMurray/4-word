@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/game_avatar_outer"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/green_border"
+        android:padding="3dp">
+
+    <TextView
+            android:visibility="gone"
+            android:text="thinking..."
+            android:id="@+id/avatar_thinking_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"/>
+
+
+    <ImageView
+            android:src="@drawable/avatar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"/>
+    <TextView
+            android:text="name"
+            android:layout_marginTop="1dp"
+            android:padding="4dp"
+            android:id="@+id/avatar_name"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/black_border"/>
+</LinearLayout>

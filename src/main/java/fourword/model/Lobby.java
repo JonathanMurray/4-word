@@ -12,6 +12,8 @@ public class Lobby implements Serializable{
     private String hostingPlayer;
     private HashMap<String, LobbyPlayer> players = new HashMap<>();
     private ArrayList<String> sortedNames = new ArrayList<>();
+    public int numCols = 4;
+    public int numRows = 4;
 
     public Lobby(String hostingPlayer){
         this.hostingPlayer = hostingPlayer;
@@ -52,6 +54,8 @@ public class Lobby implements Serializable{
         }
         return humans;
     }
+
+
 
     public void setNewHost(String host){
         if(!sortedNames.contains(host)){
@@ -101,10 +105,12 @@ public class Lobby implements Serializable{
         Lobby copy = new Lobby(hostingPlayer);
         copy.sortedNames = sortedNamesCopy;
         copy.players = playersCopy;
+        copy.numCols = numCols;
+        copy.numRows = numRows;
         return copy;
     }
 
     public String toString(){
-        return "Lobby(" + hostingPlayer + ", " + players + ", " + sortedNames + ")";
+        return "Lobby({" + numCols + "," + numRows + "}, " + hostingPlayer + ", " + players + ", " + sortedNames + ")";
     }
 }

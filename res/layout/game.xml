@@ -1,41 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res/com.example.android_test"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="@android:color/holo_blue_light">
 
-    <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="150px"
-            android:text="4-Word"
-            android:textSize="24dp"/>
+
 
     <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="600px"
-            android:orientation="horizontal">
-        <org.andengine.opengl.view.RenderSurfaceView
-                android:id="@+id/surface_view"
-                android:layout_width="600px"
-                android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <LinearLayout
+                android:id="@+id/avatar_row"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+        </LinearLayout>
+
         <TextView
                 android:id="@+id/info_text"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:textSize="18dp"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:text="Make your move!"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pick a letter and place it somewhere!!"
+                android:visibility="gone"/>
+        <fourword.FixedAspectRatioFrameLayout
+                app:aspectRatioWidth="@integer/gridWidthAspectRatio"
+                app:aspectRatioHeight="@integer/gridHeightAspectRatio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <org.andengine.opengl.view.RenderSurfaceView
+                    android:id="@+id/surface_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+        </fourword.FixedAspectRatioFrameLayout>
+
+
     </LinearLayout>
 
 
 
     <Button
             android:id="@+id/doneButton"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_width="match_parent"
-            android:layout_height="250px"
+            android:layout_height="60dp"
             android:text="DONE!"
             android:onClick="clickedDone"/>
 

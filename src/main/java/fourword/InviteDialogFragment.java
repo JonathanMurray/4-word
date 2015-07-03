@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import com.example.android_test.R;
 import fourword.messages.ClientMsg;
 import fourword.messages.Msg;
 
@@ -33,13 +32,13 @@ public class InviteDialogFragment extends DialogFragment{
         builder.setMessage(inviterName + " has invited you to a game!")
                 .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Connection.instance().sendMessage(new Msg(ClientMsg.JOIN));
+                        Connection.instance().sendMessage(new Msg(ClientMsg.ACCEPT_INVITE));
                         ChangeActivity.change(getActivity(), LobbyActivity.class, args);
                     }
                 })
                 .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Connection.instance().sendMessage(new Msg(ClientMsg.DECLINE));
+                        Connection.instance().sendMessage(new Msg(ClientMsg.DECLINE_INVITE));
                     }
                 });
         return builder.create();

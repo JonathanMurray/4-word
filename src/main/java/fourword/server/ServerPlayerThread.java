@@ -7,6 +7,7 @@ import fourword.model.Lobby;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jonathan on 2015-06-27.
@@ -15,8 +16,8 @@ public class ServerPlayerThread implements Runnable {
 
     private final PlayerSocket thisSocket;
 
-    private final static int NUM_COLS = 3;
-    private final static int NUM_ROWS = 3;
+//    private final static int NUM_COLS = 3;
+//    private final static int NUM_ROWS = 3;
 
 //    private Object playersLock = new Object();
     private boolean isLoggedIn;
@@ -73,14 +74,14 @@ public class ServerPlayerThread implements Runnable {
                 }
                 break;
 
-            case JOIN:
+            case ACCEPT_INVITE:
                 Lobby otherLobby = server.getLobbyOfHost(thisSocket.getInvitedBy());
                 otherLobby.setConnected(thisSocket.getName());
                 broadcastLobbyState(otherLobby);
                 thisSocket.joinLobby(otherLobby);
                 server.printState();
                 break;
-            case DECLINE:
+            case DECLINE_INVITE:
                 otherLobby = server.getLobbyOfHost(thisSocket.getInvitedBy());
                 thisSocket.removeInvite();
                 otherLobby.removePlayer(thisSocket.getName());
@@ -91,16 +92,16 @@ public class ServerPlayerThread implements Runnable {
             case LOGOUT:
                 server.removePlayer(thisSocket.getName());
                 break;
-            case CREATE_GAME:
+            case CREATE_LOBBY:
                 Lobby newLobby = new Lobby(thisSocket.getName());
                 thisSocket.joinLobby(newLobby);
                 server.addLobby(thisSocket.getName(), newLobby);
                 server.printState();
                 break;
-            case INVITE:
+            case INVITE_TO_LOBBY:
                 handleInvite((MsgText) msg);
                 break;
-            case ADD_BOT:
+            case ADD_BOT_TO_LOBBY:
                 String botName = server.generateBotName();
 
                 //The bot-socket has no dedicated thread like the human-sockets
@@ -111,18 +112,18 @@ public class ServerPlayerThread implements Runnable {
                 broadcastLobbyState(thisSocket.getLobby());
                 server.printState();
                 break;
-            case KICK:
+            case KICK_FROM_LOBBY:
                 handleKick((MsgText) msg);
                 break;
             case LEAVE_LOBBY:
                 leaveLobby(thisSocket);
                 break;
-            case START_GAME:
+            case START_GAME_FROM_LOBBY:
                 Lobby lobby = thisSocket.getLobby();
                 boolean enoughPlayers = lobby.size() > 1;
                 if(enoughPlayers){
-                    broadcastInLobby(lobby, new MsgGameIsStarting(NUM_COLS, NUM_ROWS));
-                    server.startGameHostedBy(thisSocket.getName(), lobby.size(), NUM_COLS, NUM_ROWS);
+                    broadcastInLobby(lobby, new MsgGameIsStarting(lobby.numCols, lobby.numRows, lobby.sortedNames().toArray(new String[0])));
+                    server.createGameHostedBy(thisSocket.getName(), lobby.size(), lobby.numCols, lobby.numRows);
                     for(LobbyPlayer bot : lobby.getAllBots()){
                         server.joinGameHostedBy(thisSocket.getName(), bot.name);
                     }
@@ -130,38 +131,43 @@ public class ServerPlayerThread implements Runnable {
                 }else{
                     thisSocket.sendMessage(new MsgText(ServerMsg.NO, "Not enough playerNames!"));
                 }
+
                 break;
+
+            case LOBBY_SET_DIMENSIONS:
+                thisSocket.getLobby().numRows = ((MsgLobbySetDim)msg).numRows;
+                thisSocket.getLobby().numCols = ((MsgLobbySetDim)msg).numCols;
+                broadcastLobbyState(thisSocket.getLobby());
+                break;
+
             case CONFIRM_GAME_STARTING:
-                boolean newGameStarted = server.joinGameHostedBy(thisSocket.getLobby().getHost(), thisSocket.getName());
+                String host = ((MsgText)msg).text;
+                boolean newGameStarted = server.joinGameHostedBy(host, thisSocket.getName());
                 if(newGameStarted){
-                    server.removeLobby(thisSocket.getLobby().getHost());
+                    server.removeLobby(host);
                 }
                 thisSocket.leaveLobby();
                 server.printState();
                 return true; //Return from this runnable. It's job is done!
 
+            case QUICK_START_GAME:
+                MsgQuickStartGame quickStart = (MsgQuickStartGame) msg;
+                server.createGameHostedBy(thisSocket.getName(), 1 + quickStart.numBots, quickStart.numCols, quickStart.numRows);
+                List<String> names = new ArrayList<String>();
+                for(int i = 0; i < quickStart.numBots; i++){
+                    botName = server.generateBotName();
+                    botSocket = new BotSocket(new AI(), botName);
+                    names.add(botName);
+                    server.addPlayer(botName, botSocket);
+                    server.joinGameHostedBy(thisSocket.getName(), botName);
+                }
+                names.add(thisSocket.getName());
+                thisSocket.sendMessage(new MsgGameIsStarting(quickStart.numCols, quickStart.numRows, names.toArray(new String[0])));
+                server.printState();
+                return false;
         }
         return false; //Thread is not done yet
     }
-
-
-
-//    private void waitForSucessfulLogin() throws IOException, ClassNotFoundException {
-//        while(true){
-//            MsgText loginMsg = (MsgText) thisSocket.receiveMessage();
-//            String name = loginMsg.text;
-//            if(server.validPlayerName(name)) {
-//                thisSocket.sendMessage(new Msg(ServerMsg.OK));
-//                thisSocket.setName(name);
-//                server.addPlayer(name, thisSocket);
-//                System.out.println(name + " has logged in.");
-//                server.printState();
-//                return;
-//            }else{
-//                thisSocket.sendMessage(new MsgText(ServerMsg.NO, "Invalid name!"));
-//            }
-//        }
-//    }
 
     private void handleKick(MsgText kickMsg) throws IOException {
         String kickedPlayer = kickMsg.text;

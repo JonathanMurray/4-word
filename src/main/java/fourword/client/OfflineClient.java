@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by jonathan on 2015-06-24.
  */
-public class OfflineClient extends Client implements MsgListener, ServerGameBehaviour.GameFinishedListener {
+public class OfflineClient extends Client implements MsgListener, ServerGameBehaviour.GameListener {
 
     private final ServerGameBehaviour behaviour;
     private final LocalSocket localSocket;
@@ -60,6 +60,11 @@ public class OfflineClient extends Client implements MsgListener, ServerGameBeha
 
     @Override
     public void gameFinished(GameObject game) {
+        //TODO
+    }
+
+    @Override
+    public void gameCrashed(GameObject game) {
         //TODO
     }
 }

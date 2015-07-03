@@ -1,8 +1,12 @@
 package fourword;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
 import fourword.messages.*;
@@ -13,6 +17,11 @@ import fourword.server.Server;
  */
 public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
 
+    private static boolean USE_LOCAL_SERVER = true;
+
+    private static final String LOCAL_SERVER_ADDRESS = "192.168.1.2";
+//    private static final String LOCAL_SERVER_ADDRESS = "192.168.43.31";
+    private static final String REMOTE_SERVER_ADDRESS = "fourword-server.herokuapp.com";
     private boolean waitingForReply = false;
     private String requestedName;
 
@@ -20,7 +29,34 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        Connection.instance().startOnline(this, Server.IP_ADDRESS, Server.PORT);
+        String serverAddr = USE_LOCAL_SERVER ? LOCAL_SERVER_ADDRESS : REMOTE_SERVER_ADDRESS;
+        Connection.instance().startOnline(this, serverAddr, Server.PORT);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        final EditText textInput = (EditText) findViewById(R.id.login_input);
+        textInput.setFocusableInTouchMode(true);
+        textInput.setFocusable(true);
+        textInput.requestFocus();
+        if(textInput.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+//        showKeyboard();
+    }
+
+    public void showKeyboard(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            final EditText textInput = (EditText) findViewById(R.id.login_input);
+            textInput.requestFocus();
+            imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
+            }
+        });
     }
 
     public void clickedLogin(View view){

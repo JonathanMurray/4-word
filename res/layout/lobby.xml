@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res/com.example.android_test"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
-
-
-    <TextView
-            android:text="Game lobby"
-            android:textSize="32sp"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+              android:layout_height="match_parent"
+              android:background="@android:color/holo_blue_light">
 
     <TextView
             android:id="@+id/lobby_info_text"
@@ -28,9 +22,9 @@
     <LinearLayout
 
             android:id="@+id/lobby_host_section"
-            android:visibility="gone"
+            android:visibility="visible"
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
         <LinearLayout
@@ -51,25 +45,57 @@
             <Button
                     android:id="@+id/lobby_add_human_button"
                     android:onClick="clickedAddPlayer"
-                    android:text="Add!"
+                    android:text="Send invite"
                     android:layout_width="160dp"
-                    android:layout_height="70dp"/>
+                    android:layout_height="60dp"/>
 
         </LinearLayout>
 
         <Button
                 android:id="@+id/lobby_add_bot_button"
                 android:onClick="clickedAddBot"
-                android:text="Add a bot!"
-                android:layout_width="fill_parent"
-                android:layout_height="70dp"/>
+                android:text="Add bot"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:textAllCaps="false"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <fourword.HorizontalNumberPicker
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/col_picker"
+                    app:minValue="3"
+                    app:maxValue="6"
+                    app:value="4"
+                    app:title="# columns"
+                    android:layout_marginLeft="20dp"/>
+            <fourword.HorizontalNumberPicker
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/row_picker"
+                    app:minValue="3"
+                    app:maxValue="6"
+                    app:value="4"
+                    app:title="# rows"
+                    android:layout_marginLeft="20dp"/>
+
+        </LinearLayout>
+
 
         <Button
                 android:id="@+id/lobby_start_button"
                 android:onClick="clickedStartGame"
-                android:text="Start game!"
-                android:layout_width="fill_parent"
-                android:layout_height="70dp"/>
+                android:text="Start game"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_height="60dp"
+                android:textAllCaps="false"/>
 
 
 

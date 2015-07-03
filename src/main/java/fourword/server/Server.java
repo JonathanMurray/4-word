@@ -13,10 +13,10 @@ import java.util.Map;
 /**
  * Created by jonathan on 2015-06-23.
  */
-public class Server implements ServerGameBehaviour.GameFinishedListener {
+public class Server implements ServerGameBehaviour.GameListener {
 
-    public static final int PORT = 4444;
-    public static final String IP_ADDRESS = "192.168.1.2";
+    public static final int PORT = EnvironmentVars.serverPort();
+
 
     private ServerSocket serverSocket;
     private List<String> playerNames = new ArrayList<String>();
@@ -61,7 +61,7 @@ public class Server implements ServerGameBehaviour.GameFinishedListener {
         }
     }
 
-    void startGameHostedBy(String hostName, int numPlayers, int numCols, int numRows){
+    void createGameHostedBy(String hostName, int numPlayers, int numCols, int numRows){
         hostGameMap.put(hostName, new GameObject(numPlayers, hostName, numCols, numRows));
     }
 
@@ -161,11 +161,31 @@ public class Server implements ServerGameBehaviour.GameFinishedListener {
         printState();
     }
 
+    @Override
+    public void gameCrashed(GameObject game) {
+        try{
+            for(PlayerSocket socket : game.playerSockets){
+                if(socket.hasDisconnected()){
+                    removePlayer(socket.getName());
+                }else if(socket.isRemote()){
+                    socket.sendMessage(new Msg(ServerMsg.GAME_CRASHED));
+                }else{ //BOT
+                    removePlayer(socket.getName());
+                }
+            }
+            hostGameMap.remove(game.getHostName());
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        printState();
+    }
+
     public void printState(){
         System.out.println();
 //        System.out.println(" -----------------------------------------");
-        System.out.println("|             Server state:               |");
-        System.out.println(" -----------------------------------------");
+//        System.out.println("|             Server state:               |");
+        System.out.println(" --------------------------------------------------------");
         System.out.print(getStateString());
 //        System.out.println(" -----------------------------------------");
         System.out.println();

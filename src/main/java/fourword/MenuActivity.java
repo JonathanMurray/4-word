@@ -22,6 +22,9 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
 
     private ArrayAdapter onlinePlayersAdapter;
 
+    int numCols = 4;
+    int numRows = 4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,10 +39,14 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
     }
 
     public void clickedCreateGame(View view){
-        Connection.instance().sendMessage(new Msg(ClientMsg.CREATE_GAME));
+        Connection.instance().sendMessage(new Msg(ClientMsg.CREATE_LOBBY));
         Bundle extras = new Bundle();
         extras.putBoolean(LobbyActivity.IS_HOST, true);
         ChangeActivity.change(this, LobbyActivity.class, extras);
+    }
+
+    public void clickedPlayAI(View view){
+        Connection.instance().sendMessage(new MsgQuickStartGame(numCols, numRows, 2));
     }
 
     @Override
@@ -77,6 +84,17 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
                 args.putString(InviteDialogFragment.INVITER_NAME, inviterName);
                 dialog.setArguments(args);
                 dialog.show(getFragmentManager(), "Invitation");
+                return true;
+            case GAME_IS_STARTING:
+                String[] playerNames = ((MsgGameIsStarting)msg).sortedPlayerNames;
+                int numCols = ((MsgGameIsStarting)msg).numCols;
+                int numRows = ((MsgGameIsStarting)msg).numRows;
+                Bundle extras = new Bundle();
+                extras.putInt(getString(R.string.NUM_COLS), numCols);
+                extras.putInt(getString(R.string.NUM_ROWS), numRows);
+                extras.putStringArray(getString(R.string.PLAYER_NAMES), playerNames);
+                Connection.instance().sendMessage(new MsgText<>(ClientMsg.CONFIRM_GAME_STARTING, Persistent.instance().playerName()));
+                ChangeActivity.change(this, GameActivity.class, extras);
                 return true;
             default:
                 throw new RuntimeException(msg.toString());

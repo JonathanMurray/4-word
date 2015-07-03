@@ -13,4 +13,8 @@ public class MsgPlaceLetter extends Msg<ClientMsg> {
         super(ClientMsg.PLACE_LETTER);
         this.cell = cell;
     }
+
+    public String toString(){
+        return "MsgPlace(" + cell + ")";
+    }
 }

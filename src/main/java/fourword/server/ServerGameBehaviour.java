@@ -13,13 +13,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by jonathan on 2015-06-26.
  */
 public class ServerGameBehaviour implements Runnable{
-    private static final String HOME_DIR = System.getenv("FOUR_WORD_HOME");
+    private static final String HOME_DIR = EnvironmentVars.homeDir();
 
     private static final File[] WORDLIST_FILES = new File[]{
             new File(HOME_DIR, "swedish-word-list-2-letters"),
             new File(HOME_DIR, "swedish-word-list-3-letters"),
             new File(HOME_DIR, "swedish-word-list-4-letters"),
             new File(HOME_DIR, "swedish-word-list-5-letters")};
+
     private final Dictionary dictionary = Dictionary.fromFiles(WORDLIST_FILES);
     private final ScoreCalculator scoreCalculator = new ScoreCalculator(dictionary);
     private final GameObject game;
@@ -31,14 +32,15 @@ public class ServerGameBehaviour implements Runnable{
     private final int numCols;
     private final int numRows;
     private final int numCells;
-    private final GameFinishedListener listener;
+    private final GameListener listener;
 
-    public ServerGameBehaviour(GameFinishedListener listener, GameObject game){
+    public ServerGameBehaviour(GameListener listener, GameObject game){
         this.sockets = game.playerSockets;
         this.grids = game.grids;
         numCols = grids.get(0).getNumCols();
         numRows = grids.get(0).getNumRows();
         numCells = numCols * numRows;
+        System.out.println("new ServerGameBehaviour, cols: " + numCols + ", rows: " + numRows);
         numPlayers = sockets.size();
         this.game = game;
         this.listener = listener;
@@ -51,13 +53,18 @@ public class ServerGameBehaviour implements Runnable{
             boolean running = true;
             while(running){
                 PlayerSocket currentPlayer = sockets.get(currentPlayerIndex);
+
+                //Sleep before the next turn, for better user experience
+                sleep(500);
+
+                broadcast(new MsgText(ServerMsg.GAME_PLAYERS_TURN, currentPlayer.getName()));
                 sendToPlayer(currentPlayer, new Msg(ServerMsg.DO_PICK_AND_PLACE_LETTER));
                 broadcast(new MsgText(ServerMsg.WAITING_FOR_PLAYER_MOVE, currentPlayer.getName()), currentPlayerIndex);
                 MsgPickAndPlaceLetter pickAndPlaceMsg = (MsgPickAndPlaceLetter) receiveFromPlayer(currentPlayer);
+                broadcast(new MsgText(ServerMsg.GAME_PLAYER_DONE_THINKING, currentPlayer.getName()));
                 final char letterPickedByCurrentPlayer = pickAndPlaceMsg.letter;
                 final Cell cellPickedByCurrentPlayer = pickAndPlaceMsg.cell;
                 grids.get(currentPlayerIndex).setCharAtCell(letterPickedByCurrentPlayer, cellPickedByCurrentPlayer);
-
                 broadcast(new MsgRequestPlaceLetter(letterPickedByCurrentPlayer, currentPlayer.getName()), currentPlayerIndex);
                 handleAllPlaceReplies(letterPickedByCurrentPlayer);
                 numPlacedLetters ++;
@@ -67,18 +74,24 @@ public class ServerGameBehaviour implements Runnable{
                 boolean isGameFinished = numPlacedLetters == numCells;
                 if(isGameFinished){
                     broadcastResults();
-
                     running = false;
                 }else{
                     currentPlayerIndex = (currentPlayerIndex + 1) % numPlayers;
+                    System.out.println("Current player index: " + currentPlayerIndex);
                 }
             }
             listener.gameFinished(game);
             System.out.println("Game is over!");
         } catch (IOException|ClassNotFoundException e) {
             e.printStackTrace();
+            gameCrashed();
         }
 
+    }
+
+    private void gameCrashed(){
+        System.out.println("Some player disconnected. Aborting game.");
+        listener.gameCrashed(game);
     }
 
     private void broadcastResults() throws IOException {
@@ -111,11 +124,17 @@ public class ServerGameBehaviour implements Runnable{
                         MsgPlaceLetter placeLetterMsg = null;
                         try {
                             placeLetterMsg = (MsgPlaceLetter) receiveFromPlayer(sockets.get(playerIndex));
+                            String senderName = sockets.get(playerIndex).getName();
+                            broadcast(new MsgText(ServerMsg.GAME_PLAYER_DONE_THINKING, senderName), playerIndex);
                         } catch (IOException|ClassNotFoundException e) {
                             e.printStackTrace();
+                            gameCrashed();
                         }
                         synchronized (grids){
+                            System.out.println(grids);
+                            System.out.println(playerIndex);
                             GridModel grid = grids.get(playerIndex);
+                            System.out.println(grid);
                             grid.setCharAtCell(pickedLetter, placeLetterMsg.cell);
                             numPlayersHavePlaced.incrementAndGet();
                         }
@@ -182,8 +201,9 @@ public class ServerGameBehaviour implements Runnable{
 
 
 
-    public interface GameFinishedListener {
+    public interface GameListener {
         void gameFinished(GameObject game);
+        void gameCrashed(GameObject game);
     }
 
 

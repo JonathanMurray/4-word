@@ -50,10 +50,15 @@ public class RemoteSocket extends PlayerSocket {
 
     @Override
     synchronized public void sendMessage(Msg msg) throws IOException {
-        msg.setId(counter);
-        System.out.println("TO " + getName() + ": " + msg);
-        out.writeObject(msg);
-        counter ++;
+        try{
+            msg.setId(counter);
+            System.out.println("TO " + getName() + ": " + msg);
+            out.writeObject(msg);
+            counter ++;
+        }catch(IOException e){
+            setDisconnected();
+            throw e;
+        }
     }
 
     @Override
@@ -62,6 +67,7 @@ public class RemoteSocket extends PlayerSocket {
             try {
                 return receiveNotBlocking();
             } catch (SocketTimeoutException e) {
+//                System.out.println(".");
                 sleep(500); // sleep and try again
             } catch(ClassCastException e){
                 e.printStackTrace();
@@ -74,6 +80,9 @@ public class RemoteSocket extends PlayerSocket {
                 System.out.println("lobby: " + getLobby());
                 System.out.println("invitedBy: " + getInvitedBy());
                 System.out.println("--------------------------------------");
+            } catch(IOException|ClassNotFoundException e){
+                setDisconnected();
+                throw e;
             }
         }
     }

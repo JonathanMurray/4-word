@@ -12,7 +12,7 @@ import fourword.model.GridModel;
 public class PickAndPlaceLetter extends GameState {
 
     private Cell placedCell;
-    private char placedLetter;
+    private char pickedLetter;
 
     public PickAndPlaceLetter(GameActivity activity, GridScene scene, GridModel grid) {
         super(activity, scene, grid);
@@ -23,29 +23,34 @@ public class PickAndPlaceLetter extends GameState {
         activity.showKeyboard();
         activity.setInfoText("Pick a letter and place it somewhere!");
         placedCell = null;
-        placedLetter = 0;
+        pickedLetter = 0;
         scene.dehighlightCell();
     }
 
     @Override
     public void exit() {
-        grid.setCharAtCell(placedLetter, placedCell);
-        Connection.instance().sendMessage(new MsgPickAndPlaceLetter(placedLetter, placedCell));
+        grid.setCharAtCell(pickedLetter, placedCell);
+        scene.setBigLetter((char)0);
+        activity.hideKeyboard();
+        activity.doneThinking();
+        Connection.instance().sendMessage(new MsgPickAndPlaceLetter(pickedLetter, placedCell));
     }
 
     @Override
     public StateTransition userTypedLetter(char letter) {
+        scene.setBigLetter(letter);
+        pickedLetter = letter;
         if(scene.hasHighlighted()){
             Cell highlighted = scene.getHighlighted();
-            boolean cellIsLocked = grid.hasCharAtCell(highlighted);
-            if(!cellIsLocked){
-                boolean alreadyPlacedLetter = placedLetter != 0 && placedCell != highlighted;
-                if(alreadyPlacedLetter){
+            boolean cellIsFree = !grid.hasCharAtCell(highlighted);
+            if(cellIsFree){
+                boolean alreadyPlacedSomewhereElse = pickedLetter != 0 && placedCell != null && placedCell != highlighted;
+                if(alreadyPlacedSomewhereElse){
                     scene.removeCharAtCell(placedCell);
                 }
                 scene.setCharAtCell(letter, highlighted);
                 placedCell = highlighted;
-                placedLetter = letter;
+                pickedLetter = letter;
             }
         }
         return StateTransition.STAY_HERE;
@@ -53,8 +58,19 @@ public class PickAndPlaceLetter extends GameState {
 
     @Override
     public StateTransition userClickedCell(Cell cell) {
-        scene.highlightCell(cell);
-        activity.showKeyboard();
+        if(!grid.hasCharAtCell(cell)){
+            if(pickedLetter != 0){
+                boolean hasPlacedSomewhere = placedCell != null;
+                if(hasPlacedSomewhere){
+                    scene.removeCharAtCell(placedCell);
+                }
+                placedCell = cell;
+                scene.setCharAtCell(pickedLetter, cell);
+            }
+            scene.highlightCell(cell);
+            activity.showKeyboard();
+        }
+
         return StateTransition.STAY_HERE;
     }
 

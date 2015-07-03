@@ -23,8 +23,9 @@ public class PlaceOpponentsLetter extends GameState {
     public void enter(Object data) {
         MsgRequestPlaceLetter msg = (MsgRequestPlaceLetter) data;
         scene.dehighlightCell();
-        activity.showKeyboard();
+        activity.hideKeyboard();
         letter = msg.letter;
+        scene.setBigLetter(letter);
         activity.setInfoText(msg.playerName + " picked " + letter + ". Place it somewhere!");
         placedCell = null;
     }
@@ -32,6 +33,8 @@ public class PlaceOpponentsLetter extends GameState {
     @Override
     public void exit() {
         grid.setCharAtCell(letter, placedCell);
+        scene.setBigLetter((char)0);
+        activity.doneThinking();
         Connection.instance().sendMessage(new MsgPlaceLetter(placedCell));
     }
 
