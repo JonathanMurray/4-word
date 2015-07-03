@@ -32,7 +32,7 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
         setContentView(R.layout.login);
         String serverAddr = USE_LOCAL_SERVER ? LOCAL_SERVER_ADDRESS : REMOTE_SERVER_ADDRESS;
         if(USE_LOCAL_SERVER){
-            Connection.instance().startOnline(this, serverAddr, EnvironmentVars.serverPort(););
+            Connection.instance().startOnline(this, serverAddr, EnvironmentVars.serverPort());
         }else{
             Connection.instance().startOnline(this, serverAddr, 80);
         }
