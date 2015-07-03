@@ -10,7 +10,15 @@ public class EnvironmentVars {
     }
 
     public static int serverPort(){
-        return Integer.parseInt(getEnvVar("FOUR_WORD_SERVER_PORT", "4444"));
+
+        String val = System.getenv("FOUR_WORD_SERVER_PORT");
+        if(val == null){
+            val = System.getenv("PORT");
+            if(val == null){
+                val = "4444";
+            }
+        }
+        return Integer.parseInt(val);
     }
 
     public static String getEnvVar(String name, String defaultVal){

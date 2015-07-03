@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
 import fourword.messages.*;
+import fourword.server.EnvironmentVars;
 import fourword.server.Server;
 
 /**
@@ -17,7 +18,7 @@ import fourword.server.Server;
  */
 public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
 
-    private static boolean USE_LOCAL_SERVER = true;
+    private static boolean USE_LOCAL_SERVER = false;
 
     private static final String LOCAL_SERVER_ADDRESS = "192.168.1.2";
 //    private static final String LOCAL_SERVER_ADDRESS = "192.168.43.31";
@@ -30,7 +31,12 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         String serverAddr = USE_LOCAL_SERVER ? LOCAL_SERVER_ADDRESS : REMOTE_SERVER_ADDRESS;
-        Connection.instance().startOnline(this, serverAddr, Server.PORT);
+        if(USE_LOCAL_SERVER){
+            Connection.instance().startOnline(this, serverAddr, EnvironmentVars.serverPort(););
+        }else{
+            Connection.instance().startOnline(this, serverAddr, 80);
+        }
+
     }
 
     @Override

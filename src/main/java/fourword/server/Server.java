@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class Server implements ServerGameBehaviour.GameListener {
 
-    public static final int PORT = EnvironmentVars.serverPort();
+
 
 
     private ServerSocket serverSocket;
@@ -30,7 +30,7 @@ public class Server implements ServerGameBehaviour.GameListener {
 //            System.exit(1);
 //        }
 //        int portNumber = Integer.parseInt(args[0]);
-        int portNumber = PORT;
+        int portNumber = EnvironmentVars.serverPort();; //In Heroku the env var "PORT" is used. Trying to set the port in code has no effect!
         Server server = new Server();
         server.run(portNumber);
     }
