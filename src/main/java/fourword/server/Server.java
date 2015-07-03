@@ -42,13 +42,18 @@ public class Server implements ServerGameBehaviour.GameListener {
             printState();
 
             while(true){
-                final RemoteSocket socket = RemoteSocket.acceptSocket(serverSocket, 0);
-                System.out.println("Accepted new socket: " + socket);
-                printState();
-                boolean isLoggedIn = false;
-                ServerPlayerThread newPlayerThread = new ServerPlayerThread(this, isLoggedIn, socket);
+                try{
+                    final RemoteSocket socket = RemoteSocket.acceptSocket(serverSocket, 0);
+                    System.out.println("Accepted new socket: " + socket);
+                    printState();
+                    boolean isLoggedIn = false;
+                    ServerPlayerThread newPlayerThread = new ServerPlayerThread(this, isLoggedIn, socket);
 //                playerThreads.add(newPlayerThread);
-                new Thread(newPlayerThread).start();
+                    new Thread(newPlayerThread).start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Problem with accepting client socket.");
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
