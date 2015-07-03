@@ -1,6 +1,5 @@
 package fourword.messages;
 
-import fourword.client.Client;
 
 /**
  * Created by jonathan on 2015-07-03.
