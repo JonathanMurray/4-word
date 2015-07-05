@@ -14,6 +14,8 @@ import org.andengine.util.debug.Debug;
  */
 public class Connection {
 
+    private static final int HEROKU_PORT = 80;
+
     private static final Connection INSTANCE = new Connection();
     public static Connection instance(){
         return INSTANCE;
@@ -21,8 +23,14 @@ public class Connection {
 
     private Client client;
 
-    public void startOnline(MsgListener<ServerMsg> listener, String serverAddress, int port){
+    public void startLocalNetwork(MsgListener<ServerMsg> listener, String serverAddress, int port){
         client = new OnlineClient(serverAddress, port);
+        client.setMessageListener(listener);
+        client.start();
+    }
+
+    public void startHeroku(MsgListener<ServerMsg> listener, String serverAddress){
+        client = new OnlineClient(serverAddress, HEROKU_PORT);
         client.setMessageListener(listener);
         client.start();
     }

@@ -11,14 +11,13 @@ import android.widget.TextView;
 import com.example.android_test.R;
 import fourword.messages.*;
 import fourword.server.EnvironmentVars;
-import fourword.server.Server;
 
 /**
  * Created by jonathan on 2015-06-27.
  */
 public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
 
-    private static boolean USE_LOCAL_SERVER = false;
+    private static boolean USE_LOCAL_SERVER = true;
 
     private static final String LOCAL_SERVER_ADDRESS = "192.168.1.2";
 //    private static final String LOCAL_SERVER_ADDRESS = "192.168.43.31";
@@ -32,9 +31,9 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
         setContentView(R.layout.login);
         String serverAddr = USE_LOCAL_SERVER ? LOCAL_SERVER_ADDRESS : REMOTE_SERVER_ADDRESS;
         if(USE_LOCAL_SERVER){
-            Connection.instance().startOnline(this, serverAddr, EnvironmentVars.serverPort());
+            Connection.instance().startLocalNetwork(this, serverAddr, EnvironmentVars.serverPort());
         }else{
-            Connection.instance().startOnline(this, serverAddr, 80);
+            Connection.instance().startHeroku(this, serverAddr);
         }
 
     }

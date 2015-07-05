@@ -60,7 +60,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
 //        lobby.addPlayer(LobbyPlayer.connectedHuman(thisPlayerName)); //already added in constructor
         updateLayout();
         Connection.instance().setMessageListener(this);
-//        Connection.instance().startOnline(this, IP_ADDRESS, PORT);
+//        Connection.instance().startLocalNetwork(this, IP_ADDRESS, PORT);
 //        Connection.instance().startOffline(this, 2, 2, 3);
     }
 

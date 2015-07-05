@@ -35,7 +35,9 @@ public class OnlineClient extends Client {
                 Socket socket = null;
                 try{
                     socket = new Socket(serverAddress, serverPort);
+
                     Debug.e("success!");
+                    Debug.e("Remote addr: " + socket.getRemoteSocketAddress());
                     fromServer = new ObjectInputStream(socket.getInputStream());
                     toServer = new ObjectOutputStream(socket.getOutputStream());
                     boolean connected = true;

@@ -19,6 +19,8 @@ public class RemoteSocket extends PlayerSocket {
 
     private int counter = 0;
 
+
+
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private Socket clientSocket;
