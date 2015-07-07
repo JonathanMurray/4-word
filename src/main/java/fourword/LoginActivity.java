@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
 import fourword_shared.messages.*;
-import fourword.server.EnvironmentVars;
 
 /**
  * Created by jonathan on 2015-06-27.
@@ -31,7 +30,7 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
         setContentView(R.layout.login);
         String serverAddr = USE_LOCAL_SERVER ? LOCAL_SERVER_ADDRESS : REMOTE_SERVER_ADDRESS;
         if(USE_LOCAL_SERVER){
-            Connection.instance().startLocalNetwork(this, serverAddr, EnvironmentVars.serverPort());
+            Connection.instance().startLocalNetwork(this, serverAddr, 80); //TODO
         }else{
             Connection.instance().startHeroku(this, serverAddr);
         }

@@ -18,24 +18,29 @@ import java.nio.ByteBuffer;
  * Created by jonathan on 2015-07-06.
  */
 public class ClientApp {
+
+    public static final String HEROKU_URL = "ws://fourword-server.herokuapp.com:80/";
+    public static final String LOCAL_URL = "ws://192.168.1.2:9000/";
+
+
     public static void main(String[] args) {
         try {
-            WebSocketClient s = new WebSocketClient(new URI("ws://play-1-test.herokuapp.com:80/")) {
+            WebSocketClient s = new WebSocketClient(new URI(LOCAL_URL)) {
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
-                    System.out.println("onopen");
+                    System.out.println("onOpen: " + handshakedata);
                 }
 
                 @Override
                 public void onMessage(String message) {
-                    System.out.println("msg: " + message);
+                    System.out.println("onMessage: " + message);
                 }
 
                 @Override
                 public void onMessage(ByteBuffer bytes){
                     try {
                         Msg<ServerMsg> msg = objectFromBytes(bytes.array());
-                        System.out.println("Received from server: " + msg);
+                        System.out.println("onMessage: " + msg);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (ClassNotFoundException e) {
@@ -45,17 +50,19 @@ public class ClientApp {
 
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
-                    System.out.println("close: " + reason + "code: " +  code);
+                    System.out.println("onClose: " + reason + ",code: " +  code);
                 }
 
                 @Override
                 public void onError(Exception ex) {
-                    System.out.println("error: " + ex);
+                    System.out.println("onError: " + ex);
                     ex.printStackTrace();
                 }
             };
-            s.connectBlocking();
+            boolean connected = s.connectBlocking();
+            System.out.println("Connected to server: " + connected);
             System.out.println("Sending msg to server");
+            System.out.println(s.getRemoteSocketAddress());
             s.send(bytesFromObject(new Msg(ClientMsg.LOGIN)));
         }  catch (URISyntaxException e) {
             e.printStackTrace();

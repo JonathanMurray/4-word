@@ -35,11 +35,11 @@ public class Connection {
         client.start();
     }
 
-    public void startOffline(MsgListener<ServerMsg> listener, int numAIs, int numCols, int numRows){
-        client = new OfflineClient(numAIs, numCols, numRows);
-        client.setMessageListener(listener);
-        client.start();
-    }
+//    public void startOffline(MsgListener<ServerMsg> listener, int numAIs, int numCols, int numRows){
+//        client = new OfflineClient(numAIs, numCols, numRows);
+//        client.setMessageListener(listener);
+//        client.start();
+//    }
 
 
     public void setMessageListener(MsgListener<ServerMsg> listener){
