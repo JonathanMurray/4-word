@@ -5,8 +5,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import fourword.messages.ClientMsg;
-import fourword.messages.Msg;
+import fourword_shared.messages.ClientMsg;
+import fourword_shared.messages.Msg;
 
 /**
  * Created by jonathan on 2015-06-27.

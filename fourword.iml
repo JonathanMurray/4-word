@@ -16,5 +16,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="AndEngine" />
+    <orderEntry type="module" module-name="4-word-shared" />
   </component>
 </module>

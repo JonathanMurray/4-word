@@ -1,10 +1,10 @@
 package fourword.server;
 
-import fourword.messages.ClientMsg;
-import fourword.messages.Msg;
-import fourword.messages.ServerMsg;
-import fourword.model.GridModel;
-import fourword.model.Lobby;
+import fourword_shared.messages.ClientMsg;
+import fourword_shared.messages.Msg;
+import fourword_shared.messages.ServerMsg;
+import fourword_shared.model.GridModel;
+import fourword_shared.model.Lobby;
 
 import java.io.IOException;
 import java.net.InetAddress;

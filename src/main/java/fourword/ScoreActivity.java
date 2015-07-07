@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import com.example.android_test.R;
-import fourword.messages.Msg;
-import fourword.messages.MsgListener;
-import fourword.messages.MsgText;
-import fourword.messages.ServerMsg;
-import fourword.model.*;
+import fourword_shared.messages.Msg;
+import fourword_shared.messages.MsgListener;
+import fourword_shared.messages.MsgText;
+import fourword_shared.messages.ServerMsg;
+import fourword_shared.model.*;
 import org.andengine.util.debug.Debug;
 
 import java.util.Iterator;

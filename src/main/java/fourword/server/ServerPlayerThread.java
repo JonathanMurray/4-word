@@ -1,8 +1,8 @@
 package fourword.server;
 
-import fourword.messages.*;
-import fourword.model.LobbyPlayer;
-import fourword.model.Lobby;
+import fourword_shared.messages.*;
+import fourword_shared.model.LobbyPlayer;
+import fourword_shared.model.Lobby;
 
 import java.io.EOFException;
 import java.io.IOException;

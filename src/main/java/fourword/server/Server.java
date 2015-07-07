@@ -1,7 +1,7 @@
 package fourword.server;
 
-import fourword.messages.*;
-import fourword.model.Lobby;
+import fourword_shared.messages.*;
+import fourword_shared.model.Lobby;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Created by jonathan on 2015-06-23.

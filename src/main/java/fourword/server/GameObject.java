@@ -1,6 +1,6 @@
 package fourword.server;
 
-import fourword.model.GridModel;
+import fourword_shared.model.GridModel;
 import fourword.server.PlayerSocket;
 
 import java.util.ArrayList;

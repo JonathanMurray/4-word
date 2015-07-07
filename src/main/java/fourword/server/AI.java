@@ -1,8 +1,8 @@
 package fourword.server;
 
-import fourword.messages.*;
-import fourword.model.Cell;
-import fourword.model.GridModel;
+import fourword_shared.messages.*;
+import fourword_shared.model.Cell;
+import fourword_shared.model.GridModel;
 
 import java.util.ArrayList;
 import java.util.List;

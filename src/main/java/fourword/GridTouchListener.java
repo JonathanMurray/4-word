@@ -1,6 +1,6 @@
 package fourword;
 
-import fourword.model.Cell;
+import fourword_shared.model.Cell;
 
 /**
  * Created by jonathan on 2015-06-20.

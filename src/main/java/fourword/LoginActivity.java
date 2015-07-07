@@ -9,7 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
-import fourword.messages.*;
+import fourword_shared.messages.*;
 import fourword.server.EnvironmentVars;
 
 /**

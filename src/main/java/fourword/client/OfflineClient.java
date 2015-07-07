@@ -1,9 +1,9 @@
 package fourword.client;
 
-import fourword.messages.ClientMsg;
-import fourword.messages.Msg;
-import fourword.model.GridModel;
-import fourword.messages.MsgListener;
+import fourword_shared.messages.ClientMsg;
+import fourword_shared.messages.Msg;
+import fourword_shared.model.GridModel;
+import fourword_shared.messages.MsgListener;
 import fourword.server.*;
 import org.andengine.util.debug.Debug;
 

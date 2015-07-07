@@ -1,8 +1,8 @@
 package fourword.server;
 
-import fourword.model.*;
-import fourword.messages.*;
-import fourword.model.Dictionary;
+import fourword_shared.model.*;
+import fourword_shared.messages.*;
+import fourword_shared.model.Dictionary;
 
 import java.io.File;
 import java.io.IOException;

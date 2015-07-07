@@ -1,10 +1,10 @@
 package fourword.states;
 
 import fourword.*;
-import fourword.messages.Msg;
-import fourword.messages.MsgPickAndPlaceLetter;
-import fourword.model.Cell;
-import fourword.model.GridModel;
+import fourword_shared.messages.Msg;
+import fourword_shared.messages.MsgPickAndPlaceLetter;
+import fourword_shared.model.Cell;
+import fourword_shared.model.GridModel;
 
 /**
  * Created by jonathan on 2015-06-23.

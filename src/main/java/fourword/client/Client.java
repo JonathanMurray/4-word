@@ -1,10 +1,10 @@
 package fourword.client;
 
 
-import fourword.messages.ClientMsg;
-import fourword.messages.Msg;
-import fourword.messages.MsgListener;
-import fourword.messages.ServerMsg;
+import fourword_shared.messages.ClientMsg;
+import fourword_shared.messages.Msg;
+import fourword_shared.messages.MsgListener;
+import fourword_shared.messages.ServerMsg;
 import org.andengine.util.debug.Debug;
 
 import java.io.Serializable;

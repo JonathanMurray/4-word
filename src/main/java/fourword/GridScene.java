@@ -2,7 +2,7 @@ package fourword;
 
 import android.content.Context;
 import com.example.android_test.R;
-import fourword.model.Cell;
+import fourword_shared.model.Cell;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.IEntity;

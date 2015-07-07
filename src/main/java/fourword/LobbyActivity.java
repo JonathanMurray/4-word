@@ -12,8 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
-import fourword.messages.*;
-import fourword.model.Lobby;
+import fourword_shared.messages.*;
+import fourword_shared.model.Lobby;
 import org.andengine.util.debug.Debug;
 
 import java.util.ArrayList;

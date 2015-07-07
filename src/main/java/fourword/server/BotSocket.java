@@ -1,9 +1,9 @@
 package fourword.server;
 
-import fourword.messages.ClientMsg;
-import fourword.messages.Msg;
-import fourword.messages.ServerMsg;
-import fourword.model.GridModel;
+import fourword_shared.messages.ClientMsg;
+import fourword_shared.messages.Msg;
+import fourword_shared.messages.ServerMsg;
+import fourword_shared.model.GridModel;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

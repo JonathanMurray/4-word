@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.example.android_test.R;
-import fourword.messages.*;
+import fourword_shared.messages.*;
 import org.andengine.util.debug.Debug;
 
 import java.util.List;

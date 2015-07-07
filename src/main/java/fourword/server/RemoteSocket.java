@@ -1,8 +1,8 @@
 package fourword.server;
 
-import fourword.messages.ClientMsg;
-import fourword.messages.Msg;
-import fourword.model.GridModel;
+import fourword_shared.messages.ClientMsg;
+import fourword_shared.messages.Msg;
+import fourword_shared.model.GridModel;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

@@ -1,10 +1,10 @@
 package fourword.client;
 
 import fourword.Persistent;
-import fourword.messages.ClientMsg;
-import fourword.messages.Msg;
-import fourword.messages.MsgStringList;
-import fourword.messages.ServerMsg;
+import fourword_shared.messages.ClientMsg;
+import fourword_shared.messages.Msg;
+import fourword_shared.messages.MsgStringList;
+import fourword_shared.messages.ServerMsg;
 import org.andengine.util.debug.Debug;
 
 import java.io.*;

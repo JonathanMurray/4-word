@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/4-word-shared/4-word-shared.iml" filepath="$PROJECT_DIR$/4-word-shared/4-word-shared.iml" />
       <module fileurl="file://$USER_HOME$/Documents/AndEngine/AndEngine.iml" filepath="$USER_HOME$/Documents/AndEngine/AndEngine.iml" />
       <module fileurl="file://$USER_HOME$/Documents/AndEngineMultiplayerExtension/AndEngineMultiplayerExtension.iml" filepath="$USER_HOME$/Documents/AndEngineMultiplayerExtension/AndEngineMultiplayerExtension.iml" />
       <module fileurl="file://$PROJECT_DIR$/fourword.iml" filepath="$PROJECT_DIR$/fourword.iml" />

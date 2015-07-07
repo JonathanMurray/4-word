@@ -14,12 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android_test.R;
-import fourword.messages.Msg;
-import fourword.messages.MsgListener;
-import fourword.messages.MsgText;
-import fourword.messages.ServerMsg;
-import fourword.model.Cell;
-import fourword.model.GridModel;
+import fourword_shared.messages.Msg;
+import fourword_shared.messages.MsgListener;
+import fourword_shared.messages.MsgText;
+import fourword_shared.messages.ServerMsg;
+import fourword_shared.model.Cell;
+import fourword_shared.model.GridModel;
 import fourword.states.*;
 
 

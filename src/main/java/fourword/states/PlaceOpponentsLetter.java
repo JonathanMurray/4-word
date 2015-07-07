@@ -1,11 +1,11 @@
 package fourword.states;
 
 import fourword.*;
-import fourword.messages.MsgPlaceLetter;
-import fourword.messages.MsgRequestPlaceLetter;
-import fourword.messages.Msg;
-import fourword.model.Cell;
-import fourword.model.GridModel;
+import fourword_shared.messages.MsgPlaceLetter;
+import fourword_shared.messages.MsgRequestPlaceLetter;
+import fourword_shared.messages.Msg;
+import fourword_shared.model.Cell;
+import fourword_shared.model.GridModel;
 
 /**
  * Created by jonathan on 2015-06-23.

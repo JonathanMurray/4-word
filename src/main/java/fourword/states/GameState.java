@@ -1,11 +1,11 @@
 package fourword.states;
 
-import fourword.messages.ServerMsg;
-import fourword.model.Cell;
+import fourword_shared.messages.ServerMsg;
+import fourword_shared.model.Cell;
 import fourword.GameActivity;
-import fourword.model.GridModel;
+import fourword_shared.model.GridModel;
 import fourword.GridScene;
-import fourword.messages.Msg;
+import fourword_shared.messages.Msg;
 
 /**
  * Created by jonathan on 2015-06-23.
