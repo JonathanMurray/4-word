@@ -1,13 +1,15 @@
 package fourword;
 
 import fourword.client.Client;
-import fourword.client.OfflineClient;
-import fourword.client.OnlineClient;
+import fourword.client.WS_Client;
 import fourword_shared.messages.ClientMsg;
 import fourword_shared.messages.Msg;
 import fourword_shared.messages.MsgListener;
 import fourword_shared.messages.ServerMsg;
 import org.andengine.util.debug.Debug;
+
+import java.io.IOException;
+import java.util.Random;
 
 /**
  * Created by jonathan on 2015-06-25.
@@ -23,14 +25,17 @@ public class Connection {
 
     private Client client;
 
-    public void startLocalNetwork(MsgListener<ServerMsg> listener, String serverAddress, int port){
-        client = new OnlineClient(serverAddress, port);
+    public void startLocalNetwork(MsgListener<ServerMsg> listener){
+
+        String userId = "id_" + new Random().nextLong();
+        client = new WS_Client("ws://192.168.1.2:9000", userId);
         client.setMessageListener(listener);
         client.start();
     }
 
     public void startHeroku(MsgListener<ServerMsg> listener, String serverAddress){
-        client = new OnlineClient(serverAddress, HEROKU_PORT);
+        String userId = "id_" + new Random().nextLong();
+        client = new WS_Client(serverAddress, userId);
         client.setMessageListener(listener);
         client.start();
     }
@@ -54,7 +59,7 @@ public class Connection {
     public void removeMessageListener(){
         client.removeMessageListener();
     }
-    public void sendMessage(Msg<ClientMsg> msg){
+    public void sendMessage(Msg<ClientMsg> msg) throws IOException{
         client.sendMessage(msg);
     }
 

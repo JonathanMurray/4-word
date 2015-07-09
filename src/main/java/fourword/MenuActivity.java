@@ -13,6 +13,7 @@ import com.example.android_test.R;
 import fourword_shared.messages.*;
 import org.andengine.util.debug.Debug;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -39,14 +40,23 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
     }
 
     public void clickedCreateGame(View view){
-        Connection.instance().sendMessage(new Msg(ClientMsg.CREATE_LOBBY));
-        Bundle extras = new Bundle();
-        extras.putBoolean(LobbyActivity.IS_HOST, true);
-        ChangeActivity.change(this, LobbyActivity.class, extras);
+        try {
+            Connection.instance().sendMessage(new Msg(ClientMsg.CREATE_LOBBY));
+            Bundle extras = new Bundle();
+            extras.putBoolean(LobbyActivity.IS_HOST, true);
+            ChangeActivity.change(this, LobbyActivity.class, extras);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void clickedPlayAI(View view){
-        Connection.instance().sendMessage(new MsgQuickStartGame(numCols, numRows, 2));
+        try {
+            Connection.instance().sendMessage(new MsgQuickStartGame(numCols, numRows, 2));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -59,8 +69,13 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
                         .setMessage("Are you sure?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                Connection.instance().sendMessage(new Msg(ClientMsg.LOGOUT));
-                                ChangeActivity.change(MenuActivity.this, LoginActivity.class, new Bundle());
+                                try {
+                                    Connection.instance().sendMessage(new Msg(ClientMsg.LOGOUT));
+                                    ChangeActivity.change(MenuActivity.this, LoginActivity.class, new Bundle());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener(){
@@ -93,8 +108,13 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
                 extras.putInt(getString(R.string.NUM_COLS), numCols);
                 extras.putInt(getString(R.string.NUM_ROWS), numRows);
                 extras.putStringArray(getString(R.string.PLAYER_NAMES), playerNames);
-                Connection.instance().sendMessage(new MsgText<>(ClientMsg.CONFIRM_GAME_STARTING, Persistent.instance().playerName()));
-                ChangeActivity.change(this, GameActivity.class, extras);
+                try {
+                    Connection.instance().sendMessage(new MsgText(ClientMsg.CONFIRM_GAME_STARTING, Persistent.instance().playerName()));
+                    ChangeActivity.change(this, GameActivity.class, extras);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 return true;
             default:
                 throw new RuntimeException(msg.toString());

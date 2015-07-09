@@ -16,12 +16,12 @@ import fourword_shared.messages.*;
 import fourword_shared.model.Lobby;
 import org.andengine.util.debug.Debug;
 
-import java.util.ArrayList;
+import java.io.IOException;
 
 /**
  * Created by jonathan on 2015-06-25.
  */
-public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, HorizontalNumberPicker.ValueListener {
+public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, HorizontalNumberPicker.NumberPickerListener {
 
     private boolean isPlayerHost;
 
@@ -76,8 +76,12 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
                         .setMessage("Are you sure?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                Connection.instance().sendMessage(new Msg(ClientMsg.LEAVE_LOBBY));
-                                ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
+                                try {
+                                    Connection.instance().sendMessage(new Msg(ClientMsg.LEAVE_LOBBY));
+                                    ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -132,7 +136,11 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
     private void clickedKickPlayer(int playerIndex){
         String name = lobby.getNameAtIndex(playerIndex);
         Debug.e("Clicked kick player " + name);
-        Connection.instance().sendMessage(new MsgText<>(ClientMsg.KICK_FROM_LOBBY, name));
+        try {
+            Connection.instance().sendMessage(new MsgText(ClientMsg.KICK_FROM_LOBBY, name));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void hideKeyboard(){
@@ -150,23 +158,35 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
 
     public void clickedAddPlayer(View view){
         String playerName = ((EditText)findViewById(R.id.lobby_player_name)).getText().toString();
-        Connection.instance().sendMessage(new MsgText(ClientMsg.INVITE_TO_LOBBY, playerName));
-        waitingForServer = true;
-        setButtonsEnabled(false);
-        setInfoText("Waiting for server...");
-        hideKeyboard();
+        try {
+            Connection.instance().sendMessage(new MsgText(ClientMsg.INVITE_TO_LOBBY, playerName));
+            waitingForServer = true;
+            setButtonsEnabled(false);
+            setInfoText("Waiting for server...");
+            hideKeyboard();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void clickedAddBot(View view){
-        Connection.instance().sendMessage(new Msg(ClientMsg.ADD_BOT_TO_LOBBY));
+        try {
+            Connection.instance().sendMessage(new Msg(ClientMsg.ADD_BOT_TO_LOBBY));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void clickedStartGame(View view){
 
-        Connection.instance().sendMessage(new Msg(ClientMsg.START_GAME_FROM_LOBBY));
-        waitingForServer = true;
-        setInfoText("Waiting for server...");
-        setButtonsEnabled(false);
+        try {
+            Connection.instance().sendMessage(new Msg(ClientMsg.START_GAME_FROM_LOBBY));
+            waitingForServer = true;
+            setInfoText("Waiting for server...");
+            setButtonsEnabled(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setButtonsEnabled(final boolean enabled){
@@ -213,13 +233,17 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
                 }
 
             case GAME_IS_STARTING:
-                Connection.instance().sendMessage(new MsgText(ClientMsg.CONFIRM_GAME_STARTING, lobby.getHost()));
-                Bundle extras = new Bundle();
-                extras.putInt(getString(R.string.NUM_COLS), ((MsgGameIsStarting) msg).numCols);
-                extras.putInt(getString(R.string.NUM_ROWS), ((MsgGameIsStarting) msg).numRows);
-                String[] playerNames = ((MsgGameIsStarting)msg).sortedPlayerNames;
-                extras.putStringArray(getString(R.string.PLAYER_NAMES), playerNames);
-                ChangeActivity.change(this, GameActivity.class, extras);
+                try {
+                    Connection.instance().sendMessage(new MsgText(ClientMsg.CONFIRM_GAME_STARTING, lobby.getHost()));
+                    Bundle extras = new Bundle();
+                    extras.putInt(getString(R.string.NUM_COLS), ((MsgGameIsStarting) msg).numCols);
+                    extras.putInt(getString(R.string.NUM_ROWS), ((MsgGameIsStarting) msg).numRows);
+                    String[] playerNames = ((MsgGameIsStarting)msg).sortedPlayerNames;
+                    extras.putStringArray(getString(R.string.PLAYER_NAMES), playerNames);
+                    ChangeActivity.change(this, GameActivity.class, extras);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return true;
             case LOBBY_STATE:
                 this.lobby = ((MsgLobbyState)msg).lobby;
@@ -255,7 +279,11 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
     }
 
     @Override
-    public void onChange(int newValue) {
-        Connection.instance().sendMessage(new MsgLobbySetDim(colPicker.getValue(), rowPicker.getValue()));
+    public void onNumberPickerChange(int newValue) {
+        try {
+            Connection.instance().sendMessage(new MsgLobbySetDim(colPicker.getValue(), rowPicker.getValue()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

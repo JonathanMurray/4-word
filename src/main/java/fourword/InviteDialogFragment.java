@@ -8,6 +8,8 @@ import android.os.Bundle;
 import fourword_shared.messages.ClientMsg;
 import fourword_shared.messages.Msg;
 
+import java.io.IOException;
+
 /**
  * Created by jonathan on 2015-06-27.
  */
@@ -32,13 +34,21 @@ public class InviteDialogFragment extends DialogFragment{
         builder.setMessage(inviterName + " has invited you to a game!")
                 .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                    try {
                         Connection.instance().sendMessage(new Msg(ClientMsg.ACCEPT_INVITE));
                         ChangeActivity.change(getActivity(), LobbyActivity.class, args);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     }
                 })
                 .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Connection.instance().sendMessage(new Msg(ClientMsg.DECLINE_INVITE));
+                        try {
+                            Connection.instance().sendMessage(new Msg(ClientMsg.DECLINE_INVITE));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
         return builder.create();

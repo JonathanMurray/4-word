@@ -85,8 +85,9 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
         final int GRID_WIDTH_ASPECT_RATIO = getResources().getInteger(R.integer.gridWidthAspectRatio);
         HEIGHT_PROPORTION = (float) GRID_HEIGHT_ASPECT_RATIO / (float)GRID_WIDTH_ASPECT_RATIO;
         camHeight = camWidth * HEIGHT_PROPORTION;
-        NUM_COLS = (int) getIntent().getExtras().get(getString(R.string.NUM_COLS));
-        NUM_ROWS = (int) getIntent().getExtras().get(getString(R.string.NUM_ROWS));
+
+        NUM_COLS = (Integer) getIntent().getExtras().get(getString(R.string.NUM_COLS));
+        NUM_ROWS = (Integer) getIntent().getExtras().get(getString(R.string.NUM_ROWS));
         playerNames = getIntent().getStringArrayExtra(getString(R.string.PLAYER_NAMES));
         for(String name : playerNames){
             thinkingPlayers.put(name, true);

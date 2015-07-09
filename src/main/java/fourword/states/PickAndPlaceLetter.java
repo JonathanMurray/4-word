@@ -6,6 +6,8 @@ import fourword_shared.messages.MsgPickAndPlaceLetter;
 import fourword_shared.model.Cell;
 import fourword_shared.model.GridModel;
 
+import java.io.IOException;
+
 /**
  * Created by jonathan on 2015-06-23.
  */
@@ -33,7 +35,11 @@ public class PickAndPlaceLetter extends GameState {
         scene.setBigLetter((char)0);
         activity.hideKeyboard();
         activity.doneThinking();
-        Connection.instance().sendMessage(new MsgPickAndPlaceLetter(pickedLetter, placedCell));
+        try {
+            Connection.instance().sendMessage(new MsgPickAndPlaceLetter(pickedLetter, placedCell));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

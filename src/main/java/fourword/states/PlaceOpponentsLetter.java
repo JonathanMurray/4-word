@@ -7,6 +7,8 @@ import fourword_shared.messages.Msg;
 import fourword_shared.model.Cell;
 import fourword_shared.model.GridModel;
 
+import java.io.IOException;
+
 /**
  * Created by jonathan on 2015-06-23.
  */
@@ -35,7 +37,11 @@ public class PlaceOpponentsLetter extends GameState {
         grid.setCharAtCell(letter, placedCell);
         scene.setBigLetter((char)0);
         activity.doneThinking();
-        Connection.instance().sendMessage(new MsgPlaceLetter(placedCell));
+        try {
+            Connection.instance().sendMessage(new MsgPlaceLetter(placedCell));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

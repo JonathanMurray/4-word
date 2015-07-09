@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.example.android_test.R;
 import fourword_shared.messages.*;
 
+import java.io.IOException;
+
 /**
  * Created by jonathan on 2015-06-27.
  */
@@ -30,7 +32,7 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
         setContentView(R.layout.login);
         String serverAddr = USE_LOCAL_SERVER ? LOCAL_SERVER_ADDRESS : REMOTE_SERVER_ADDRESS;
         if(USE_LOCAL_SERVER){
-            Connection.instance().startLocalNetwork(this, serverAddr, 80); //TODO
+            Connection.instance().startLocalNetwork(this);
         }else{
             Connection.instance().startHeroku(this, serverAddr);
         }
@@ -66,9 +68,13 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
     public void clickedLogin(View view){
         setButtonEnabled(false);
         String nameInput = ((TextView)findViewById(R.id.login_input)).getText().toString();
-        Connection.instance().sendMessage(new MsgText(ClientMsg.LOGIN, nameInput));
-        waitingForReply = true;
-        requestedName = nameInput;
+        try{
+            Connection.instance().sendMessage(new MsgText(ClientMsg.LOGIN, nameInput));
+            waitingForReply = true;
+            requestedName = nameInput;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

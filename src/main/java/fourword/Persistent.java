@@ -15,7 +15,7 @@ public class Persistent {
     }
 
     private String playerName;
-    private List<String> otherOnlinePlayers = new ArrayList<>();
+    private List<String> otherOnlinePlayers = new ArrayList();
     private OnlineListener listener;
 
     public void setOnlineListener(OnlineListener listener){

@@ -19,7 +19,7 @@ public class HorizontalNumberPicker extends LinearLayout {
     private int minValue;
     private int maxValue;
     private int value;
-    private ValueListener listener;
+    private NumberPickerListener listener;
 
     public HorizontalNumberPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -70,7 +70,7 @@ public class HorizontalNumberPicker extends LinearLayout {
 
     private void updateValue(){
         if(listener != null){
-            listener.onChange(value);
+            listener.onNumberPickerChange(value);
         }
         ((TextView)findViewById(R.id.numberpicker_value)).setText("" + value);
         invalidate();
@@ -91,12 +91,12 @@ public class HorizontalNumberPicker extends LinearLayout {
         }
     }
 
-    public void setValueListener(ValueListener listener){
+    public void setValueListener(NumberPickerListener listener){
         this.listener = listener;
     }
 
-    public static interface ValueListener {
-        void onChange(int newValue);
+    public static interface NumberPickerListener {
+        void onNumberPickerChange(int newValue);
     }
 
 
