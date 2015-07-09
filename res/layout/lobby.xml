@@ -27,29 +27,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-            <TextView
-                    android:text="Add player:"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            <EditText
-                    android:id="@+id/lobby_player_name"
-                    android:hint="name"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"/>
-            <Button
-                    android:id="@+id/lobby_add_human_button"
-                    android:onClick="clickedAddPlayer"
-                    android:text="Send invite"
-                    android:layout_width="160dp"
-                    android:layout_height="60dp"/>
-
-        </LinearLayout>
+        <Button
+                android:id="@+id/lobby_add_human_button"
+                android:onClick="clickedAddPlayer"
+                android:text="Invite other player"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:textAllCaps="false"/>
 
         <Button
                 android:id="@+id/lobby_add_bot_button"
@@ -69,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/col_picker"
-                    app:minValue="3"
+                    app:minValue="2"
                     app:maxValue="6"
                     app:value="4"
                     app:title="# columns"
@@ -78,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/row_picker"
-                    app:minValue="3"
+                    app:minValue="2"
                     app:maxValue="6"
                     app:value="4"
                     app:title="# rows"

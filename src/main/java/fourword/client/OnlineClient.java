@@ -4,6 +4,7 @@ import fourword.Persistent;
 import fourword_shared.messages.ClientMsg;
 import fourword_shared.messages.Msg;
 import fourword_shared.messages.ServerMsg;
+import fourword_shared.model.PlayerInfo;
 import org.andengine.util.debug.Debug;
 
 import java.io.*;
@@ -45,8 +46,8 @@ public class OnlineClient extends Client {
                         Msg<ServerMsg> msg = (Msg<ServerMsg>) fromServer.readObject();
                         Debug.e("   Received message: " + msg + ", id: " + msg.id());
                         switch (msg.type()){
-                            case ONLINE_PLAYERS:
-                                List<String> onlinePlayers = ((Msg.OnlinePlayers)msg).get();
+                            case ONLINE_PLAYERS_INFO:
+                                List<PlayerInfo> onlinePlayers = ((Msg.OnlinePlayersInfo)msg).get();
                                 onlinePlayers.remove(Persistent.instance().playerName());
                                 Persistent.instance().notifyOnlinePlayers(onlinePlayers);
                                 Debug.e("Not delegating to listener. Handled by OnlineClient.");

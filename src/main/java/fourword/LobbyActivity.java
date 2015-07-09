@@ -5,12 +5,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.*;
 import com.example.android_test.R;
 import fourword_shared.messages.*;
 import fourword_shared.model.Lobby;
@@ -42,26 +41,14 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
         isPlayerHost = getIntent().getBooleanExtra(IS_HOST, false);
         Debug.e("lobby, isHost: " + isPlayerHost);
 
-        ViewGroup hostSection= (ViewGroup) findViewById(R.id.lobby_host_section);
-
-        if(isPlayerHost){
-            hostSection.setVisibility(View.VISIBLE);
-        }else{
-            hostSection.setVisibility(View.GONE);
-        }
-
         colPicker = ((HorizontalNumberPicker)findViewById(R.id.col_picker));
         rowPicker = ((HorizontalNumberPicker)findViewById(R.id.row_picker));
         colPicker.setValueListener(this);
         rowPicker.setValueListener(this);
 
-
         lobby = new Lobby(Persistent.instance().playerName());
-//        lobby.addPlayer(LobbyPlayer.connectedHuman(thisPlayerName)); //already added in constructor
         updateLayout();
         Connection.instance().setMessageListener(this);
-//        Connection.instance().startLocalNetwork(this, IP_ADDRESS, PORT);
-//        Connection.instance().startOffline(this, 2, 2, 3);
     }
 
 
@@ -96,6 +83,8 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
     }
 
     private void updateLayout(){
+        isPlayerHost = lobby.getHost().equals(Persistent.instance().playerName());
+
         Debug.e("LobbyActivity.updateLayout()");
         runOnUiThread(new Runnable() {
             @Override
@@ -128,6 +117,13 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
                     avatarRow.addView(avatarView);
                     i++;
                 }
+
+                ViewGroup hostSection = (ViewGroup) findViewById(R.id.lobby_host_section);
+                if(isPlayerHost){
+                    hostSection.setVisibility(View.VISIBLE);
+                }else{
+                    hostSection.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -145,30 +141,44 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
     }
 
     public void hideKeyboard(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                final EditText textInput = (EditText) findViewById(R.id.lobby_player_name);
-                imm.hideSoftInputFromWindow(textInput.getWindowToken(), 0);
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                final EditText textInput = (EditText) findViewById(R.id.lobby_player_name);
+//                imm.hideSoftInputFromWindow(textInput.getWindowToken(), 0);
+//            }
+//        });
     }
 
 
 
     public void clickedAddPlayer(View view){
-        String playerName = ((EditText)findViewById(R.id.lobby_player_name)).getText().toString();
-        try {
+//        String playerName = ((EditText)findViewById(R.id.lobby_player_name)).getText().toString();
 
-            Connection.instance().sendMessage(new Msg.InviteToLobby(playerName));
-            waitingForServer = true;
-            setButtonsEnabled(false);
-            setInfoText("Waiting for server...");
-            hideKeyboard();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //TODO Use same kind of view here as in menu when seeing other online players
+        //The players that are in game or lobby should somehow be disabled, so u cant invite them
+        final String[] names = Persistent.instance().getOtherOnlinePlayers().toArray(new String[0]);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(LobbyActivity.this)
+            .setItems(names, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String playerName = names[which];
+                    try {
+                        Connection.instance().sendMessage(new Msg.InviteToLobby(playerName));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    waitingForServer = true;
+                    setButtonsEnabled(false);
+                    setInfoText("Waiting for server...");
+                }
+            });
+        LayoutInflater inflater = getLayoutInflater();
+        View convertView = (View) inflater.inflate(R.layout.invite_other_dialog, null);
+        alertDialog.setView(convertView);
+        alertDialog.setTitle("Invite player");
+        alertDialog.show();
     }
 
     public void clickedAddBot(View view){

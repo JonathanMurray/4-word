@@ -1,13 +1,16 @@
 package fourword.client;
 
 import com.neovisionaries.ws.client.*;
+import fourword.Persistent;
 import fourword_shared.messages.ClientMsg;
 import fourword_shared.messages.Msg;
 import fourword_shared.messages.ServerMsg;
+import fourword_shared.model.PlayerInfo;
 import org.andengine.util.debug.Debug;
 
 import java.io.*;
 import java.net.URL;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -81,8 +84,27 @@ public class WS_Client extends Client {
                                 public void onBinaryMessage(WebSocket websocket, byte[] binary) {
                                     try {
                                         Msg<ServerMsg> msg = objectFromBytes(binary);
-                                        System.out.println("From server: " + msg + ", delegating to listener");
-                                        delegateToListener(msg);
+                                        switch (msg.type()){
+                                            case ONLINE_PLAYERS_INFO:
+                                                List<PlayerInfo> onlinePlayers = ((Msg.OnlinePlayersInfo)msg).get();
+                                                onlinePlayers.remove(Persistent.instance().playerName());
+                                                Persistent.instance().notifyOnlinePlayers(onlinePlayers);
+                                                Debug.e("Not delegating to listener. Handled by OnlineClient.");
+                                                break;
+                                            case PLAYER_INFO_UPDATE:
+                                                PlayerInfo info = ((Msg.PlayerInfoUpdate)msg).get();
+                                                Persistent.instance().notifyPlayerInfo(info);
+                                                Debug.e("Not delegating to listener. Handled by OnlineClient.");
+                                                break;
+                                            case PLAYER_LOGGED_OUT:
+                                                String name = ((Msg.PlayerLoggedOut)msg).get();
+                                                Persistent.instance().notifyLoggedOut(name);
+                                                Debug.e("Not delegating to listener. Handled by OnlineClient.");
+                                                break;
+                                            default:
+                                                delegateToListener(msg);
+                                                break;
+                                        }
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     } catch (ClassNotFoundException e) {
