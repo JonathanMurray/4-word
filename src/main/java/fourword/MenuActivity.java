@@ -41,7 +41,7 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
 
     public void clickedCreateGame(View view){
         try {
-            Connection.instance().sendMessage(new Msg(ClientMsg.CREATE_LOBBY));
+            Connection.instance().sendMessage(new Msg.CreateLobby());
             Bundle extras = new Bundle();
             extras.putBoolean(LobbyActivity.IS_HOST, true);
             ChangeActivity.change(this, LobbyActivity.class, extras);
@@ -53,7 +53,7 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
 
     public void clickedPlayAI(View view){
         try {
-            Connection.instance().sendMessage(new MsgQuickStartGame(numCols, numRows, 2));
+            Connection.instance().sendMessage(new Msg.QuickStartGame(numCols, numRows, 2));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +70,7 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                    Connection.instance().sendMessage(new Msg(ClientMsg.LOGOUT));
+                                    Connection.instance().sendMessage(new Msg.LogOut());
                                     ChangeActivity.change(MenuActivity.this, LoginActivity.class, new Bundle());
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -93,7 +93,7 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
     public boolean handleMessage(Msg<ServerMsg> msg) {
         switch (msg.type()){
             case YOU_ARE_INVITED:
-                String inviterName = ((MsgText)msg).text;
+                String inviterName = ((Msg.YouAreInvited)msg).get();
                 DialogFragment dialog = new InviteDialogFragment();
                 Bundle args = new Bundle();
                 args.putString(InviteDialogFragment.INVITER_NAME, inviterName);
@@ -101,15 +101,16 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
                 dialog.show(getFragmentManager(), "Invitation");
                 return true;
             case GAME_IS_STARTING:
-                String[] playerNames = ((MsgGameIsStarting)msg).sortedPlayerNames;
-                int numCols = ((MsgGameIsStarting)msg).numCols;
-                int numRows = ((MsgGameIsStarting)msg).numRows;
+                String[] playerNames = ((Msg.GameIsStarting)msg).sortedPlayerNames;
+                int numCols = ((Msg.GameIsStarting)msg).numCols;
+                int numRows = ((Msg.GameIsStarting)msg).numRows;
                 Bundle extras = new Bundle();
                 extras.putInt(getString(R.string.NUM_COLS), numCols);
                 extras.putInt(getString(R.string.NUM_ROWS), numRows);
                 extras.putStringArray(getString(R.string.PLAYER_NAMES), playerNames);
                 try {
-                    Connection.instance().sendMessage(new MsgText(ClientMsg.CONFIRM_GAME_STARTING, Persistent.instance().playerName()));
+
+                    Connection.instance().sendMessage(new Msg.ConfirmGameStarting(Persistent.instance().playerName()));
                     ChangeActivity.change(this, GameActivity.class, extras);
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -69,7 +69,7 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
         setButtonEnabled(false);
         String nameInput = ((TextView)findViewById(R.id.login_input)).getText().toString();
         try{
-            Connection.instance().sendMessage(new MsgText(ClientMsg.LOGIN, nameInput));
+            Connection.instance().sendMessage(new Msg.LogIn(nameInput));
             waitingForReply = true;
             requestedName = nameInput;
         } catch (IOException e) {
@@ -87,7 +87,7 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
                 case NO:
                     waitingForReply = false;
                     setButtonEnabled(true);
-                    setInfoText(((MsgText)msg).text);
+                    setInfoText(((Msg.No)msg).get());
                     break;
                 default:
                     throw new RuntimeException(msg.toString());

@@ -2,7 +2,6 @@ package fourword.states;
 
 import fourword.*;
 import fourword_shared.messages.Msg;
-import fourword_shared.messages.MsgPickAndPlaceLetter;
 import fourword_shared.model.Cell;
 import fourword_shared.model.GridModel;
 
@@ -36,7 +35,7 @@ public class PickAndPlaceLetter extends GameState {
         activity.hideKeyboard();
         activity.doneThinking();
         try {
-            Connection.instance().sendMessage(new MsgPickAndPlaceLetter(pickedLetter, placedCell));
+            Connection.instance().sendMessage(new Msg.PickAndPlaceLetter(pickedLetter, placedCell));
         } catch (IOException e) {
             e.printStackTrace();
         }

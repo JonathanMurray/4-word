@@ -77,7 +77,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                    Connection.instance().sendMessage(new Msg(ClientMsg.LEAVE_LOBBY));
+                                    Connection.instance().sendMessage(new Msg.LeaveLobby());
                                     ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -137,7 +137,8 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
         String name = lobby.getNameAtIndex(playerIndex);
         Debug.e("Clicked kick player " + name);
         try {
-            Connection.instance().sendMessage(new MsgText(ClientMsg.KICK_FROM_LOBBY, name));
+
+            Connection.instance().sendMessage(new Msg.KickFromLobby(name));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -159,7 +160,8 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
     public void clickedAddPlayer(View view){
         String playerName = ((EditText)findViewById(R.id.lobby_player_name)).getText().toString();
         try {
-            Connection.instance().sendMessage(new MsgText(ClientMsg.INVITE_TO_LOBBY, playerName));
+
+            Connection.instance().sendMessage(new Msg.InviteToLobby(playerName));
             waitingForServer = true;
             setButtonsEnabled(false);
             setInfoText("Waiting for server...");
@@ -171,7 +173,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
 
     public void clickedAddBot(View view){
         try {
-            Connection.instance().sendMessage(new Msg(ClientMsg.ADD_BOT_TO_LOBBY));
+            Connection.instance().sendMessage(new Msg.AddBot());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -180,7 +182,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
     public void clickedStartGame(View view){
 
         try {
-            Connection.instance().sendMessage(new Msg(ClientMsg.START_GAME_FROM_LOBBY));
+            Connection.instance().sendMessage(new Msg.StartGameFromlobby());
             waitingForServer = true;
             setInfoText("Waiting for server...");
             setButtonsEnabled(false);
@@ -226,7 +228,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
                 if(waitingForServer){
                     waitingForServer = false;
                     setButtonsEnabled(true);
-                    setInfoText(((MsgText)msg).text);
+                    setInfoText(((Msg.No)msg).get());
                     return true;
                 }else{
                     throw new RuntimeException(msg.toString());
@@ -234,11 +236,12 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
 
             case GAME_IS_STARTING:
                 try {
-                    Connection.instance().sendMessage(new MsgText(ClientMsg.CONFIRM_GAME_STARTING, lobby.getHost()));
+
+                    Connection.instance().sendMessage(new Msg.ConfirmGameStarting(lobby.getHost()));
                     Bundle extras = new Bundle();
-                    extras.putInt(getString(R.string.NUM_COLS), ((MsgGameIsStarting) msg).numCols);
-                    extras.putInt(getString(R.string.NUM_ROWS), ((MsgGameIsStarting) msg).numRows);
-                    String[] playerNames = ((MsgGameIsStarting)msg).sortedPlayerNames;
+                    extras.putInt(getString(R.string.NUM_COLS), ((Msg.GameIsStarting) msg).numCols);
+                    extras.putInt(getString(R.string.NUM_ROWS), ((Msg.GameIsStarting) msg).numRows);
+                    String[] playerNames = ((Msg.GameIsStarting)msg).sortedPlayerNames;
                     extras.putStringArray(getString(R.string.PLAYER_NAMES), playerNames);
                     ChangeActivity.change(this, GameActivity.class, extras);
                 } catch (IOException e) {
@@ -246,7 +249,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
                 }
                 return true;
             case LOBBY_STATE:
-                this.lobby = ((MsgLobbyState)msg).lobby;
+                this.lobby = ((Msg.LobbyState)msg).get();
                 updateLayout();
                 return true;
 
@@ -281,7 +284,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
     @Override
     public void onNumberPickerChange(int newValue) {
         try {
-            Connection.instance().sendMessage(new MsgLobbySetDim(colPicker.getValue(), rowPicker.getValue()));
+            Connection.instance().sendMessage(new Msg.LobbySetDim(colPicker.getValue(), rowPicker.getValue()));
         } catch (IOException e) {
             e.printStackTrace();
         }

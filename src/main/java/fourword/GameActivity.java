@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.example.android_test.R;
 import fourword_shared.messages.Msg;
 import fourword_shared.messages.MsgListener;
-import fourword_shared.messages.MsgText;
 import fourword_shared.messages.ServerMsg;
 import fourword_shared.model.Cell;
 import fourword_shared.model.GridModel;
@@ -254,14 +253,14 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
                 }
             });
         }else if(msg.type() == ServerMsg.GAME_PLAYER_DONE_THINKING){
-            String playerName = ((MsgText)msg).text;
+            String playerName = ((Msg.PlayerDoneThinking)msg).get();
             thinkingPlayers.put(playerName, false);
             updateLayout();
         }else if(msg.type() == ServerMsg.GAME_PLAYERS_TURN){
             for(String name : playerNames){
                 thinkingPlayers.put(name, true);
             }
-            activePlayer = ((MsgText)msg).text;
+            activePlayer = ((Msg.PlayersTurn)msg).get();
             updateLayout();;
         }else{
             synchronized (stateLock){

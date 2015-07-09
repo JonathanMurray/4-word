@@ -8,7 +8,6 @@ import android.widget.TextView;
 import com.example.android_test.R;
 import fourword_shared.messages.Msg;
 import fourword_shared.messages.MsgListener;
-import fourword_shared.messages.MsgText;
 import fourword_shared.messages.ServerMsg;
 import fourword_shared.model.*;
 import org.andengine.util.debug.Debug;
@@ -89,7 +88,7 @@ public class ScoreActivity extends Activity implements MsgListener<ServerMsg>{
     public boolean handleMessage(Msg<ServerMsg> msg) {
         switch (msg.type()){
             case YOU_ARE_INVITED:
-                String inviterName = ((MsgText)msg).text;
+                String inviterName = ((Msg.YouAreInvited)msg).get();
                 DialogFragment dialog = new InviteDialogFragment();
                 Bundle args = new Bundle();
                 args.putString(InviteDialogFragment.INVITER_NAME, inviterName);

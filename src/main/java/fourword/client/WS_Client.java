@@ -3,7 +3,6 @@ package fourword.client;
 import com.neovisionaries.ws.client.*;
 import fourword_shared.messages.ClientMsg;
 import fourword_shared.messages.Msg;
-import fourword_shared.messages.MsgText;
 import fourword_shared.messages.ServerMsg;
 import org.andengine.util.debug.Debug;
 

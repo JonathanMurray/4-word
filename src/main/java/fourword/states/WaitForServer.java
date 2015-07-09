@@ -2,7 +2,6 @@ package fourword.states;
 
 import fourword.*;
 import fourword_shared.messages.Msg;
-import fourword_shared.messages.MsgText;
 import fourword_shared.messages.ServerMsg;
 import fourword_shared.model.Cell;
 import fourword_shared.model.GridModel;
@@ -56,10 +55,10 @@ public class WaitForServer extends GameState {
                 return StateTransition.change(StateName.PICK_AND_PLACE_LETTER);
             case GAME_FINISHED:
                 return StateTransition.change(StateName.SCORE_SCREEN, msg);
-            case WAITING_FOR_PLAYER_MOVE:
-                String opponentName = ((MsgText)msg).text;
-                activity.setInfoText("Waiting for " + opponentName + " to make a move...");
-                return StateTransition.STAY_HERE;
+//            case WAITING_FOR_PLAYER_MOVE:
+//                String opponentName = ((MsgText)msg).text;
+//                activity.setInfoText("Waiting for " + opponentName + " to make a move...");
+//                return StateTransition.STAY_HERE;
         }
         throw new RuntimeException(msg.toString());
     }

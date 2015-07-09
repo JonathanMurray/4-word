@@ -1,8 +1,6 @@
 package fourword.states;
 
 import fourword.*;
-import fourword_shared.messages.MsgPlaceLetter;
-import fourword_shared.messages.MsgRequestPlaceLetter;
 import fourword_shared.messages.Msg;
 import fourword_shared.model.Cell;
 import fourword_shared.model.GridModel;
@@ -23,7 +21,7 @@ public class PlaceOpponentsLetter extends GameState {
 
     @Override
     public void enter(Object data) {
-        MsgRequestPlaceLetter msg = (MsgRequestPlaceLetter) data;
+        Msg.RequestPlaceLetter msg = (Msg.RequestPlaceLetter) data;
         scene.dehighlightCell();
         activity.hideKeyboard();
         letter = msg.letter;
@@ -38,7 +36,7 @@ public class PlaceOpponentsLetter extends GameState {
         scene.setBigLetter((char)0);
         activity.doneThinking();
         try {
-            Connection.instance().sendMessage(new MsgPlaceLetter(placedCell));
+            Connection.instance().sendMessage(new Msg.PlaceLetter(placedCell));
         } catch (IOException e) {
             e.printStackTrace();
         }

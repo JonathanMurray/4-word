@@ -1,7 +1,6 @@
 package fourword;
 
 import android.content.Intent;
-import fourword_shared.messages.MsgGameFinished;
 import fourword_shared.messages.Msg;
 import fourword_shared.model.Cell;
 import fourword_shared.model.GridModel;
@@ -21,9 +20,9 @@ public class ScoreScreen extends GameState {
     @Override
     public void enter(Object data) {
         activity.hideKeyboard();
-        MsgGameFinished msg = (MsgGameFinished) data;
+        Msg.GameFinished msg = (Msg.GameFinished) data;
         Intent intent = new Intent(activity, ScoreActivity.class);
-        intent.putExtra("data", msg.result);
+        intent.putExtra("data", msg.get());
         activity.startActivity(intent);
     }
 

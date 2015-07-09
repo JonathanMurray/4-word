@@ -35,7 +35,7 @@ public class InviteDialogFragment extends DialogFragment{
                 .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                     try {
-                        Connection.instance().sendMessage(new Msg(ClientMsg.ACCEPT_INVITE));
+                        Connection.instance().sendMessage(new Msg.AcceptInvite());
                         ChangeActivity.change(getActivity(), LobbyActivity.class, args);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -45,7 +45,7 @@ public class InviteDialogFragment extends DialogFragment{
                 .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         try {
-                            Connection.instance().sendMessage(new Msg(ClientMsg.DECLINE_INVITE));
+                            Connection.instance().sendMessage(new Msg.DeclineInvite());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
