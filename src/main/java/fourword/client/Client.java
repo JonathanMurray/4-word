@@ -48,7 +48,7 @@ public abstract class Client implements Serializable{
         synchronized (listenerLock){
             boolean handledByListener = false;
             if(listener != null){
-                Debug.d("delegateToListener -> listener tries to handle it now");
+                Debug.d("delegateToListener -> listener tries to handle it now ( " + msg + " )");
                 handledByListener = listener.handleMessage(msg);
             }
 

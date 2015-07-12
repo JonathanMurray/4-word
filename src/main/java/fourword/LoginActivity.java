@@ -18,11 +18,10 @@ import java.io.IOException;
  */
 public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
 
-    private static boolean USE_LOCAL_SERVER = true;
-
-    private static final String LOCAL_SERVER_ADDRESS = "192.168.1.2";
+//    private static boolean USE_LOCAL_SERVER = true;
+//    private static final String LOCAL_SERVER_ADDRESS = "192.168.1.2";
 //    private static final String LOCAL_SERVER_ADDRESS = "192.168.43.31";
-    private static final String REMOTE_SERVER_ADDRESS = "fourword-server.herokuapp.com";
+//    private static final String REMOTE_SERVER_ADDRESS = "fourword-server.herokuapp.com";
     private boolean waitingForReply = false;
     private String requestedName;
 
@@ -30,12 +29,10 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        String serverAddr = USE_LOCAL_SERVER ? LOCAL_SERVER_ADDRESS : REMOTE_SERVER_ADDRESS;
-        if(USE_LOCAL_SERVER){
-            Connection.instance().startLocalNetwork(this);
-        }else{
-            Connection.instance().startHeroku(this, serverAddr);
-        }
+//        String serverAddr = USE_LOCAL_SERVER ? LOCAL_SERVER_ADDRESS : REMOTE_SERVER_ADDRESS;
+//        Connection.instance().connectToLAN(this);
+//        Connection.instance().connectToHeroku(this);
+        Connection.instance().connectToCustom(this, "192.168.43.31");
 
     }
 

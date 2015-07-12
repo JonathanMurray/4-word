@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.example.android_test.R;
@@ -19,7 +18,6 @@ import fourword_shared.model.PlayerInfo;
 import org.andengine.util.debug.Debug;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,8 +27,9 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
 
     private ArrayAdapter onlinePlayersAdapter;
 
-    int numCols = 4;
-    int numRows = 4;
+    int QUICK_GAME_COLS = 4;
+    int QUICK_GAME_ROWS = 4;
+    int QUICK_GAME_TIME_PER_ROUND = 10;
 
     private DialogFragment inviteDialog;
 
@@ -42,9 +41,10 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
         Connection.instance().setMessageListener(this);
 
         onlinePlayersAdapter = new OnlinePlayersAdapter(this, Persistent.instance().getOtherOnlinePlayers());
+        ((ListView) findViewById(R.id.other_players_list)).setAdapter(onlinePlayersAdapter);
 //        onlinePlayersAdapter.setNotifyOnChange(true); //doens't seem to work
         Persistent.instance().setOnlineListener(this);
-        ((ListView) findViewById(R.id.other_players_list)).setAdapter(onlinePlayersAdapter);
+
         try {
             Connection.instance().sendMessage(new Msg.RequestOnlinePlayersInfo());
         } catch (IOException e) {
@@ -121,7 +121,8 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
 
     public void clickedPlayAI(View view){
         try {
-            Connection.instance().sendMessage(new Msg.QuickStartGame(numCols, numRows, 2));
+
+            Connection.instance().sendMessage(new Msg.QuickStartGame(QUICK_GAME_COLS, QUICK_GAME_ROWS, QUICK_GAME_TIME_PER_ROUND, 2));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -161,6 +162,7 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
     public boolean handleMessage(Msg<ServerMsg> msg) {
         switch (msg.type()){
             case YOU_ARE_INVITED:
+                SoundManager.instance(this).play(SoundManager.INVITED);
                 final String inviterName = ((Msg.YouAreInvited)msg).get();
                 inviteDialog = new InviteDialogFragment();
                 Bundle args = new Bundle();
@@ -173,10 +175,12 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
                 String[] playerNames = ((Msg.GameIsStarting)msg).sortedPlayerNames;
                 int numCols = ((Msg.GameIsStarting)msg).numCols;
                 int numRows = ((Msg.GameIsStarting)msg).numRows;
+                int timePerTurn = ((Msg.GameIsStarting)msg).timePerTurn;
                 Bundle extras = new Bundle();
                 extras.putInt(getString(R.string.NUM_COLS), numCols);
                 extras.putInt(getString(R.string.NUM_ROWS), numRows);
                 extras.putStringArray(getString(R.string.PLAYER_NAMES), playerNames);
+                extras.putInt(getString(R.string.TIME_PER_TURN), timePerTurn);
                 try {
 
                     Connection.instance().sendMessage(new Msg.ConfirmGameStarting(Persistent.instance().playerName()));
@@ -191,12 +195,10 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         inviteDialog.dismiss();
                     }
                 });
                 return true;
-
 
 
             default:

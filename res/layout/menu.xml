@@ -14,8 +14,9 @@
 
     <Button
             android:onClick="clickedCreateGame"
-            android:text="Start game!"
+            android:text="Start new game"
             android:textSize="20sp"
+            android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="110dp"/>
 
@@ -24,6 +25,7 @@
             android:text="Play vs. AI"
             android:textSize="20sp"
             android:layout_width="match_parent"
+            android:textAllCaps="false"
             android:layout_height="110dp"/>
 
     <TextView

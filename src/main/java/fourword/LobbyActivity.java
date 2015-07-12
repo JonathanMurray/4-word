@@ -2,13 +2,11 @@ package fourword;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.example.android_test.R;
 import fourword_shared.messages.*;
@@ -30,6 +28,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
     private HorizontalNumberPicker colPicker;
     private HorizontalNumberPicker rowPicker;
 
+
     public final static String IS_HOST = "IS_HOST"; //Instead of R.string since the string is also used by a dialogfragment
     //that doesn't have access to R.string (not attached to an activity yet)
 
@@ -48,6 +47,33 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
 
         lobby = new Lobby(Persistent.instance().playerName());
         updateLayout();
+
+        RadioGroup timeLimitRadioGroup = (RadioGroup) findViewById(R.id.time_limit_radiogroup);
+        timeLimitRadioGroup.check(R.id.radio_no_time_limit);
+        timeLimitRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                try{
+                    switch (checkedId){
+                        case R.id.radio_no_time_limit:
+                            Connection.instance().sendMessage(new Msg.LobbySetTimeLimit(0));
+                            break;
+                        case R.id.radio_time_limit_10:
+                            Connection.instance().sendMessage(new Msg.LobbySetTimeLimit(10));
+                            break;
+                        case R.id.radio_time_limit_20:
+                            Connection.instance().sendMessage(new Msg.LobbySetTimeLimit(20));
+                            break;
+                        default:
+                            throw new RuntimeException("Not handled id: " + checkedId);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
         Connection.instance().setMessageListener(this);
     }
 
@@ -55,37 +81,42 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
 
     @Override
     public void onBackPressed() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog dialog = new AlertDialog.Builder(LobbyActivity.this)
-                        .setTitle("Leave lobby")
-                        .setMessage("Are you sure?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    Connection.instance().sendMessage(new Msg.LeaveLobby());
-                                    ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                //Do nothing
-                            }
-                        })
-                        .create();
-                dialog.show();
-            }
-        });
+
+        DialogCreator.changeActivityQuestion(this, "Leave lobby",
+                "Are you sure?",
+                new Msg.LeaveLobby(), MenuActivity.class);
+
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                AlertDialog dialog = new AlertDialog.Builder(LobbyActivity.this)
+//                        .setTitle("Leave lobby")
+//                        .setMessage("Are you sure?")
+//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                try {
+//                                    Connection.instance().sendMessage(new Msg.LeaveLobby());
+//                                    ChangeActivity.change(LobbyActivity.this, MenuActivity.class, new Bundle());
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        })
+//                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                //Do nothing
+//                            }
+//                        })
+//                        .create();
+//                dialog.show();
+//            }
+//        });
     }
 
     private void updateLayout(){
         isPlayerHost = lobby.getHost().equals(Persistent.instance().playerName());
 
-        Debug.e("LobbyActivity.updateLayout()");
+        Debug.e("LobbyActivity.updateAvatarLayout()");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -157,7 +188,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
 //        String playerName = ((EditText)findViewById(R.id.lobby_player_name)).getText().toString();
 
         //TODO Use same kind of view here as in menu when seeing other online players
-        //The players that are in game or lobby should somehow be disabled, so u cant invite them
+        //The players that are in game or lobby should somehow be disabled, so u cant ENTER_GAME them
         final String[] names = Persistent.instance().getOtherOnlinePlayers().toArray(new String[0]);
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(LobbyActivity.this)
             .setItems(names, new DialogInterface.OnClickListener() {
@@ -253,6 +284,8 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, H
                     extras.putInt(getString(R.string.NUM_ROWS), ((Msg.GameIsStarting) msg).numRows);
                     String[] playerNames = ((Msg.GameIsStarting)msg).sortedPlayerNames;
                     extras.putStringArray(getString(R.string.PLAYER_NAMES), playerNames);
+                    extras.putInt(getString(R.string.TIME_PER_TURN), ((Msg.GameIsStarting)msg).timePerTurn);
+
                     ChangeActivity.change(this, GameActivity.class, extras);
                 } catch (IOException e) {
                     e.printStackTrace();

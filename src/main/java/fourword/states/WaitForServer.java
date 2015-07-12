@@ -17,7 +17,7 @@ public class WaitForServer extends GameState {
 
     @Override
     public void enter(Object data) {
-        activity.setInfoText("Waiting for opponent...");
+        activity.setInfoText("Waiting...");
         activity.setButtonEnabled(false);
     }
 
@@ -61,6 +61,11 @@ public class WaitForServer extends GameState {
 //                return StateTransition.STAY_HERE;
         }
         throw new RuntimeException(msg.toString());
+    }
+
+    @Override
+    public StateTransition timeRanOut() {
+        throw new RuntimeException("Shouldn't happen here");
     }
 
     public String toString(){

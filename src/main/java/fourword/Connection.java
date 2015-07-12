@@ -25,15 +25,27 @@ public class Connection {
 
     private Client client;
 
-    public void startLocalNetwork(MsgListener<ServerMsg> listener){
+    public void connectToCustom(MsgListener<ServerMsg> listener, String ip){
+        String userId = "id_" + new Random().nextLong();
+        client = new WS_Client("ws://" + ip + ":9000", userId);
+        client.setMessageListener(listener);
+        client.start();
 
+    }
+
+
+
+
+
+    public void connectToLAN(MsgListener<ServerMsg> listener){
         String userId = "id_" + new Random().nextLong();
         client = new WS_Client("ws://192.168.1.2:9000", userId);
         client.setMessageListener(listener);
         client.start();
     }
 
-    public void startHeroku(MsgListener<ServerMsg> listener, String serverAddress){
+    public void connectToHeroku(MsgListener<ServerMsg> listener){
+        String serverAddress = "ws://fourword-server.herokuapp.com:80";
         String userId = "id_" + new Random().nextLong();
         client = new WS_Client(serverAddress, userId);
         client.setMessageListener(listener);

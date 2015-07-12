@@ -73,6 +73,16 @@ public class HorizontalNumberPicker extends LinearLayout {
             listener.onNumberPickerChange(value);
         }
         ((TextView)findViewById(R.id.numberpicker_value)).setText("" + value);
+        Button minusButton = ((Button)findViewById(R.id.numberpicker_minus));
+        Button plusButton = ((Button)findViewById(R.id.numberpicker_plus));
+
+        minusButton.setEnabled(true);
+        plusButton.setEnabled(true);
+        if(value == minValue){
+            minusButton.setEnabled(false);
+        }else if(value == maxValue){
+            plusButton.setEnabled(false);
+        }
         invalidate();
         requestLayout();
     }

@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <application android:label="@string/app_name" android:icon="@drawable/ic_launcher">
         <activity android:name="fourword.LoginActivity"
-                  android:label="Log in!">
+                  android:label="4-Word (Word Puzzle App)">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

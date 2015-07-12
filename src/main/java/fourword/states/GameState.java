@@ -29,4 +29,6 @@ public abstract class GameState {
     public abstract StateTransition onUpdate();
     public abstract StateTransition userClickedDone();
     public abstract StateTransition handleServerMessage(Msg<ServerMsg> msg);
+
+    public abstract StateTransition timeRanOut();
 }

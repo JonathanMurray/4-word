@@ -6,4 +6,5 @@
     <string name="PLAYER_NAMES">PLAYER_NAMES</string>
     <string name="NUM_COLS">NUM_COLS</string>
     <string name="NUM_ROWS">NUM_ROWS</string>
+    <string name="TIME_PER_TURN">TIME_PER_TURN</string>
 </resources>

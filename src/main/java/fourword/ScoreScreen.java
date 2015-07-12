@@ -54,6 +54,11 @@ public class ScoreScreen extends GameState {
     }
 
     @Override
+    public StateTransition timeRanOut() {
+        throw new RuntimeException("shouldnt happen here");
+    }
+
+    @Override
     public StateTransition handleServerMessage(Msg msg) {
         return StateTransition.STAY_HERE;
     }

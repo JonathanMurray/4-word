@@ -6,6 +6,7 @@ import fourword_shared.model.Cell;
 import fourword_shared.model.GridModel;
 
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Created by jonathan on 2015-06-23.
@@ -21,6 +22,7 @@ public class PickAndPlaceLetter extends GameState {
 
     @Override
     public void enter(Object data) {
+        activity.startTimer();
         activity.showKeyboard();
         activity.setInfoText("Pick a letter and place it somewhere!");
         placedCell = null;
@@ -30,6 +32,7 @@ public class PickAndPlaceLetter extends GameState {
 
     @Override
     public void exit() {
+        activity.stopTimer();
         grid.setCharAtCell(pickedLetter, placedCell);
         scene.setBigLetter((char)0);
         activity.hideKeyboard();
@@ -86,11 +89,28 @@ public class PickAndPlaceLetter extends GameState {
 
     @Override
     public StateTransition userClickedDone() {
-        if(placedCell == null){
+        if(placedCell == null || pickedLetter == 0){
             return StateTransition.STAY_HERE;
         }
 
         return StateTransition.change(StateName.WAIT_FOR_SERVER);
+    }
+
+    @Override
+    public StateTransition timeRanOut() {
+        if(pickedLetter == 0){
+            userTypedLetter(randomLetter());
+        }
+        if(placedCell == null){
+            userClickedCell(grid.getRandomFreeCell());
+        }
+        return userClickedDone();
+    }
+
+    private char randomLetter(){
+        int A = 65;
+        int Z = 90;
+        return (char) (A + new Random().nextInt(Z - A));
     }
 
     @Override

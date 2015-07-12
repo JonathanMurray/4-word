@@ -4,6 +4,7 @@ import fourword.*;
 import fourword_shared.messages.Msg;
 import fourword_shared.model.Cell;
 import fourword_shared.model.GridModel;
+import org.andengine.util.debug.Debug;
 
 import java.io.IOException;
 
@@ -21,6 +22,8 @@ public class PlaceOpponentsLetter extends GameState {
 
     @Override
     public void enter(Object data) {
+        activity.startTimer();
+        Debug.e("After starttimer in Placeopponents letter");
         Msg.RequestPlaceLetter msg = (Msg.RequestPlaceLetter) data;
         scene.dehighlightCell();
         activity.hideKeyboard();
@@ -32,6 +35,7 @@ public class PlaceOpponentsLetter extends GameState {
 
     @Override
     public void exit() {
+        activity.stopTimer();
         grid.setCharAtCell(letter, placedCell);
         scene.setBigLetter((char)0);
         activity.doneThinking();
@@ -72,6 +76,15 @@ public class PlaceOpponentsLetter extends GameState {
         }
 
         return StateTransition.change(StateName.WAIT_FOR_SERVER);
+    }
+
+    @Override
+    public StateTransition timeRanOut() {
+        if(placedCell == null){
+            userClickedCell(grid.getRandomFreeCell());
+        }
+
+        return userClickedDone();
     }
 
     @Override
