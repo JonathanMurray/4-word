@@ -22,6 +22,7 @@ public class PickAndPlaceLetter extends GameState {
 
     @Override
     public void enter(Object data) {
+        SoundManager.instance().play(SoundManager.YOUR_TURN);
         activity.startTimer();
         activity.showKeyboard();
         activity.setInfoText("Pick a letter and place it somewhere!");

@@ -2,4 +2,7 @@
 <resources>
     <integer name="gridWidthAspectRatio">4</integer>
     <integer name="gridHeightAspectRatio">2</integer>
+    <integer name="timePerTurnStress">12</integer>
+    <integer name="timePerTurnNormal">25</integer>
+    <integer name="timePerTurnLong">40</integer>
 </resources>

@@ -50,17 +50,17 @@ public class InviteDialogFragment extends DialogFragment{
                             e.printStackTrace();
                         }
                     }
-                })
-                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        try {
-                            Connection.instance().sendMessage(new Msg.DeclineInvite());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 });
         return builder.create();
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        try {
+            Connection.instance().sendMessage(new Msg.DeclineInvite());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

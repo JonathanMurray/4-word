@@ -1,7 +1,6 @@
 package fourword;
 
 import android.content.Context;
-import com.example.android_test.R;
 import fourword_shared.model.Cell;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;
@@ -22,103 +21,33 @@ import java.util.ArrayList;
 /**
  * Created by jonathan on 2015-06-20.
  */
-public class GridScene extends Scene{
+public class GridScene extends ExtendedScene{
 
-    private static int LINE_WIDTH = 10;
-    private static Font smallFont;
-    private static Font bigFont;
-    private static Color lineColor;
-    private static Color HIGHLIGHT_COLOR = new Color(0.3f, 0.3f, 0.4f);
-    private static Color FILLED_GRID_COLOR = new Color(0.3f, 0.3f, 0.3f);
-    private int backgroundColor;
-
-    private final Context context;
-    private final int cellSize;
-    private final int margin;
-    private int numCols;
-    private int numRows;
-    private int gridWidth;
-    private int gridHeight;
-
-    private Text[][] textCells;
-    private Cell highlighted;
-    private Rectangle highlightedRect;
-    private Rectangle[][] filledCells;
-    private boolean hasHighlightedCell;
-    private VertexBufferObjectManager vboManager;
     private GridTouchListener gridTouchListener;
-    private final Camera camera;
 
     private Text bigLetter;
 
-    private ArrayList<IEntity> attachQueue = new ArrayList<IEntity>();
-    private ArrayList<IEntity> detachQueue = new ArrayList<IEntity>();
+    final private GridSceneGrid grid;
 
-    public GridScene(Context context, Color backgroundColor, Font smallFont, Font bigFont, final int margin, final int cellSize, int numCols, int numRows, VertexBufferObjectManager vboManager, Camera camera){
-        this.context = context;
-        this.smallFont = smallFont;
-        this.bigFont = bigFont;
+    public GridScene(int topLeftX, int topLeftY, Color backgroundColor, Font smallFont,
+                     Font bigFont, final int cellSize,
+                     int numCols, int numRows, VertexBufferObjectManager vboManager
+                     ){
 
-        this.margin = margin;
-
-
-        lineColor = backgroundColor;
-
-
-//        this.cellSize = cellSize;
-        this.numCols = numCols;
-        this.numRows = numRows;
-
-        this.cellSize = cellSize;
-        gridWidth = cellSize * numCols;
-        gridHeight = cellSize * numRows;
-        //charCells = new char[numCols][numRows];
-        textCells = new Text[numCols][numRows];
-        this.vboManager = vboManager;
-        this.camera = camera;
-
-        for(int x = margin; x <= gridWidth + margin; x += cellSize){
-            Line line = new Line(x, margin, x, gridHeight + margin, LINE_WIDTH, vboManager);
-            line.setColor(lineColor);
-            attachChild(line);
-        }
-        for(int y = margin; y <= gridHeight + margin; y += cellSize){
-            Line line = new Line(margin, y, gridWidth + margin, y, LINE_WIDTH, vboManager);
-            line.setColor(lineColor);
-            attachChild(line);
-        }
-
-//        for(int x = 0; x < numCols; x++){
-//            for(int y = 0; y < numRows; y++){
-//                Rectangle rect = new Rectangle(
-//                        x * cellSize + margin,
-//                        y * cellSize + margin,
-//                        cellSize,
-//                        cellSize,
-//                        vboManager);
-//
-//                rect.setColor(FILLED_CELL_COLOR);
-//                rect.setZIndex(-100); //far black_border
-//                attachChild(rect);
-//            }
-//        }
-
-
-
-        Rectangle filledGrid = new Rectangle(margin, margin, cellSize*numCols, cellSize*numRows, vboManager);
-        filledGrid.setColor(FILLED_GRID_COLOR);
-        filledGrid.setZIndex(-100);
-        attachChild(filledGrid);
+        grid = new GridSceneGrid(this, smallFont, backgroundColor,
+                topLeftX, topLeftY, cellSize,
+                numCols, numRows, vboManager
+        );
 
         setOnSceneTouchListener(new IOnSceneTouchListener() {
             @Override
             public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
                 if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
-                    float x = pSceneTouchEvent.getX();
-                    float y = pSceneTouchEvent.getY();
-                    Cell cell = new Cell((int) ((x - margin) / cellSize), (int) ((y - margin) / cellSize));
-                    if (gridTouchListener != null && isValidCell(cell)) {
-                        gridTouchListener.gridTouchEvent(cell);
+                    final float x = pSceneTouchEvent.getX();
+                    final float y = pSceneTouchEvent.getY();
+                    Cell clickedCell = grid.sceneTouch(x,y);
+                    if(clickedCell != null){
+                        gridTouchListener.gridTouchEvent(clickedCell);
                     }
                 }
                 return true;
@@ -126,117 +55,52 @@ public class GridScene extends Scene{
         });
 
         //Must be initialized with non-empty string since the max lngth of the text is set in the constructor
-        Debug.d("bigFont.getTexture.getWidth: " + bigFont.getTexture().getWidth());
+//        Debug.d("bigFont.getTexture.getWidth: " + bigFont.getTexture().getWidth());
 
-        bigLetter = new Text(750-100, 250-150, bigFont, "X", vboManager);
+        bigLetter = new Text(750-100, 250-150, bigFont, " ", vboManager);
         attachChild(bigLetter);
-        Debug.d("new Text(" + bigLetter.getX() + ", " + bigLetter.getY());
+//        Debug.d("new Text(" + bigLetter.getX() + ", " + bigLetter.getY());
 
-        registerUpdateHandler(new IUpdateHandler() {
-            @Override
-            public void onUpdate(float pSecondsElapsed) { //
-                for (IEntity e : detachQueue) {
-                    detachChild(e);
-                }
-                detachQueue.clear();
-                for (IEntity e : attachQueue) {
-                    attachChild(e);
-                }
-                attachQueue.clear();
-                sortChildren();
-            }
 
-            @Override
-            public void reset() {
-
-            }
-        });
-    }
-
-    public void highlightCell(Cell cell){
-        assertValidCell(cell);
-        if(hasHighlightedCell == true){
-            dehighlightCell();
-        }
-        hasHighlightedCell = true;
-        highlighted = cell;
-        highlightedRect = new Rectangle(
-                cell.x() * cellSize + margin,
-                cell.y() * cellSize + margin,
-                cellSize,
-                cellSize,
-                vboManager);
-
-        highlightedRect.setColor(HIGHLIGHT_COLOR);
-        highlightedRect.setZIndex(-100); //far black_border
-        safeAttach(highlightedRect);
-    }
-
-    public void dehighlightCell(){
-        hasHighlightedCell = false;
-        safeDetach(highlightedRect);
-        highlightedRect = null;
-    }
-
-    public Cell getHighlighted(){
-        return highlighted;
     }
 
 
-    public boolean hasHighlighted(){
-        return hasHighlightedCell;
+    public void setGridTouchListener(GridTouchListener listener){
+        gridTouchListener = listener;
     }
 
-    public boolean isValidCell(Cell cell){
-        return cell.x() >= 0 && cell.x() < numCols && cell.y() >= 0 && cell.y() < numRows;
-    }
 
-    public void setCharAtCell(char ch, Cell cell){
-        assertValidCell(cell);
-        removeCharAtCell(cell);
 
-        //charCells[cell.x()][cell.y()] = ch;
-        Text text = new Text(margin + (float) (cell.x()+0.2) * cellSize, margin + (float) (cell.y()) * cellSize, smallFont, "" + ch, vboManager);
-        text.setZIndex(0);
-        safeAttach(text);
-        textCells[cell.x()][cell.y()] = text;
-    }
-
-    public void safeDetach(IEntity e){
-        if(attachQueue.contains(e)){ //hasn't been attached yet, just cancel it from the queue
-            attachQueue.remove(e);
-        }else{
-            detachQueue.add(e); //has been attached, demand detachment
-        }
-    }
-
-    public void safeAttach(IEntity e){
-        attachQueue.add(e);
-    }
-
-    public void removeCharAtCell(Cell cell){
-        assertValidCell(cell);
-        Text currentText = textCells[cell.x()][cell.y()];
-        if(currentText != null){
-            safeDetach(currentText);
-        }
-    }
-
-    public void setBigLetter(char letter){
+    public void setBigLetter(char letter) {
         String text = "" + letter;
         Debug.d("setBigLetter(" + text + ")");
         bigLetter.setText(text);
-
-
     }
 
-    public void setGridTouchListener(GridTouchListener gridTouchListener) {
-        this.gridTouchListener = gridTouchListener;
+    public boolean hasHighlighted() {
+        return grid.hasHighlighted();
     }
 
-    private void assertValidCell(Cell cell){
-        if(!isValidCell(cell)){
-            throw new IllegalArgumentException("Cell " + cell + " out of bounds. numCols: " + numCols + ", numRows: " + numRows);
-        }
+
+    public void dehighlightCell() {
+        grid.dehighlightCell();
+    }
+
+
+    public Cell getHighlighted() {
+        return grid.getHighlighted();
+    }
+
+    public void removeCharAtCell(Cell cell) {
+        grid.removeCharAtCell(cell);
+    }
+
+    public void setCharAtCell(char letter, Cell cell) {
+        grid.setCharAtCell(letter, cell);
+    }
+
+    public void highlightCell(Cell cell) {
+        grid.highlightCell(cell);
+
     }
 }

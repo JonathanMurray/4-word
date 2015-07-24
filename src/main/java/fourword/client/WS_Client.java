@@ -89,17 +89,17 @@ public class WS_Client extends Client {
                                                 List<PlayerInfo> onlinePlayers = ((Msg.OnlinePlayersInfo)msg).get();
                                                 onlinePlayers.remove(Persistent.instance().playerName());
                                                 Persistent.instance().notifyOnlinePlayers(onlinePlayers);
-                                                Debug.e("Not delegating to listener. Handled by OnlineClient.");
+                                                Debug.e("Handled by OnlineClient: " + msg);
                                                 break;
                                             case PLAYER_INFO_UPDATE:
                                                 PlayerInfo info = ((Msg.PlayerInfoUpdate)msg).get();
                                                 Persistent.instance().notifyPlayerInfo(info);
-                                                Debug.e("Not delegating to listener. Handled by OnlineClient.");
+                                                Debug.e("Handled by OnlineClient: " + msg);
                                                 break;
                                             case PLAYER_LOGGED_OUT:
                                                 String name = ((Msg.PlayerLoggedOut)msg).get();
                                                 Persistent.instance().notifyLoggedOut(name);
-                                                Debug.e("Not delegating to listener. Handled by OnlineClient.");
+                                                Debug.e("Handled by OnlineClient: " + msg);
                                                 break;
                                             default:
                                                 delegateToListener(msg);

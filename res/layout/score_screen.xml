@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res/com.example.android_test"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
             android:background="@android:color/holo_blue_light">
 
-    <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/scorescreen_button">
-        <TextView
-                android:id="@+id/info_text"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:textSize="18dp"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="[Placeholder]"/>
-    </ScrollView>
+    <!--<ScrollView-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_above="@+id/scorescreen_button">-->
+        <!--<TextView-->
+                <!--android:id="@+id/info_text"-->
+                <!--android:layout_marginLeft="20dp"-->
+                <!--android:layout_marginRight="20dp"-->
+                <!--android:textSize="18dp"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="[Placeholder]"/>-->
+    <!--</ScrollView>-->
+
+    <fourword.FixedAspectRatioFrameLayout
+            app:aspectRatioWidth="@integer/gridWidthAspectRatio"
+            app:aspectRatioHeight="@integer/gridHeightAspectRatio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <org.andengine.opengl.view.RenderSurfaceView
+                android:id="@+id/score_surface_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+    </fourword.FixedAspectRatioFrameLayout>
 
     <Button
             android:id="@+id/scorescreen_button"

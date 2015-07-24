@@ -1,8 +1,6 @@
 package fourword;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +19,7 @@ import fourword_shared.messages.Msg;
 import fourword_shared.messages.MsgListener;
 import fourword_shared.messages.ServerMsg;
 import fourword_shared.model.Cell;
+import fourword_shared.model.GameSettings;
 import fourword_shared.model.GridModel;
 import fourword.states.*;
 
@@ -51,12 +50,14 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
     private Camera camera;
     private GridScene scene;
     private GridModel grid;
+    private boolean isGameRunning;
 
     private int layoutID = R.layout.game;
 
-    private int NUM_COLS;
-    private int NUM_ROWS;
-    private int TIME_PER_TURN;
+//    private int NUM_COLS;
+//    private int NUM_ROWS;
+//    private int TIME_PER_TURN;
+    private GameSettings SETTINGS;
     private int cellSize;
     private float HEIGHT_PROPORTION;
     private final int MARGIN = 20;
@@ -89,20 +90,23 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
 
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
-        SoundManager.instance(this).play(SoundManager.ENTER_GAME);
+        isGameRunning = true;
+        SoundManager.instance().play(SoundManager.ENTER_GAME);
         final int GRID_HEIGHT_ASPECT_RATIO = getResources().getInteger(R.integer.gridHeightAspectRatio);
         final int GRID_WIDTH_ASPECT_RATIO = getResources().getInteger(R.integer.gridWidthAspectRatio);
         HEIGHT_PROPORTION = (float) GRID_HEIGHT_ASPECT_RATIO / (float)GRID_WIDTH_ASPECT_RATIO;
         camHeight = camWidth * HEIGHT_PROPORTION;
 
-        NUM_COLS = (Integer) getIntent().getExtras().get(getString(R.string.NUM_COLS));
-        NUM_ROWS = (Integer) getIntent().getExtras().get(getString(R.string.NUM_ROWS));
+        SETTINGS = (GameSettings) getIntent().getExtras().getSerializable(getString(R.string.GAME_SETTINGS));
+
+//        NUM_COLS = (Integer) getIntent().getExtras().get(getString(R.string.NUM_COLS));
+//        NUM_ROWS = (Integer) getIntent().getExtras().get(getString(R.string.NUM_ROWS));
         playerNames = getIntent().getStringArrayExtra(getString(R.string.PLAYER_NAMES));
-        TIME_PER_TURN = getIntent().getExtras().getInt(getString(R.string.TIME_PER_TURN));
+//        TIME_PER_TURN = getIntent().getExtras().getInt(getString(R.string.TIME_PER_TURN));
         for(String name : playerNames){
             thinkingPlayers.put(name, true);
         }
-        cellSize = (int) (camWidth * HEIGHT_PROPORTION - MARGIN*2) / Math.max(NUM_COLS, NUM_ROWS);
+        cellSize = (int) (camWidth * HEIGHT_PROPORTION - MARGIN*2) / Math.max(numCols(), numRows());
         super.onCreate(pSavedInstanceState);
 
 
@@ -114,10 +118,8 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
             public boolean handleMessage(Message msg) {
                 Debug.e("handleMessage: " + msg.arg1);
                 secondsLeft --;
-                timer.setProgress((int) (100 * (secondsLeft/(double)TIME_PER_TURN)));
+                timer.setProgress((int) (100 * (secondsLeft/(double)timePerTurn())));
                 timer.postInvalidate();
-                TextView secondsLeftView = (TextView) findViewById(R.id.seconds_left);
-                secondsLeftView.setText("" + secondsLeft);
                 if(secondsLeft < 0 ) {
                     StateTransition transition = state.timeRanOut();
                     timerSection.setVisibility(View.INVISIBLE);
@@ -143,30 +145,195 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
                 avatarRow.removeAllViews();
                 int i = 0;
                 for (String player : playerNames) {
-                    final int playerIndex = i;
-                    ViewGroup avatarView = (ViewGroup) View.inflate(GameActivity.this, R.layout.game_avatar, null);
-                    ((TextView) avatarView.findViewById(R.id.avatar_name)).setText(player);
-                    TextView thinking = ((TextView)avatarView.findViewById(R.id.avatar_thinking_text));
-                    ViewGroup outer = ((ViewGroup)avatarView.findViewById(R.id.game_avatar_outer));
-                    TextView avatarName = (TextView) avatarView.findViewById(R.id.avatar_name);
+//                    final int playerIndex = i;
 
-                    if (thinkingPlayers.get(player)) {
-                        thinking.setText("Thinking...");
-                        outer.setBackground(null);
-                    }else{
-                        thinking.setText("");
-                        outer.setBackground(getResources().getDrawable(R.drawable.green_border));
-                    }
-
+                    AvatarView avatarView = new AvatarView(GameActivity.this);
+                    avatarView.setPlayerName(player);
+                    boolean isThinking = thinkingPlayers.get(player);
+                    avatarView.setHighlighted(!isThinking);
                     if(player.equals(activePlayer)){
-                        avatarName.setTextColor(android.graphics.Color.RED);
+                        avatarView.setTextColor(android.graphics.Color.RED);
                     }else{
-                        avatarName.setTextColor(android.graphics.Color.WHITE);
+                        avatarView.setTextColor(android.graphics.Color.WHITE);
                     }
+
+
+//                    ViewGroup avatarView = (ViewGroup) View.inflate(GameActivity.this, R.layout.game_avatar, null);
+//                    ((TextView) avatarView.findViewById(R.id.avatar_name)).setText(player);
+//                    ViewGroup outer = ((ViewGroup)avatarView.findViewById(R.id.avatar_outer));
+//                    TextView avatarName = (TextView) avatarView.findViewById(R.id.avatar_name);
+
+//                    if (thinkingPlayers.get(player)) {
+//                        outer.setBackground(null);
+//                    }else{
+//                        outer.setBackground(getResources().getDrawable(R.drawable.green_border));
+//                    }
+
+//                    if(player.equals(activePlayer)){
+//                        avatarName.setTextColor(android.graphics.Color.RED);
+//                    }else{
+//                        avatarName.setTextColor(android.graphics.Color.WHITE);
+//                    }
 
                     avatarRow.addView(avatarView);
                     i++;
                 }
+
+            }
+        });
+    }
+
+
+
+    @Override
+    public boolean handleMessage(Msg<ServerMsg> msg) {
+
+        switch (msg.type()){
+            case GAME_CRASHED:
+                isGameRunning = false;
+                DialogCreator.changeActivityForced(
+                        this,
+                        "Whoops",
+                        "The game ended unexpectedly. A player may have disconnected.",
+                        MenuActivity.class);
+                break;
+
+            case GAME_PLAYER_DONE_THINKING:
+                String playerName = ((Msg.PlayerDoneThinking)msg).get();
+                thinkingPlayers.put(playerName, false);
+                SoundManager.instance().play(SoundManager.PLAYER_DONE_THINKING);
+                updateAvatarLayout();
+                break;
+
+            case GAME_PLAYERS_TURN:
+                for(String name : playerNames){
+                    thinkingPlayers.put(name, true);
+                }
+                activePlayer = ((Msg.PlayersTurn)msg).get();
+                updateAvatarLayout();;
+                break;
+
+            case GAME_ENDED:
+                isGameRunning = false;
+                Msg.GameEnded gameEnded = (Msg.GameEnded) msg;
+                DialogCreator.changeActivityForced(
+                        this,
+                        "Whoops",
+                        "The game ended since " + gameEnded.leaverName + " left!",
+                        MenuActivity.class);
+                break;
+
+            case SET_LETTER_AT_CELL:
+                Msg.SetLetterAtCell setLetter = (Msg.SetLetterAtCell) msg;
+                scene.setCharAtCell(setLetter.letter, setLetter.cell);
+                grid.setCharAtCell(setLetter.letter, setLetter.cell);
+                break;
+
+            default:
+                if(!isGameRunning){
+                    return false;
+                }
+                synchronized (stateLock){
+                    Debug.d("   Received msg from server: " + msg);
+                    Debug.d("   current state: " + state);
+                    StateTransition transition = state.handleServerMessage(msg);
+                    Debug.d("   transition: " + transition);
+                    handleTransition(transition);
+                }
+                break;
+        }
+
+        return true;
+    }
+
+    public void startTimer(){
+        if(timePerTurn() > 0){
+            secondsLeft = timePerTurn();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    timer.setProgress(100);
+                    timerSection.setVisibility(View.VISIBLE);
+                    timer.invalidate();
+                }
+            });
+            updateAvatarLayout();
+            ticker = new Ticker(messageHandler, timePerTurn());
+            ticker.start();
+        }
+    }
+
+    public void stopTimer(){
+        if(timePerTurn() > 0){
+            ticker.interrupt();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    timerSection.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(timePerTurn() > 0) {
+            ticker.interrupt();
+        }
+    }
+
+    private void handleTransition(StateTransition transition){
+        if(transition.changeState){
+            synchronized (stateLock){
+                GameState previousState = state;
+                GameState nextState = fsm.get(transition.newState);
+                previousState.exit();
+                nextState.enter(transition.data);
+                state = nextState;
+                processMessageQueue();
+            }
+        }
+    }
+
+    private void processMessageQueue(){
+        while(!messageQueue.isEmpty()){
+            Msg msg = messageQueue.remove();
+            state.handleServerMessage(msg);
+        }
+    }
+
+    public void showKeyboard(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                final EditText textInput = (EditText) findViewById(R.id.text_input);
+                imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
+            }
+        });
+    }
+
+    private int numRows(){
+        return SETTINGS.getInt(GameSettings.IntAttribute.ROWS);
+    }
+
+    private int numCols(){
+        return SETTINGS.getInt(GameSettings.IntAttribute.COLS);
+    }
+
+    private int timePerTurn(){
+        return SETTINGS.getInt(GameSettings.IntAttribute.TIME_PER_TURN);
+    }
+
+    public void hideKeyboard(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                final EditText textInput = (EditText) findViewById(R.id.text_input);
+                imm.hideSoftInputFromWindow(textInput.getWindowToken(), 0);
             }
         });
     }
@@ -184,11 +351,6 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected Scene onCreateScene() throws InterruptedException {
         this.mEngine.registerUpdateHandler(new FPSLogger());
 
@@ -196,11 +358,10 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
         Color backgroundColor = new Color(android.graphics.Color.red(backgroundInt)/255f,
                 android.graphics.Color.green(backgroundInt)/255f, android.graphics.Color.blue(backgroundInt)/255f);
 
-
-
-        scene = new GridScene(this, backgroundColor, smallFont, bigFont, MARGIN,  cellSize, NUM_COLS, NUM_ROWS, this.getVertexBufferObjectManager(), camera);
+        scene = new GridScene(MARGIN, MARGIN, backgroundColor, smallFont, bigFont, cellSize, numCols(),
+                numRows(), this.getVertexBufferObjectManager());
         scene.setBackground(new Background(backgroundColor));
-        grid = new GridModel(NUM_COLS, NUM_ROWS);
+        grid = new GridModel(numCols(), numRows());
 
 
         fsm.put(StateName.PICK_AND_PLACE_LETTER, new PickAndPlaceLetter(this, scene, grid));
@@ -260,146 +421,6 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
 
 
         return scene;
-    }
-
-    @Override
-    public boolean handleMessage(Msg<ServerMsg> msg) {
-
-        switch (msg.type()){
-            case GAME_CRASHED:
-                DialogCreator.changeActivityForced(
-                        this,
-                        "Whoops",
-                        "The game ended unexpectedly. A player may have disconnected.",
-                        MenuActivity.class);
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        AlertDialog dialog = new AlertDialog.Builder(GameActivity.this)
-//                                .setCancelable(false)
-//                                .setTitle("Whoops!")
-//                                .setMessage("The game ended unexpectedly. A player may have disconnected.")
-//                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        ChangeActivity.change(GameActivity.this, MenuActivity.class, new Bundle());
-//                                    }
-//                                })
-//                                .create();
-//                        dialog.show();
-//
-//                    }
-//                });
-                break;
-
-            case GAME_PLAYER_DONE_THINKING:
-                String playerName = ((Msg.PlayerDoneThinking)msg).get();
-                thinkingPlayers.put(playerName, false);
-                updateAvatarLayout();
-                break;
-
-            case GAME_PLAYERS_TURN:
-                for(String name : playerNames){
-                    thinkingPlayers.put(name, true);
-                }
-                activePlayer = ((Msg.PlayersTurn)msg).get();
-                updateAvatarLayout();;
-                break;
-
-            case GAME_ENDED:
-                Msg.GameEnded gameEnded = (Msg.GameEnded) msg;
-                DialogCreator.changeActivityForced(
-                        this,
-                        "Whoops",
-                        "The game ended since " + gameEnded.leaverName + " left!",
-                        MenuActivity.class);
-                break;
-
-            default:
-                synchronized (stateLock){
-                    Debug.d("   Received msg from server: " + msg);
-                    Debug.d("   current state: " + state);
-                    StateTransition transition = state.handleServerMessage(msg);
-                    Debug.d("   transition: " + transition);
-                    handleTransition(transition);
-                }
-                break;
-        }
-
-        return true;
-    }
-
-    public void startTimer(){
-        if(TIME_PER_TURN > 0){
-            secondsLeft = TIME_PER_TURN;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    timer.setProgress(100);
-                    timerSection.setVisibility(View.VISIBLE);
-                    timer.invalidate();
-                    ((TextView)findViewById(R.id.seconds_left)).setText("" + secondsLeft);
-                }
-            });
-            updateAvatarLayout();
-            ticker = new Ticker(messageHandler, TIME_PER_TURN);
-            ticker.start();
-        }
-    }
-
-    public void stopTimer(){
-        if(TIME_PER_TURN > 0){
-            ticker.interrupt();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    timerSection.setVisibility(View.INVISIBLE);
-                }
-            });
-
-        }
-    }
-
-    private void handleTransition(StateTransition transition){
-        if(transition.changeState){
-            synchronized (stateLock){
-                GameState previousState = state;
-                GameState nextState = fsm.get(transition.newState);
-                previousState.exit();
-                nextState.enter(transition.data);
-                state = nextState;
-                processMessageQueue();
-            }
-        }
-    }
-
-    private void processMessageQueue(){
-        while(!messageQueue.isEmpty()){
-            Msg msg = messageQueue.remove();
-            state.handleServerMessage(msg);
-        }
-    }
-
-    public void showKeyboard(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                final EditText textInput = (EditText) findViewById(R.id.text_input);
-                imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
-            }
-        });
-    }
-
-    public void hideKeyboard(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                final EditText textInput = (EditText) findViewById(R.id.text_input);
-                imm.hideSoftInputFromWindow(textInput.getWindowToken(), 0);
-            }
-        });
     }
 
     @Override

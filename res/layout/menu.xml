@@ -1,35 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res/com.example.android_test"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@android:color/holo_blue_light">
+              android:background="@android:color/holo_blue_light"
+              android:padding="15dp">
 
-    <TextView
-            android:id="@+id/menu_name"
-            android:text="[name placeholder]"
-            android:textSize="20sp"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="15dp">
+
+        <fourword.AvatarView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/menu_avatar"
+                app:playerName="NAME"
+                app:highlighted="false"
+                app:unknownAvatar="false"/>
+
+        <TextView
+                android:id="@+id/menu_name"
+                android:text="4-WORD "
+                android:textSize="32sp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+
+    </LinearLayout>
+
+
+
 
     <Button
             android:onClick="clickedCreateGame"
             android:text="Start new game"
-            android:textSize="20sp"
+            android:typeface="serif"
+            android:textStyle="bold"
+            android:textSize="22sp"
             android:textAllCaps="false"
             android:layout_width="match_parent"
-            android:layout_height="110dp"/>
+            android:layout_height="70dp"/>
 
     <Button
+            android:layout_marginTop="0dp"
             android:onClick="clickedPlayAI"
-            android:text="Play vs. AI"
-            android:textSize="20sp"
+            android:text="Quick play"
+            android:textSize="22sp"
+            android:typeface="serif"
+            android:textStyle="bold"
             android:layout_width="match_parent"
             android:textAllCaps="false"
-            android:layout_height="110dp"/>
+            android:layout_height="70dp"/>
+
+    <Button
+            android:layout_marginTop="0dp"
+            android:onClick="clickedPlayAIRandom"
+            android:text="Quick play (random)"
+            android:textSize="22sp"
+            android:typeface="serif"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:textAllCaps="false"
+            android:layout_height="70dp"/>
 
     <TextView
-            android:textSize="24sp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:textSize="20sp"
             android:text="Others online:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -37,6 +80,7 @@
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
               android:id="@+id/other_players_list"
               android:layout_width="wrap_content"
-              android:layout_height="wrap_content" />
+              android:layout_height="wrap_content"
+              android:layout_marginTop="20dp"/>
 
 </LinearLayout>

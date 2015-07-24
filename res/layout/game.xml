@@ -16,16 +16,20 @@
         <LinearLayout
                 android:id="@+id/avatar_row"
                 android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
         </LinearLayout>
 
         <TextView
                 android:id="@+id/info_text"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="0dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:gravity="center"
                 android:textSize="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -40,35 +44,9 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical">
 
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal"
-                    android:visibility="gone">
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Seconds remaining:"
-                        android:textSize="16sp"
-                        android:gravity="center"/>
-
-                <TextView
-                        android:id="@+id/seconds_left"
-                        android:layout_marginLeft="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@android:color/holo_orange_light"
-                        android:textSize="20sp"
-                        android:text="12"
-                        />
-            </LinearLayout>
-
             <ProgressBar
                     android:id="@+id/progress_bar"
                     style="@style/CustomProgressBar"
-                    android:layout_marginTop="10dp"
                     android:layout_marginLeft="50dp"
                     android:layout_marginRight="50dp"
                     android:progress="25"

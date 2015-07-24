@@ -4,7 +4,5 @@
 
     <string name="PLAYER_NAME">PLAYER_NAME</string>
     <string name="PLAYER_NAMES">PLAYER_NAMES</string>
-    <string name="NUM_COLS">NUM_COLS</string>
-    <string name="NUM_ROWS">NUM_ROWS</string>
-    <string name="TIME_PER_TURN">TIME_PER_TURN</string>
+    <string name="GAME_SETTINGS">GAME_SETTINGS</string>
 </resources>

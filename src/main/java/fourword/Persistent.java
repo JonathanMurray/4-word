@@ -40,12 +40,38 @@ public class Persistent {
         return otherOnlinePlayers;
     }
 
+    public String[] getOtherOnlinePlayerStrings(){
+        List<String> strings = new ArrayList<String>();
+        for(PlayerInfo info : getOtherOnlinePlayers()){
+            strings.add(info.name + "   " + info.infoString());
+        }
+        return strings.toArray(new String[0]);
+    }
+
+    public String[] getOtherOnlinePlayerNames(){
+        List<String> strings = new ArrayList<String>();
+        for(PlayerInfo info : getOtherOnlinePlayers()){
+            strings.add(info.name);
+        }
+        return strings.toArray(new String[0]);
+    }
+
+    private void removeInfoWithName(List<PlayerInfo> list, String name){
+        Iterator<PlayerInfo> infos = list.iterator();
+        while(infos.hasNext()){
+            if(infos.next().name.equals(name)){
+                infos.remove();
+                break;
+            }
+        }
+    }
 
 
     public void notifyOnlinePlayers(List<PlayerInfo> onlinePlayers){
         otherOnlinePlayers.clear();
         otherOnlinePlayers.addAll(onlinePlayers);
-        otherOnlinePlayers.remove(playerName);
+        removeInfoWithName(otherOnlinePlayers, playerName);
+
         Debug.e("Persistent updating other online players: " + otherOnlinePlayers);
         if(listener != null){
             Debug.e("Notifying listener");
@@ -57,6 +83,9 @@ public class Persistent {
 
     public void notifyPlayerInfo(PlayerInfo info) {
         boolean updatedExisting = false;
+        if(info.name.equals(playerName)){
+            return; //Don't care about the player of this client
+        }
         for(int i = 0; i < otherOnlinePlayers.size(); i++){
             PlayerInfo existing = otherOnlinePlayers.get(i);
             if(existing.name.equals(info.name)){

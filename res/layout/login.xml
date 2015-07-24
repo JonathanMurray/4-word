@@ -3,49 +3,63 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:padding="15dp"
               android:background="@android:color/holo_blue_light">
+
 
     <TextView
             android:textColor="@android:color/holo_red_dark"
             android:id="@+id/login_info"
             android:layout_width="match_parent"
-            android:layout_height="20dp"/>
+            android:layout_height="wrap_content"
+            android:text="error message"/>
 
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_marginBottom="15dp">
 
         <TextView
                 android:text="Pick a  name:"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"/>
 
         <EditText
                 android:hint="name"
                 android:id="@+id/login_input"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:layout_width="140dp"
-                android:layout_height="wrap_content"/>
-
-
-
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"/>
     </LinearLayout>
 
     <Button
             android:id="@+id/button_login"
             android:onClick="clickedLogin"
-            android:text="Play!"
-            android:textSize="20sp"
+            android:textSize="22sp"
+            android:typeface="serif"
+            android:textStyle="bold"
+            android:layout_gravity="center"
             android:textAllCaps="false"
-            android:layout_width="fill_parent"
-            android:layout_height="130dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"/>
+            android:text="Start playing"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            />
 
-
+    <Button
+            android:id="@+id/button_shortcut"
+            android:onClick="clickedShortcut"
+            android:textSize="22sp"
+            android:typeface="serif"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textAllCaps="false"
+            android:text="Shortcut"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            />
 
 </LinearLayout>

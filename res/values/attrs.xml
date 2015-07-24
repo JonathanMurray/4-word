@@ -5,13 +5,20 @@
         <attr name="aspectRatioHeight" format="integer" />
     </declare-styleable>
 
-    <declare-styleable name="HorizontalNumberPicker">
+    <declare-styleable name="NumberPickerView">
         <attr name="title" format="string" />
         <attr name="value" format="integer"/>
         <attr name="minValue" format="integer"/>
         <attr name="maxValue" format="integer"/>
+
     </declare-styleable>
 
+    <declare-styleable name="AvatarView">
+        <attr name="playerName" format="string" />
+        <attr name="unknownAvatar" format="boolean"/>
+        <attr name="highlighted" format="boolean"/>
+        <attr name="nameVisible" format="boolean"/>
+    </declare-styleable>
 
 
 </resources>

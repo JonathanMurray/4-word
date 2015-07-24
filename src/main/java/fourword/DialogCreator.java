@@ -16,6 +16,33 @@ import java.io.IOException;
 public class DialogCreator {
 
 
+
+    public static void dialog(
+            final Activity activity,
+            final String title,
+            final String dialogMessage,
+            final DialogInterface.OnClickListener yesListener){
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog dialog = new AlertDialog.Builder(activity)
+                        .setCancelable(false)
+                        .setTitle(title)
+                        .setMessage(dialogMessage)
+                        .setPositiveButton("Yes", yesListener)
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .create();
+                dialog.show();
+            }
+        });
+    }
+
+
     public static void changeActivityForced(
             final Activity activity,
             final String title,

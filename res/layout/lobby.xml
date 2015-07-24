@@ -6,18 +6,22 @@
               android:layout_height="match_parent"
               android:background="@android:color/holo_blue_light">
 
-    <TextView
-            android:id="@+id/lobby_info_text"
-            android:textColor="@android:color/holo_red_dark"
-            android:layout_width="fill_parent"
-            android:layout_height="20dp"/>
-
     <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
             android:id="@+id/avatar_row"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
     </LinearLayout>
+
+    <TextView
+            android:id="@+id/lobby_info_text"
+            android:textColor="@android:color/holo_red_dark"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="error message"/>
 
     <Button
             android:id="@+id/lobby_start_button"
@@ -26,17 +30,20 @@
             android:layout_width="match_parent"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
+            android:typeface="serif"
+            android:textStyle="bold"
             android:layout_height="60dp"
             android:textAllCaps="false"/>
 
     <ScrollView
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/lobby_host_section"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp">
 
         <LinearLayout
-
-                android:id="@+id/lobby_host_section"
                 android:visibility="visible"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -45,55 +52,74 @@
             <LinearLayout
                     android:layout_gravity="center"
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                 <Button
                         android:id="@+id/lobby_add_human_button"
                         android:onClick="clickedAddPlayer"
                         android:text="Invite player"
-                        android:layout_width="160dp"
+                        android:layout_width="fill_parent"
+                        android:layout_weight="1"
                         android:layout_height="60dp"
+                        android:typeface="serif"
+                        android:textStyle="bold"
                         android:textAllCaps="false"/>
 
                 <Button
                         android:id="@+id/lobby_add_bot_button"
                         android:onClick="clickedAddBot"
                         android:text="Add bot"
-                        android:layout_width="160dp"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
                         android:layout_height="60dp"
+                        android:typeface="serif"
+                        android:textStyle="bold"
                         android:textAllCaps="false"/>
 
             </LinearLayout>
 
 
 
-            <LinearLayout
+            <RelativeLayout
                     android:layout_marginTop="20dp"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+
                     android:layout_gravity="center">
 
-                <fourword.HorizontalNumberPicker
+                <View
+                        android:layout_centerInParent="true"
+                        android:id="@+id/mid"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        >
+                </View>
+
+                <fourword.NumberPickerView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/col_picker"
                         app:minValue="2"
                         app:maxValue="6"
                         app:value="4"
+                        android:layout_alignRight="@id/mid"
+                        android:layout_marginRight="4dp"
                         app:title="# columns"/>
-                <fourword.HorizontalNumberPicker
-                        android:layout_marginLeft="10dp"
+
+                <fourword.NumberPickerView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/row_picker"
                         app:minValue="2"
                         app:maxValue="6"
                         app:value="4"
+                        android:layout_alignLeft="@+id/mid"
+                        android:layout_marginLeft="4dp"
                         app:title="# rows"/>
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
                     android:layout_width="wrap_content"
@@ -101,11 +127,11 @@
                     android:orientation="vertical"
                     android:paddingLeft="60dp"
                     android:paddingRight="60dp"
-                    android:layout_marginBottom="20dp"
+                    android:paddingBottom="10dp"
                     android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@android:color/holo_blue_dark"
-                    android:layout_gravity="center"
-                    >
+                    android:layout_gravity="center" >
                 <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -129,20 +155,53 @@
                     <RadioButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="10 sec / turn"
-                            android:id="@+id/radio_time_limit_10"/>
+                            android:text="Stress"
+                            android:id="@+id/radio_time_limit_stress"/>
 
                     <RadioButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="20 sec / turn"
-                            android:id="@+id/radio_time_limit_20"/>
+                            android:text="Normal"
+                            android:id="@+id/radio_time_limit_normal"/>
+
+                    <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Deep thinker"
+                            android:id="@+id/radio_time_limit_long"/>
 
                 </RadioGroup>
 
             </LinearLayout>
 
+            <CheckBox
+                    android:layout_gravity="center"
+                    android:id="@+id/use_custom_rules_checkbox"
+                    android:onClick="clickedUseCustomRules"
+                    android:text="Use custom rules"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/custom_rules_section"
+                    android:background="@android:color/holo_green_light">
+
+                <CheckBox
+                        android:onClick="clickedPreplacedRandomLetters"
+                        android:id="@+id/preplaced_random_letters_checkbox"
+                        android:text="Preplaced random letters"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
         </LinearLayout>
+
+
 
     </ScrollView>
 
