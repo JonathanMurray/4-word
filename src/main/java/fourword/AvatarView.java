@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.example.android_test.R;
+import com.example.fourword.R;
 
 /**
  * Created by jonathan on 2015-07-24.

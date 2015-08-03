@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res/com.example.android_test"
+              xmlns:app="http://schemas.android.com/apk/res/com.example.fourword"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@android:color/holo_blue_light">
 
+    <fourword.ConnectionSection
+            android:id="@+id/connection_section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
 
     <LinearLayout
@@ -20,8 +24,11 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                android:layout_height="wrap_content">
+
+            <fourword.AvatarView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
         </LinearLayout>
 
@@ -89,6 +96,11 @@
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:alpha="0"/>
+
+    <fourword.KeyboardView
+            android:id="@+id/game_keyboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
 
 

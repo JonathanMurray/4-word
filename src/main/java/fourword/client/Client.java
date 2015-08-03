@@ -21,7 +21,11 @@ public abstract class Client implements Serializable{
 
     private Queue<Msg<ServerMsg>> messageQueue = new LinkedList<Msg<ServerMsg>>();
     private Object listenerLock = new Object();
-    private MsgListener listener;
+    protected MsgListener listener;
+
+    public abstract String getUserId();
+
+    public abstract boolean isConnected();
 
     public void setMessageListener(MsgListener<ServerMsg> listener){
         synchronized (listenerLock){

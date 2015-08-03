@@ -19,46 +19,44 @@ import java.util.List;
  */
 public class ScoreScene extends ExtendedScene{
 
-
-
-    private final static int X_MARGIN = 50;
+    private final static int X_MARGIN = 0;
     private final static int X_SPACE = 10;
-    private final static int Y_MARGIN = 50;
+    private final static int Y_MARGIN = 0;
 
-    private ColRowListener gridTouchListener;
-    private final GameResult result;
-    private final List<GridSceneGrid> graphicGrids  = new ArrayList<GridSceneGrid>();
+//    private ColRowListener gridTouchListener;
+    private final GridSceneGrid graphicGrid;
 
-    public ScoreScene(GameResult result, Color backgroundColor, Font smallFont,
+    public ScoreScene(GridModel grid, Color backgroundColor, Font smallFont,
                       final int cellSize, VertexBufferObjectManager vboManager){
-        this.result = result;
         int i = 0;
-        Iterator<GridModel> it = result.grids().values().iterator();
-        GridModel someGrid = it.next();
-        final int numCols = someGrid.getNumCols();
-        final int numRows = someGrid.getNumRows();
-        for(String playerName : result.grids().keySet()){
-            GridModel grid = result.grids().get(playerName);
-            final int x = X_MARGIN + i*X_SPACE + i*(cellSize*numCols);
-            final int y = Y_MARGIN;
-            GridSceneGrid graphicGrid = new GridSceneGrid(this,
-                    smallFont, backgroundColor, x, y, cellSize,
-                    numCols, numRows, vboManager);
-            graphicGrids.add(graphicGrid);
-            graphicGrid.renderGrid(grid);
-            i++;
-        }
-
-
+        final int numCols = grid.getNumCols();
+        final int numRows = grid.getNumRows();
+        final int x = X_MARGIN + i*X_SPACE + i*(cellSize*numCols);
+        final int y = Y_MARGIN;
+        graphicGrid = new GridSceneGrid(this,
+                smallFont, backgroundColor, x, y, cellSize,
+                numCols, numRows, vboManager);
+        graphicGrid.renderGrid(grid);
     }
 
-
-    public void setColRowListener(ColRowListener listener){
-        gridTouchListener = listener;
+    public void renderGrid(GridModel grid){
+        graphicGrid.renderGrid(grid);
     }
 
-    public interface ColRowListener{
-        void colRowChosen(String colRow);
+    public void highlightRow(int index){
+        graphicGrid.highlightRow(index);
     }
+
+    public void highlightCol(int index){
+        graphicGrid.highlightCol(index);
+    }
+
+//    public void setColRowListener(ColRowListener listener){
+//        gridTouchListener = listener;
+//    }
+
+//    public interface ColRowListener{
+//        void colRowChosen(String colRow);
+//    }
 
 }

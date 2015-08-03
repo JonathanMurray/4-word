@@ -27,6 +27,11 @@ public class OnlineClient extends Client {
         this.serverPort = serverPort;
     }
 
+    @Override
+    public boolean isConnected(){
+        return true; //TODO
+    }
+
     public void start(){
         new Thread(new Runnable() {
             @Override
@@ -76,6 +81,11 @@ public class OnlineClient extends Client {
                 }
             }
         }).start();
+    }
+
+    @Override
+    public String getUserId() {
+        return ""; //TODO
     }
 
     private void close(Closeable closeable){

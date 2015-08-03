@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.example.android_test.R;
+import com.example.fourword.R;
 import fourword_shared.messages.*;
 import fourword_shared.model.GameSettings;
 import fourword_shared.model.PlayerInfo;
@@ -25,10 +25,11 @@ import java.util.Random;
 /**
  * Created by jonathan on 2015-06-27.
  */
-public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Persistent.OnlineListener {
+public class MenuActivity extends ReconnectableActivity implements Persistent.OnlineListener {
 
     private ArrayAdapter onlinePlayersAdapter;
     private AvatarView avatar;
+    private TextView othersOnlineHeader;
 
     private final static GameSettings QUICK_GAME_SETTINGS = new GameSettings();
     static{
@@ -50,6 +51,7 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
         ((ListView) findViewById(R.id.other_players_list)).setAdapter(onlinePlayersAdapter);
         avatar = (AvatarView) findViewById(R.id.menu_avatar);
         avatar.setPlayerName(Persistent.instance().playerName());
+        othersOnlineHeader = (TextView) findViewById(R.id.others_online_header);
 //        onlinePlayersAdapter.setNotifyOnChange(true); //doens't seem to work
         Persistent.instance().setOnlineListener(this);
 
@@ -150,8 +152,8 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
         try {
             Random r = new Random();
             int numBots = r.nextInt(2) + 1;
-            int cols = r.nextInt(2) + 2;
-            int rows = r.nextInt(2) + 2;
+            int cols = r.nextInt(3) + 2;
+            int rows = r.nextInt(3) + 2;
             int time = r.nextInt(30) + 7;
             GameSettings settings = new GameSettings();
 
@@ -251,6 +253,7 @@ public class MenuActivity extends Activity implements MsgListener<ServerMsg>, Pe
             public void run() {
                 Debug.e("updating adapter");
                 onlinePlayersAdapter.notifyDataSetChanged();
+                othersOnlineHeader.setText((othersOnline.size()) + " others online");
                 //  onlinePlayersAdapter.setNotifyOnChange() doesn't seem to work
             }
         });

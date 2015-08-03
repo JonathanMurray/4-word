@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
-import com.example.android_test.R;
+import com.example.fourword.R;
 
 public class FixedAspectRatioFrameLayout extends FrameLayout
 {

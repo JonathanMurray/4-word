@@ -23,10 +23,11 @@ public class PlaceOpponentsLetter extends GameState {
     @Override
     public void enter(Object data) {
         activity.startTimer();
-        Debug.e("After starttimer in Placeopponents letter");
         Msg.RequestPlaceLetter msg = (Msg.RequestPlaceLetter) data;
         scene.dehighlightCell();
+        System.out.println("place pp hide key");
         activity.hideKeyboard();
+        System.out.println("after hide");
         letter = msg.letter;
         scene.setBigLetter(letter);
         activity.setInfoText(msg.playerName + " picked " + letter + ". Place it somewhere!");

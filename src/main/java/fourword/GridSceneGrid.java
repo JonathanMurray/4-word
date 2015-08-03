@@ -16,6 +16,7 @@ import org.andengine.util.color.Color;
 public class GridSceneGrid {
 
     private static int LINE_WIDTH = 10;
+    private static Color ROW_COL_HIGHLIGHT_COLOR = new Color(0.4f, 0.4f, 0.6f);
     private static Color HIGHLIGHT_COLOR = new Color(0.3f, 0.3f, 0.4f);
     private static Color FILLED_GRID_COLOR = new Color(0.3f, 0.3f, 0.3f);
 
@@ -35,6 +36,9 @@ public class GridSceneGrid {
     private Cell highlighted;
     private Rectangle highlightedRect;
     private boolean hasHighlightedCell;
+
+    private Rectangle highlightedRowOrCol;
+
 
     public GridSceneGrid(ExtendedScene scene, Font smallFont, Color backgroundColor,
                      final int topLeftXScene, final int topLeftYScene, final int cellSize,
@@ -70,7 +74,27 @@ public class GridSceneGrid {
         filledGrid.setColor(FILLED_GRID_COLOR);
         filledGrid.setZIndex(-100);
         scene.attachChild(filledGrid);
+    }
 
+    public void highlightRow(int index){
+        Rectangle row = new Rectangle(topLeftXScene, topLeftYScene + index*cellSize, cellSize * numCols, cellSize, vboManager);
+        highlightRowOrCol(row);
+    }
+
+    public void highlightCol(int index){
+        Rectangle col = new Rectangle(topLeftXScene + index*cellSize, topLeftYScene, cellSize, cellSize*numRows, vboManager);
+        highlightRowOrCol(col);
+    }
+
+    private void highlightRowOrCol(Rectangle rect){
+        System.out.println("highlight row or col : " + rect);
+        if(highlightedRowOrCol != null){
+            scene.safeDetach(highlightedRowOrCol);
+        }
+        highlightedRowOrCol = rect;
+        rect.setColor(ROW_COL_HIGHLIGHT_COLOR);
+        rect.setZIndex(-100);
+        scene.safeAttach(rect);
     }
 
     public void highlightCell(Cell cell){

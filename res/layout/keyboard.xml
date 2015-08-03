@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@android:color/holo_orange_dark"
+              android:padding="5dp"
+              android:layout_margin="5dp">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <Button
+                android:text="Q"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="W"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="E"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="R"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="T"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="Y"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="U"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="I"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="O"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="P"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="Å"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <View
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_weight="0.02"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <View
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_weight="0.02"/>
+
+        <Button
+                android:text="A"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="S"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="D"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="F"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="G"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="H"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="J"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="K"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="L"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="Ö"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="Ä"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <View
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_weight="0.07"/>
+
+        <Button
+                android:text="Z"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="X"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="C"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="V"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="B"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="N"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <Button
+                android:text="M"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.09"/>
+
+        <View
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_weight="0.29"/>
+    </LinearLayout>
+
+
+
+</LinearLayout>

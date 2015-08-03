@@ -3,7 +3,7 @@ package fourword;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import com.example.android_test.R;
+import com.example.fourword.R;
 
 import java.util.HashSet;
 
@@ -12,6 +12,8 @@ import java.util.HashSet;
  */
 public class SoundManager {
     private SoundPool soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+
+    private float volume = 0; //0 or 1
 
     private static SoundManager instance;
 
@@ -69,7 +71,7 @@ public class SoundManager {
     public void play(int soundId){
         if(loadedSounds.contains(soundId)){
             System.out.println("Playing sound " + soundId);
-            soundPool.play(soundId, 1, 1, 1, 0, 1f);
+            soundPool.play(soundId, volume, volume, 1, 0, 1f);
         }else{
             System.out.println("Queueing sound " + soundId);
             queuedSounds.add(soundId);

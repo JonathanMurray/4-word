@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.example.android_test.R;
+import com.example.fourword.R;
 import fourword_shared.messages.*;
 import fourword_shared.model.GameSettings;
 import fourword_shared.model.Lobby;
@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by jonathan on 2015-06-25.
  */
-public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, NumberPickerView.NumberPickerListener, Persistent.OnlineListener {
+public class LobbyActivity extends ReconnectableActivity implements NumberPickerView.NumberPickerListener, Persistent.OnlineListener {
 
     private boolean isPlayerHost;
 
@@ -47,8 +47,8 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
     private CheckBox useCustomRulesCheckbox;
     private CheckBox preplacedRandomLettersCheckbox;
 
-
     public final static String IS_HOST = "IS_HOST"; //Instead of R.string since the string is also used by a dialogfragment
+
     //that doesn't have access to R.string (not attached to an activity yet)
 
     @Override
@@ -69,8 +69,11 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
         timeLimitRadioGroup = (RadioGroup) findViewById(R.id.time_limit_radiogroup);
         timeNoLimit = (RadioButton) findViewById(R.id.radio_no_time_limit);
         timeStress = (RadioButton) findViewById(R.id.radio_time_limit_stress);
+        timeStress.setText(timeStress.getText() + " (" + getResources().getInteger(R.integer.timePerTurnStress) + ")");
         timeNormal = (RadioButton) findViewById(R.id.radio_time_limit_normal);
+        timeNormal.setText(timeNormal.getText() + " (" + getResources().getInteger(R.integer.timePerTurnNormal) + ")");
         timeLong = (RadioButton) findViewById(R.id.radio_time_limit_long);
+        timeLong.setText(timeLong.getText() + " (" + getResources().getInteger(R.integer.timePerTurnLong) + ")");
         useCustomRulesCheckbox = (CheckBox) findViewById(R.id.use_custom_rules_checkbox);
         customRulesSection = (ViewGroup) findViewById(R.id.custom_rules_section);
         preplacedRandomLettersCheckbox = (CheckBox) findViewById(R.id.preplaced_random_letters_checkbox);
@@ -79,10 +82,6 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
 
         colPicker.setClickedChangeListener(this);
         rowPicker.setClickedChangeListener(this);
-
-
-
-
 
         timeLimitRadioGroup.check(R.id.radio_no_time_limit);
         timeLimitRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -119,6 +118,8 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
             }
         });
 
+        setStartButtonEnabled(false);
+
         customRulesSection.setVisibility(View.GONE);
 
         if(isPlayerHost){
@@ -128,13 +129,6 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
             updateLayout();
             setupForHost();
         }
-
-
-
-//        if(isPlayerHost){
-//            Persistent.instance().setOnlineListener(this);
-//        }
-
 
         Connection.instance().setMessageListener(this);
     }
@@ -147,16 +141,12 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
 
     public void clickedUseCustomRules(View view){
         settings.setAttribute(GameSettings.BoolAttribute.CUSTOM_RULES, useCustomRulesCheckbox.isChecked());
-//        lobby.useCustomRules = useCustomRulesCheckbox.isChecked();
-//        int visibility = lobby.useCustomRules ? View.VISIBLE : View.GONE;
         final int visibility = settings.getBool(GameSettings.BoolAttribute.CUSTOM_RULES) ? View.VISIBLE : View.GONE;
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 customRulesSection.setVisibility(visibility);
-//                settingsScrollSection.fullScroll(ScrollView.FOCUS_DOWN);
-//                settingsScrollSection.scrollTo(0, settingsScrollSection.getBottom());
             }
         });
         settingsScrollSection.post(new Runnable() {
@@ -209,39 +199,27 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
 
                 avatarRow.removeAllViews();
                 int i = 0;
-                for (String lobbyPlayer : lobby.sortedNames()) {
+                for (final String playerName : lobby.sortedNames()) {
                     final int playerIndex = i;
-
-
-
-
-//                    ViewGroup avatarView = (ViewGroup) View.inflate(LobbyActivity.this, R.layout.simple_avatar, null);
-//                    ((TextView) avatarView.findViewById(R.id.avatar_name)).setText(lobbyPlayer);
-                    boolean connected = lobby.getPlayer(lobbyPlayer).hasConnected;
-//                    if (!connected) {
-//                        ((ImageView) avatarView.findViewById(R.id.avatar_img)).setImageResource(R.drawable.unknown_avatar);
-//                    }
-                    boolean selfAvatar = lobbyPlayer.equals(Persistent.instance().playerName());
-//                    Button kickButton = ((Button) avatarView.findViewById(R.id.avatar_kick_button));
-
+                    boolean connected = lobby.getPlayer(playerName).hasConnected;
+                    boolean selfAvatar = playerName.equals(Persistent.instance().playerName());
 
                     AvatarView avatarView = new AvatarView(LobbyActivity.this);
-                    avatarView.setPlayerName(lobbyPlayer);
+                    avatarView.setPlayerName(playerName);
                     if(!connected){
                         avatarView.setUnknownAvatar(true);
                     }
 
                     if (isPlayerHost && !selfAvatar) {
-                        avatarView.setOnLongClickListener(new View.OnLongClickListener() {
+                        avatarView.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public boolean onLongClick(View v) {
-                                DialogCreator.dialog(LobbyActivity.this, "Kick from lobby", "Are you sure?", new DialogInterface.OnClickListener() {
+                            public void onClick(View v) {
+                                DialogCreator.dialog(LobbyActivity.this, "Kick " + playerName + " from lobby", "Are you sure?", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         clickedKickPlayer(playerIndex);
                                     }
                                 });
-                                return true;
                             }
                         });
                     }
@@ -330,41 +308,19 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
         preplacedRandomLettersCheckbox.setEnabled(isHost);
     }
 
-//    private void copySettingsFromLobbyObject(Lobby lobby){
-//        colPicker.setValue(lobby.numCols);
-//        rowPicker.setValue(lobby.numRows);
-//
-//        final int stressTime = getResources().getInteger(R.integer.timePerTurnStress);
-//        final int normalTime = getResources().getInteger(R.integer.timePerTurnNormal);
-//        final int longTime = getResources().getInteger(R.integer.timePerTurnLong);
-//        if(lobby.timeLimit == 0){
-//            timeNoLimit.setChecked(true);
-//        }else if(lobby.timeLimit == stressTime){
-//            timeStress.setChecked(true);
-//        }else if(lobby.timeLimit == normalTime){
-//            timeNormal.setChecked(true);
-//        }else if(lobby.timeLimit == longTime){
-//            timeLong.setChecked(true);
-//        }else{
-//            Debug.e("Unknown time limit: " + lobby.timeLimit);
-//        }
-//    }
-
     private void clickedKickPlayer(int playerIndex){
         String name = lobby.getNameAtIndex(playerIndex);
         Debug.e("Clicked kick player " + name);
         try {
-
             Connection.instance().sendMessage(new Msg.KickFromLobby(name));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
     public void clickedAddPlayer(View view){
         final String[] strings = Persistent.instance().getOtherOnlinePlayerStrings();
-        final String[] onlinePlayers = Persistent.instance().getOtherOnlinePlayerNames();
+        final String[] othersPlayerNames = Persistent.instance().getOtherOnlinePlayerNames();
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(LobbyActivity.this)
             .setItems(strings, new DialogInterface.OnClickListener() {
                 @Override
@@ -372,7 +328,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
                     waitingForServer = true;
                     setButtonsEnabled(false);
                     try {
-                        String name = onlinePlayers[which];
+                        String name = othersPlayerNames[which];
                         Connection.instance().sendMessage(new Msg.InviteToLobby(name));
                         SoundManager.instance().play(SoundManager.ADDED_TO_LOBBY);
                     } catch (IOException e) {
@@ -385,7 +341,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
         LayoutInflater inflater = getLayoutInflater();
         View convertView = (View) inflater.inflate(R.layout.invite_other_dialog, null);
         alertDialog.setView(convertView);
-        alertDialog.setTitle("Invite player");
+        alertDialog.setTitle("Invite player (" + (othersPlayerNames.length) + " online)");
         alertDialog.show();
     }
 
@@ -409,12 +365,32 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
         }
     }
 
+    private void setInviteButtonsEnabled(final boolean enabled){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                inviteButton.setEnabled(enabled);
+                addBotButton.setEnabled(enabled);
+            }
+        });
+    }
+
+    private void setStartButtonEnabled(final boolean enabled){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                startButton.setEnabled(enabled);
+            }
+        });
+    }
+
     private void setButtonsEnabled(final boolean enabled){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                findViewById(R.id.lobby_add_human_button).setEnabled(enabled);
-                findViewById(R.id.lobby_start_button).setEnabled(enabled);
+                inviteButton.setEnabled(enabled);
+                addBotButton.setEnabled(enabled);
+                startButton.setEnabled(enabled);
             }
         });
     }
@@ -497,6 +473,7 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
                         }
                         break;
                 }
+                handleNumPlayers();
                 updateLayout();
                 return true;
 
@@ -531,6 +508,14 @@ public class LobbyActivity extends Activity implements MsgListener<ServerMsg>, N
                 return false;
         }
     }
+
+    private void handleNumPlayers(){
+        boolean canInviteMore = lobby.size() < Lobby.MAX_PLAYERS;
+        setInviteButtonsEnabled(canInviteMore);
+        boolean canStart = lobby.size() > 1;
+        setStartButtonEnabled(canStart);
+    }
+
 
     //Triggered by increase() and decrease() but not setValue()
     @Override

@@ -1,46 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res/com.example.android_test"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-            android:background="@android:color/holo_blue_light">
+        xmlns:app="http://schemas.android.com/apk/res/com.example.fourword"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/holo_blue_light"
+        android:padding="15dp">
 
-    <!--<ScrollView-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_above="@+id/scorescreen_button">-->
-        <!--<TextView-->
-                <!--android:id="@+id/info_text"-->
-                <!--android:layout_marginLeft="20dp"-->
-                <!--android:layout_marginRight="20dp"-->
-                <!--android:textSize="18dp"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="[Placeholder]"/>-->
-    <!--</ScrollView>-->
 
-    <fourword.FixedAspectRatioFrameLayout
-            app:aspectRatioWidth="@integer/gridWidthAspectRatio"
-            app:aspectRatioHeight="@integer/gridHeightAspectRatio"
+    <LinearLayout
+            android:id="@+id/avatar_row"
+            android:orientation="horizontal"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <org.andengine.opengl.view.RenderSurfaceView
-                android:id="@+id/score_surface_view"
+
+            <fourword.AvatarWithScoreView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+            <fourword.AvatarWithScoreView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/result_col_buttons"
+            >
+
+        <Button android:layout_width="60dp" android:layout_height="40dp"/>
+        <Button android:layout_width="60dp" android:layout_height="40dp"/>
+        <Button android:layout_width="60dp" android:layout_height="40dp"/>
+        <Button android:layout_width="60dp" android:layout_height="40dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+            <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:id="@+id/result_row_buttons">
+                    <Button android:layout_width="40dp" android:layout_height="60dp"/>
+                    <Button android:layout_width="40dp" android:layout_height="60dp"/>
+            </LinearLayout>
+
+            <fourword.FixedAspectRatioFrameLayout
+                    android:id="@+id/render_container"
+                    app:aspectRatioWidth="@integer/scoreWidthAspectRatio"
+                    app:aspectRatioHeight="@integer/scoreHeightAspectRatio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <org.andengine.opengl.view.RenderSurfaceView
+                            android:id="@+id/score_surface_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+            </fourword.FixedAspectRatioFrameLayout>
+
+
+    </LinearLayout>
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-    </fourword.FixedAspectRatioFrameLayout>
+                android:layout_height="wrap_content">
 
-    <Button
-            android:id="@+id/scorescreen_button"
-            android:onClick="clickedReturn"
-            android:text="Return to menu"
-            android:textSize="20sp"
-            android:layout_width="fill_parent"
-            android:layout_height="130dp"
-            android:layout_alignParentBottom="true"/>
+            <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:background="@android:color/black"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:id="@+id/result_shown_words">
+
+                <TextView
+                        android:text="AN"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <TextView
+                        android:text="AND"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <TextView
+                        android:text="ANDRA"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <TextView
+                        android:text="DRA"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <Button
+                    android:id="@+id/scorescreen_button"
+                    android:onClick="clickedReturn"
+                    android:text="Return to menu"
+                    android:textSize="20sp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="70dp"
+                    android:layout_alignParentBottom="true"/>
+
+        </LinearLayout>
 
 
 
-</RelativeLayout>
+    </ScrollView>
+
+
+
+
+
+
+</LinearLayout>

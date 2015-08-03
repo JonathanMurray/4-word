@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.example.android_test.R;
+import com.example.fourword.R;
 import fourword_shared.messages.Msg;
 import fourword_shared.messages.MsgListener;
 import fourword_shared.messages.ServerMsg;
@@ -44,7 +44,7 @@ import java.util.*;
 /**
  * Created by jonathan on 2015-06-20.
  */
-public class GameActivity extends SimpleLayoutGameActivity implements MsgListener<ServerMsg> {
+public class GameActivity extends SimpleLayoutGameActivity implements MsgListener<ServerMsg>, KeyboardView.KeyboardListener {
     private Font smallFont;
     private Font bigFont;
     private Camera camera;
@@ -81,6 +81,9 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
     ViewGroup timerSection;
     ProgressBar timer;
 
+    private KeyboardView keyboard;
+    private ConnectionSection connectionSection;
+
     @Override
     public void onBackPressed(){
         DialogCreator.changeActivityQuestion(this, "Leave game",
@@ -110,9 +113,12 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
         super.onCreate(pSavedInstanceState);
 
 
+        keyboard = (KeyboardView) findViewById(R.id.game_keyboard);
+        keyboard.setListener(this);
         timerSection = (ViewGroup) findViewById(R.id.timer_section);
         timer = (ProgressBar) findViewById(R.id.progress_bar);
         timerSection.setVisibility(View.INVISIBLE);
+        connectionSection = (ConnectionSection) findViewById(R.id.connection_section);
         messageHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
@@ -246,6 +252,26 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
         return true;
     }
 
+    @Override
+    public void lostConnection() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                connectionSection.setOnline(false);
+            }
+        });
+    }
+
+    @Override
+    public void establishedConnection() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                connectionSection.setOnline(true);
+            }
+        });
+    }
+
     public void startTimer(){
         if(timePerTurn() > 0){
             secondsLeft = timePerTurn();
@@ -308,11 +334,18 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                final EditText textInput = (EditText) findViewById(R.id.text_input);
-                imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
+                keyboard.setEnabled(true);
             }
         });
+
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                final EditText textInput = (EditText) findViewById(R.id.text_input);
+//                imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
+//            }
+//        });
     }
 
     private int numRows(){
@@ -328,14 +361,23 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
     }
 
     public void hideKeyboard(){
+        System.out.println("hide keyboard");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                final EditText textInput = (EditText) findViewById(R.id.text_input);
-                imm.hideSoftInputFromWindow(textInput.getWindowToken(), 0);
+                System.out.println("Set enabled");
+                keyboard.setEnabled(false);
             }
         });
+
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                final EditText textInput = (EditText) findViewById(R.id.text_input);
+//                imm.hideSoftInputFromWindow(textInput.getWindowToken(), 0);
+//            }
+//        });
     }
 
     @Override
@@ -373,25 +415,25 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
         Connection.instance().setMessageListener(this);
 
         final EditText textInput = (EditText) findViewById(R.id.text_input);
-        textInput.addTextChangedListener(new TextWatcher() {
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(s.length() > 0){
-                    char ch = Character.toUpperCase(s.charAt(s.length()-1));
-                    if(Character.isLetter(ch)) {
-                        synchronized (stateLock){
-                            state.userTypedLetter(ch);
-                        }
-
-                    }
-                    s.clear();
-                }
-            }
-        });
+//        textInput.addTextChangedListener(new TextWatcher() {
+//
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+//            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                if(s.length() > 0){
+//                    char ch = Character.toUpperCase(s.charAt(s.length()-1));
+//                    if(Character.isLetter(ch)) {
+//                        synchronized (stateLock){
+//                            state.userTypedLetter(ch);
+//                        }
+//
+//                    }
+//                    s.clear();
+//                }
+//            }
+//        });
 
         scene.setGridTouchListener(new GridTouchListener() {
             @Override
@@ -469,4 +511,13 @@ public class GameActivity extends SimpleLayoutGameActivity implements MsgListene
         });
     }
 
+    @Override
+    public void onTypedLetter(char letter) {
+        System.out.println("ontypedletter "  + letter);
+        synchronized (stateLock){
+            System.out.println("in statelock");
+            state.userTypedLetter(letter);
+            System.out.println("After state.typedletter");
+        }
+    }
 }

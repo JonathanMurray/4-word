@@ -9,17 +9,18 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.example.android_test.R;
+import com.example.fourword.R;
 import fourword_shared.messages.*;
 import fourword_shared.model.GameResult;
 import fourword_shared.model.MockupFactory;
+import org.andengine.util.debug.Debug;
 
 import java.io.IOException;
 
 /**
  * Created by jonathan on 2015-06-27.
  */
-public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
+public class LoginActivity extends ReconnectableActivity {
 
 //    private static boolean USE_LOCAL_SERVER = true;
 //    private static final String LOCAL_SERVER_ADDRESS = "192.168.1.2";
@@ -28,29 +29,24 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
     private boolean waitingForReply = false;
     private String requestedName;
 
+
     @Override
     public void onBackPressed() {
-
         //Do nothing
-
-        //TODO finish just quits the activity
-//        DialogCreator.dialog(this, "Quit", "Do you want to quit?", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                finish();
-//            }
-//        });
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Debug.e("----------------------------------      LoginActivity.onCreate()      -------------------------------------------");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         SoundManager.create(this);
+
 //        String serverAddr = USE_LOCAL_SERVER ? LOCAL_SERVER_ADDRESS : REMOTE_SERVER_ADDRESS;
 //        Connection.instance().connectToLAN(this);
 //        Connection.instance().connectToHeroku(this);
-        Connection.instance().connectToCustom(this, "192.168.1.2");
+        boolean isConnected = Connection.instance().connectDefault(this);
+
 
     }
 
@@ -77,11 +73,10 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            final EditText textInput = (EditText) findViewById(R.id.login_input);
-            textInput.requestFocus();
-            imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                final EditText textInput = (EditText) findViewById(R.id.login_input);
+                textInput.requestFocus();
+                imm.showSoftInput(textInput, InputMethodManager.SHOW_FORCED);
             }
         });
     }
@@ -95,6 +90,7 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
             requestedName = nameInput;
         } catch (IOException e) {
             e.printStackTrace();
+            lostConnection();
         }
     }
 
@@ -115,6 +111,18 @@ public class LoginActivity extends Activity implements MsgListener<ServerMsg> {
             }
         }
         return true;
+    }
+
+    @Override
+    public void establishedConnection() {
+        super.establishedConnection();
+        setButtonEnabled(true);
+    }
+
+    @Override
+    public void lostConnection() {
+        super.lostConnection();
+        setButtonEnabled(false);
     }
 
     private void setButtonEnabled(final boolean enabled){
